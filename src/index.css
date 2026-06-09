@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-navy-50: #edf2f9;
+  --color-navy-100: #d6e2f4;
+  --color-navy-200: #b5ccee;
+  --color-navy-300: #85acdf;
+  --color-navy-400: #4e85ce;
+  --color-navy-500: #2a63b5;
+  --color-navy-600: #1c4a91;
+  --color-navy-700: #173d77;
+  --color-navy-800: #0f274c;
+  --color-navy-850: #0c1c38;
+  --color-navy-900: #0a1128;
+  --color-navy-950: #050a18;
+  
+  --color-lightyellow-50: #fffff2;
+  --color-lightyellow-100: #fefdd8;
+  --color-lightyellow-200: #fefbae;
+  --color-lightyellow-300: #fbf477;
+  --color-lightyellow-400: #f7e641;
+  --color-lightyellow-500: #ebd01f;
+  
+  --color-gold-50: #fdfaf3;
+  --color-gold-100: #faf1df;
+  --color-gold-200: #f4e1be;
+  --color-gold-300: #ebd08d;
+  --color-gold-400: #dcb35c;
+  --color-gold-500: #c5a059;
+  --color-gold-600: #b0813f;
+  --color-gold-700: #936033;
+}
+
+body {
+  background-color: #050a18;
+  color: #fffff2;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
