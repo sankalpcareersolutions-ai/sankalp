@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Anchor, Award, BookOpen, Calendar, CheckCircle, Clock, GraduationCap, Mail, Phone, Shield, ShieldCheck, User } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import founderPortraitImg from "../assets/images/naval_veteran_founder_portrait_1779626852788.png";
+import { supabase } from "../lib/supabase";
 
 export interface FounderAppointment {
   id: string;
   name: string;
   email: string;
   phone: string;
-  slotDate: string;
-  slotTime: string;
-  focusArea: string;
-  ticketNumber: string;
+  slot_date: string;
+  slot_time: string;
+  focus_area: string;
+  ticket_number: string;
   timestamp: string;
 }
 
@@ -25,15 +26,36 @@ export default function AboutAndAppointment() {
   const [focusArea, setFocusArea] = useState("SSB Psychology & Personal Interview Coaching");
   const [bookingSuccess, setBookingSuccess] = useState<FounderAppointment | null>(null);
 
-  // Load bookings from localStorage
-  const [bookings, setBookings] = useState<FounderAppointment[]>(() => {
-    const cached = localStorage.getItem("sankalp_founder_appointments");
-    return cached ? JSON.parse(cached) : [];
-  });
+  // Load bookings from Supabase
+  const [bookings, setBookings] = useState<FounderAppointment[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem("sankalp_founder_appointments", JSON.stringify(bookings));
-  }, [bookings]);
+    async function fetchBookings() {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*')
+          .order('timestamp', { ascending: false });
+          
+        if (error) {
+          console.error("Error fetching appointments:", error);
+          // Fallback to local storage if table doesn't exist yet
+          const cached = localStorage.getItem("sankalp_founder_appointments");
+          if (cached) setBookings(JSON.parse(cached));
+        } else if (data) {
+          setBookings(data as FounderAppointment[]);
+          localStorage.setItem("sankalp_founder_appointments", JSON.stringify(data));
+        }
+      } catch (err) {
+        console.error("Supabase connection error:", err);
+      } finally {
+        setLoadingBookings(false);
+      }
+    }
+    
+    fetchBookings();
+  }, []);
 
   const timeSlots = [
     "0500hrs - 0530hrs (Morning)",
@@ -51,7 +73,7 @@ export default function AboutAndAppointment() {
     "DRDO / ISRO Professional Scientist Entry Portfolio"
   ];
 
-  const handleBook = (e: React.FormEvent) => {
+  const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !phone || !slotDate || !slotTime) return;
 
@@ -61,18 +83,31 @@ export default function AboutAndAppointment() {
       name,
       email,
       phone,
-      slotDate,
-      slotTime,
-      focusArea,
-      ticketNumber,
-      timestamp: new Date().toLocaleDateString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit"
-      })
+      slot_date: slotDate,
+      slot_time: slotTime,
+      focus_area: focusArea,
+      ticket_number: ticketNumber,
+      timestamp: new Date().toISOString()
     };
 
+    // Optimistic UI update
     setBookings((prev) => [newBooking, ...prev]);
     setBookingSuccess(newBooking);
+    
+    // Attempt to save to Supabase
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .insert([newBooking]);
+        
+      if (error) {
+        // Fallback for demo purposes if table doesn't exist
+        const updatedBookings = [newBooking, ...bookings];
+        localStorage.setItem("sankalp_founder_appointments", JSON.stringify(updatedBookings));
+      }
+    } catch (err) {
+      // Fallback
+    }
 
     // Reset simple form inputs
     setName("");
@@ -81,8 +116,23 @@ export default function AboutAndAppointment() {
     setSlotDate("");
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancel = async (id: string) => {
     setBookings((prev) => prev.filter((b) => b.id !== id));
+    
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .delete()
+        .eq('id', id);
+        
+      if (error) {
+        // Fallback
+        const updatedBookings = bookings.filter((b) => b.id !== id);
+        localStorage.setItem("sankalp_founder_appointments", JSON.stringify(updatedBookings));
+      }
+    } catch (err) {
+      // Fallback
+    }
   };
 
   return (
@@ -319,9 +369,9 @@ export default function AboutAndAppointment() {
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-gold-450 hover:bg-gold-500 text-navy-950 font-sans font-extrabold text-xs uppercase tracking-widest rounded-xl transition duration-200 shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                className="w-full py-4 bg-navy-900 border-2 border-gold-500 hover:bg-navy-800 text-lightyellow-100 font-sans font-black text-base md:text-lg uppercase tracking-widest rounded-xl transition duration-200 shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
               >
-                ⚓ Issue Commander's Appointment Ticket
+                BOOK APPOINTMENT
               </button>
             </form>
           </div>
@@ -361,19 +411,19 @@ export default function AboutAndAppointment() {
                   </div>
                   <div>
                     <span className="text-[9.5px] font-mono text-gold-400 tracking-wider uppercase block">Gate Pass ticket:</span>
-                    <span className="font-extrabold text-lightyellow-100 text-sm font-mono tracking-wider">{bookingSuccess.ticketNumber}</span>
+                    <span className="font-extrabold text-lightyellow-100 text-sm font-mono tracking-wider">{bookingSuccess.ticket_number}</span>
                   </div>
                   <div>
                     <span className="text-[9.5px] font-mono text-gold-400 tracking-wider uppercase block">Confirmed Date:</span>
-                    <span className="font-bold text-lightyellow-100">{bookingSuccess.slotDate}</span>
+                    <span className="font-bold text-lightyellow-100">{bookingSuccess.slot_date}</span>
                   </div>
                   <div>
                     <span className="text-[9.5px] font-mono text-gold-400 tracking-wider uppercase block">Allocated Time Block:</span>
-                    <span className="font-bold text-lightyellow-100 text-[11px] leading-snug block">{bookingSuccess.slotTime}</span>
+                    <span className="font-bold text-lightyellow-100 text-[11px] leading-snug block">{bookingSuccess.slot_time}</span>
                   </div>
                   <div className="sm:col-span-2">
                     <span className="text-[9.5px] font-mono text-gold-400 tracking-wider uppercase block">Custom Focus Core:</span>
-                    <span className="font-bold text-lightyellow-100 text-xs">{bookingSuccess.focusArea}</span>
+                    <span className="font-bold text-lightyellow-100 text-xs">{bookingSuccess.focus_area}</span>
                   </div>
                 </div>
 
@@ -410,13 +460,13 @@ export default function AboutAndAppointment() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-lightyellow-100">{booking.name}</span>
-                        <span className="text-[9px] font-mono bg-navy-800 text-gold-400 px-2 py-0.5 rounded tracking-widest border border-gold-500/20">{booking.ticketNumber}</span>
+                        <span className="text-[9px] font-mono bg-navy-800 text-gold-400 px-2 py-0.5 rounded tracking-widest border border-gold-500/20">{booking.ticket_number}</span>
                       </div>
                       <p className="text-[10.5px] font-mono text-lightyellow-200/60 flex items-center gap-1.5">
                         <Clock className="w-3 h-3 text-gold-400" />
-                        {booking.slotDate} • {booking.slotTime}
+                        {booking.slot_date} • {booking.slot_time}
                       </p>
-                      <p className="text-[11px] text-lightyellow-200/80 font-sans font-medium">Topic: {booking.focusArea}</p>
+                      <p className="text-[11px] text-lightyellow-200/80 font-sans font-medium">Topic: {booking.focus_area}</p>
                     </div>
 
                     <button

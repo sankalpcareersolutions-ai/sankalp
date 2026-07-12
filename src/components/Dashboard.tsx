@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Course, Mentor, Internship, DailyTrivia, UserStats } from "../types";
 import { dailyTriviaPool } from "../data/portalData";
 import { CheckCircle, Award, Calendar, BookOpen, Clock, Activity, Zap, Star, Shield, ArrowRight, Save, Flame, Compass, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { supabase } from "../lib/supabase";
 
 interface DashboardProps {
   enrolledCourses: Course[];
@@ -30,19 +31,49 @@ export default function Dashboard({
   const [customDate, setCustomDate] = useState(userStats.examDate);
 
   // Only founder appointments for cadet desk
-  const [founderAppointments, setFounderAppointments] = useState<any[]>(() => {
-    try {
-      const cached = localStorage.getItem("sankalp_founder_appointments");
-      return cached ? JSON.parse(cached) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [founderAppointments, setFounderAppointments] = useState<any[]>([]);
 
-  const handleCancelFounderAppt = (id: string) => {
+  useEffect(() => {
+    async function fetchBookings() {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*')
+          .order('timestamp', { ascending: false });
+          
+        if (error) {
+          console.error("Error fetching appointments in Dashboard:", error);
+          const cached = localStorage.getItem("sankalp_founder_appointments");
+          if (cached) setFounderAppointments(JSON.parse(cached));
+        } else if (data) {
+          setFounderAppointments(data);
+          localStorage.setItem("sankalp_founder_appointments", JSON.stringify(data));
+        }
+      } catch (err) {
+        console.error("Supabase connection error:", err);
+      }
+    }
+    
+    fetchBookings();
+  }, []);
+
+  const handleCancelFounderAppt = async (id: string) => {
     const updated = founderAppointments.filter((b) => b.id !== id);
     setFounderAppointments(updated);
-    localStorage.setItem("sankalp_founder_appointments", JSON.stringify(updated));
+    
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .delete()
+        .eq('id', id);
+        
+      if (error) {
+        console.error("Error deleting from Supabase:", error);
+        localStorage.setItem("sankalp_founder_appointments", JSON.stringify(updated));
+      }
+    } catch (err) {
+      console.error("Supabase delete error:", err);
+    }
   };
 
   // Daily Trivia Quiz States
@@ -394,17 +425,17 @@ export default function Dashboard({
                           Sankalp Founder & Lead Counselor
                         </h4>
                         <p className="text-[10px] text-stone-500">
-                          Nominee: <span className="font-semibold text-stone-700">{appt.name}</span> • Ticket: <span className="font-mono text-emerald-800 font-bold">{appt.ticketNumber}</span>
+                          Nominee: <span className="font-semibold text-stone-700">{appt.name}</span> • Ticket: <span className="font-mono text-emerald-800 font-bold">{appt.ticket_number}</span>
                         </p>
                         <span className="inline-block mt-1 text-[10px] font-mono text-emerald-850 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
-                          Topic: {appt.focusArea}
+                          Topic: {appt.focus_area}
                         </span>
                       </div>
                     </div>
                     <div className="flex sm:flex-col items-start sm:items-end justify-between sm:justify-center gap-2">
                       <div className="text-left sm:text-right">
-                        <p className="text-xs font-mono text-stone-700 font-bold">{appt.slotDate}</p>
-                        <p className="text-[10.5px] font-mono text-stone-605 font-bold">{appt.slotTime}</p>
+                        <p className="text-xs font-mono text-stone-700 font-bold">{appt.slot_date}</p>
+                        <p className="text-[10.5px] font-mono text-stone-605 font-bold">{appt.slot_time}</p>
                       </div>
                       <button
                         id={`cancel_founder_appt_${appt.id}`}

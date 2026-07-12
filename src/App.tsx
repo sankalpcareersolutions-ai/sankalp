@@ -8,6 +8,7 @@ import Placements from "./components/Placements";
 import TestimonialsPage from "./components/TestimonialsPage";
 import AboutAndAppointment from "./components/AboutAndAppointment";
 import SovereignExams from "./components/SovereignExams";
+import AdminPanel from "./components/AdminPanel";
 import { Course, Mentor, Internship, UserStats } from "./types";
 import { initialCourses, mentors, initialInternships } from "./data/portalData";
 import { Compass, Shield, Award, Users, BookOpen, GraduationCap, HeartHandshake, ShieldCheck, Mail, Phone, MapPin } from "lucide-react";
@@ -224,6 +225,9 @@ export default function App() {
                 setSearchTerm={setSearchTerm}
               />
             )}
+            {currentTab === "admin" && (
+              <AdminPanel />
+            )}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -307,7 +311,13 @@ export default function App() {
         {/* Legal Row */}
         <div className="max-w-7xl mx-auto mt-8 pt-8 border-t border-gold-600/30 flex flex-col md:flex-row justify-between items-center text-xs text-lightyellow-200/70 font-semibold gap-4" id="footer_copyright_banner">
           <p>© {new Date().getFullYear()} SANKALP Career Solutions. Under collaborative advisory of retired Indian Armed Forces Veterans & DRDO and ISRO Scientific Consultants.</p>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
+            <button 
+              onClick={() => setCurrentTab("admin")}
+              className="text-gold-500 hover:text-gold-400 font-mono tracking-widest uppercase transition-colors mr-4"
+            >
+              Admin Access
+            </button>
             <span className="text-gold-400">Sovereign Security Cleared</span>
             <span className="text-gold-400">Made for India</span>
           </div>
