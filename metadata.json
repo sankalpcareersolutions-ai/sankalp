@@ -1,5 +1,5 @@
 {
-  "name": "SANKALP",
+  "name": "careercounsellinghub",
   "description": "SANKALP is a consolidated career counselling, personalized mentorship, skill-building, and internship placement platform tailored for Indian Defence Services, Paramilitary, Defence Civilian roles, and elite scientific establishments like DRDO, BARC, and ISRO.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
