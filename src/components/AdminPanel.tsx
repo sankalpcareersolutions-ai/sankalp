@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Shield, Lock, Calendar, Clock, User, Mail, Phone, LogOut } from "lucide-react";
 import { motion } from "motion/react";
-import { FounderAppointment } from "./AboutAndAppointment";
+import { CareerCounselingAppointment } from "./AboutAndAppointment";
 
 export default function AdminPanel() {
   const [session, setSession] = useState<any>(null);
@@ -13,7 +13,7 @@ export default function AdminPanel() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [authError, setAuthError] = useState("");
 
-  const [appointments, setAppointments] = useState<FounderAppointment[]>([]);
+  const [appointments, setAppointments] = useState<CareerCounselingAppointment[]>([]);
   const [loadingData, setLoadingData] = useState(false);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function AdminPanel() {
         const cached = localStorage.getItem("sankalp_founder_appointments");
         if (cached) setAppointments(JSON.parse(cached));
       } else if (data) {
-        setAppointments(data as FounderAppointment[]);
+        setAppointments(data as CareerCounselingAppointment[]);
       }
     } catch (error: any) {
       const cached = localStorage.getItem("sankalp_founder_appointments");

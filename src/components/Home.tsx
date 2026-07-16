@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Compass, Shield, Award, Users, BookOpen, GraduationCap, Search, Atom, Target, AlertCircle, ArrowRight, HeartHandshake, Eye, Rocket, Crosshair } from "lucide-react";
+import { Search, Compass, Shield, Award, Users, BookOpen, GraduationCap, Target, AlertCircle, ArrowRight, HeartHandshake, Eye, Rocket, Crosshair, ChevronRight, HelpCircle, Newspaper, Cpu, Landmark, Gavel, Atom } from "lucide-react";
 import { motion } from "motion/react";
 
-// Import generated premium assets
 import flagsImg from "../assets/images/armed_forces_flags_1780997129787.png";
 import combatAssetsImg from "../assets/images/army_tank_1780997176988.png";
 import droneImg from "../assets/images/fighter_jet_drone_1780997160368.png";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface HomeProps {
   onSearchSelection: (term: string) => void;
@@ -13,477 +13,290 @@ interface HomeProps {
 }
 
 export default function Home({ onSearchSelection, onTabChange }: HomeProps) {
-  // Sector mapping state for the interactive "Career Sector Matcher Tool"
-  const [userEducation, setUserEducation] = useState<string>("general_grad");
-  const [userCategory, setUserCategory] = useState<string>("combat");
-  const [isCalculated, setIsCalculated] = useState<boolean>(true);
-  const [matchResult, setMatchResult] = useState<{
-    stream: string;
-    exams: string[];
-    description: string;
-  } | null>({
-    stream: "Combat Officer Commissions",
-    exams: ["Combined Defence Services (CDS) Exam", "NCC Special Entry Scheme"],
-    description: "Enlist in the prestigious Indian Military Academy or Officers Training Academy (OTA) Chennai. Leading platoons on tactical boundaries."
-  });
-
-  // Degrees
-  const degrees = [
-    { value: "tenth_twelfth", label: "Class 10th / 12th Aspirant" },
-    { value: "engineering", label: "Engineering Graduate (B.E. / B.Tech)" },
-    { value: "sciences", label: "Science Graduate (B.Sc / M.Sc / Ph.D)" },
-    { value: "general_grad", label: "General Graduate (B.A. / B.Com / B.B.A)" },
+  const [searchQuery, setSearchQuery] = useState("");
+  const { t } = useLanguage();
+  
+  const faqs = [
+    { q: "What is Sankalp?", a: "India's most trusted platform for career guidance, focusing heavily on Defence & Strategic Careers alongside all major professions." },
+    { q: "When should a student start career counselling?", a: "We recommend starting from Class 9th to build a strong foundation and choose the right streams." },
+    { q: "Do you provide guidance for NDA & CDS?", a: "Yes, our flagship category is Defence Careers, covering NDA, CDS, AFCAT, and SSB Interview prep." },
+    { q: "Can graduates use this platform?", a: "Absolutely. We guide graduates towards opportunities in DRDO, ISRO, UPSC, and Corporate sectors." }
   ];
-
-  // Interest Categories
-  const interests = [
-    { value: "combat", label: "Active Front-line Combat & Field Leadership" },
-    { value: "engineering_rnd", label: "R&D and Space-Tech Systems Engineering" },
-    { value: "internal_security", label: "Internal Security & Border Management" },
-    { value: "civilian_admin", label: "Military Engineering Construction & Supply Logistics" },
-  ];
-
-  const handleMatchCareer = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!userEducation || !userCategory) return;
-
-    let stream = "";
-    let exams: string[] = [];
-    let description = "";
-
-    if (userEducation === "tenth_twelfth") {
-      if (userCategory === "combat") {
-        stream = "Indian Armed Forces (Soldier/Officer Entries)";
-        exams = ["NDA (National Defence Academy)", "Army 10+2 Technical Entry Scheme (TES)", "Navy B.Tech Entry Schema"];
-        description = "You can target elite direct entry schemes as an officer cadet immediately after school. Focus on NDA written preparation and SSB spatial reasoning.";
-      } else {
-        stream = "Paramilitary Services & Constabulary Entries";
-        exams = ["SSC GD Constable", "BSF/CRPF Radio Operator (RO/RMO) Exams"];
-        description = "Excellent scope to enter paramilitary forces. Great stability and chance to serve on India’s critical regional borders.";
-      }
-    } else if (userEducation === "engineering") {
-      if (userCategory === "engineering_rnd") {
-        stream = "Scientific Establishments & Labs (DRDO / ISRO)";
-        exams = ["DRDO RAC Scientist 'B' screening exam", "ISRO Centralised Recruitment Board (ICRB)", "BARC OCES/DGFS Scientific Officer Scheme"];
-        description = "As an engineer interested in advanced research, you can directly contribute to missile systems, launch vehicles, and defense material projects.";
-      } else if (userCategory === "combat") {
-        stream = "Armed Forces Engineering Branches";
-        exams = ["CDS (Combined Defence Services)", "AFCAT (Air Force Common Admission Test)", "TGC (Technical Graduate Course)", "Navy UES (University Entry Scheme)"];
-        description = "You qualify for both direct technical entries (no written test, immediate SSB call) and standard written tests with higher priority for engineering streams.";
-      } else {
-        stream = "Civilian Defence Services & Border Administration";
-        exams = ["Military Engineering Services (MES) Assistant Director", "UPSC CAPF (AC) Technical Officers", "Directorate General of Quality Assurance (DGQA)"];
-        description = "Work inside cantonments and weapons factories managing core military civilian supply lines, quality testing, and construction blueprints.";
-      }
-    } else if (userEducation === "sciences") {
-      if (userCategory === "engineering_rnd" || userCategory === "civilian_admin") {
-        stream = "Atomic & Chemical Research Wings (BARC)";
-        exams = ["BARC OCES Chemical/Acoustic Physics selection", "DRDO CEPTAM Senior Technical Assistant (STA-B)", "ISRO Project Assistant Recruitment"];
-        description = "Ideal matches for science post-graduates. High-fidelity laboratory assignments mapping nuclear radiation containment, optics, and solid state devices.";
-      } else {
-        stream = "Specialized Para-Police Intelligence Operations";
-        exams = ["UPSC CAPF Assistant Commandant", "SSC CPO Sub-Inspector", "Intelligence Bureau (IB) ACIO Selection"];
-        description = "Utilize your deep scientific analytics mindset in counter-terrorism systems, telecom wings, and border security communication lines.";
-      }
-    } else {
-      // general graduate
-      if (userCategory === "combat") {
-        stream = "Combat Officer Commissions";
-        exams = ["Combined Defence Services (CDS) Exam", "NCC Special Entry Scheme"];
-        description = "Enlist in the prestigious Indian Military Academy or Officers Training Academy (OTA) Chennai. Leading platoons on tactical boundaries.";
-      } else {
-        stream = "Internal Security & Civil Administration";
-        exams = ["UPSC CAPF Assistant Commandant", "SSC CPO Sub-Inspector CISF/BSF", "IDES (Indian Defence Estates Service) Group A"];
-        description = "High administrative authority profiles heading paramilitary platoons, airport safety grids, or managing military cantonment land affairs.";
-      }
-    }
-
-    setMatchResult({ stream, exams, description });
-    setIsCalculated(true);
-  };
-
-  const handleQuickTopicSearch = (topic: string) => {
-    onSearchSelection(topic);
-    onTabChange("testimonials");
-  };
 
   return (
-    <div className="space-y-12" id="home_tab_root">
+    <div className="space-y-16" id="home_tab_root">
       
-      {/* Patriotic Banner & National Flags Row */}
-      <div className="relative rounded-3xl overflow-hidden border border-gold-600/30 shadow-2xl" id="flags_national_display">
-        <div className="h-64 sm:h-80 w-full relative">
-          <img
-            src={flagsImg}
-            alt="National Tricolour and Armed Forces Flags assembly"
-            className="w-full h-full object-cover filter brightness-[0.75] contrast-[1.05]"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-900/40 to-[#050a18]/45"></div>
-          
-          <div className="absolute bottom-6 left-6 right-6 sm:bottom-10 sm:left-12 sm:right-12 space-y-2">
-            <span className="inline-flex items-center gap-1 bg-amber-500/20 text-lightyellow-100 border border-gold-400/40 text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase px-3 py-1 rounded">
-              🇮🇳 Sovereign Pride & Duty
-            </span>
-            <h2 className="text-xl sm:text-3xl font-extrabold text-lightyellow-100 uppercase tracking-tight font-sans drop-shadow-md">
-              One Nation • One Sankalp
-            </h2>
-            <p className="text-xs sm:text-sm text-lightyellow-100/90 max-w-2xl font-medium font-sans leading-relaxed drop-shadow">
-              We stand united under the Indian National Tricolour, aligned with the supreme valor codes of the Tri-Services—Indian Army, Navy, and Air Force.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <section className="relative rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-navy-850 border border-gold-600/30 overflow-hidden shadow-2xl py-16 px-6 md:px-12 text-center" id="hero_section">
-        {/* Camouflage design accents */}
+      {/* 1. Hero Section with Search Bar */}
+      <section className="relative rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-navy-850 border border-gold-600/30 overflow-hidden shadow-2xl py-20 px-6 md:px-12 text-center">
         <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-[radial-gradient(#c5a059_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div className="absolute right-0 bottom-0 bg-gold-500/10 w-96 h-96 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-widest text-lightyellow-200 bg-gold-500/15 border border-gold-400/40 uppercase shadow-inner">
-            <Shield className="w-4 h-4 text-gold-400 fill-gold-500/10" /> National Security Careers Consolidated Engine
+        <div className="relative z-10 max-w-5xl mx-auto space-y-8">
+          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-mono font-bold tracking-widest text-lightyellow-200 bg-gold-500/15 border border-gold-400/40 uppercase shadow-inner">
+            <Shield className="w-4 h-4 text-gold-400 fill-gold-500/10" /> {t("home.hero_badge")}
           </span>
 
-          <h1 className="text-5xl md:text-7xl font-black font-sans text-white tracking-widest leading-tight uppercase drop-shadow-lg">
-            Sankalp
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black font-sans text-white tracking-tight leading-tight uppercase drop-shadow-lg">
+            {t("home.hero_title1")} <span className="text-gold-400">{t("home.hero_title2")}</span>
           </h1>
-          <p className="text-base md:text-xl font-mono text-gold-400 font-black tracking-widest uppercase max-w-2xl mx-auto drop-shadow-md">
-            Bridge the Gap to India's Sovereign Sectors
+          <p className="text-base md:text-xl text-lightyellow-200/90 font-sans max-w-3xl mx-auto drop-shadow-md">
+            {t("home.hero_subtitle")}
           </p>
 
-          <p className="max-w-2xl mx-auto text-lightyellow-200/80 text-xs md:text-sm leading-relaxed font-sans">
-            A unified career counseling platform providing personalized mentorship guidelines, scientific courses,
-            and internship placement boards specifically designed for the Indian Armed Forces, Paramilitary divisions,
-            civilian contractors, and legendary research organizations like DRDO, BARC, and ISRO.
-          </p>
-
-          {/* Call to Actions */}
-          <div className="flex flex-wrap justify-center gap-4 pt-4">
-            <button
-              id="hero_btn_dashboard"
-              onClick={() => onTabChange("dashboard")}
-              className="px-6 py-3 bg-gold-450 hover:bg-gold-500 border border-gold-500 text-navy-950 text-xs md:text-sm font-sans font-bold rounded-xl transition duration-200 shadow-md hover:shadow-xl cursor-pointer"
-            >
-              Access Command Center Dashboard
-            </button>
-            <button
-              id="hero_btn_mentors"
-              onClick={() => onTabChange("mentorship")}
-              className="px-6 py-3 bg-transparent hover:bg-gold-500/10 border border-gold-400 text-gold-400 text-xs md:text-sm font-sans font-bold rounded-xl transition cursor-pointer"
-            >
-              Meet the Founder
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Combat Power & Tactical Asset Display Row (Warships, Aircraft, Tanks) */}
-      <section className="bg-navy-900 border border-gold-600/25 rounded-3xl overflow-hidden p-6 md:p-8 space-y-6" id="combat_power_display_row">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-7 space-y-4 text-left">
-            <span className="text-[10px] font-mono tracking-widest uppercase bg-gold-500/10 text-gold-400 border border-gold-500/20 px-3 py-1 rounded">
-              ⚔️ Tri-Services Integrated Arsenal
-            </span>
-            <h2 className="text-xl md:text-3xl font-bold font-sans text-lightyellow-100 tracking-tight leading-tight uppercase">
-              Dominating Land, Air, & Deep Seas
-            </h2>
-            <p className="text-xs md:text-sm text-lightyellow-100/80 leading-relaxed font-sans">
-              Indian Sovereignty relies on heavy engineering prowess. From testing **Main Battle Arjun Tanks** on desert tracks,
-              to commanding **Stealth Weaponized Guided-Missile Destroyers** in deep tactical waters, and steering high-maneuver **Supersonic Fighter Interceptors** in territorial airspace. 
-            </p>
-            <p className="text-xs text-gold-400/80 font-mono leading-relaxed">
-              *Master the fundamental aerodynamics, nuclear metallurgy, and naval architecture governing these assets inside our curated courses.*
-            </p>
-            <div className="pt-2">
-              <button
-                onClick={() => onTabChange("courses")}
-                className="px-4 py-2 bg-navy-800 text-lightyellow-200 hover:text-lightyellow-100 border border-gold-500/30 text-xs font-sans font-bold rounded-lg transition hover:bg-navy-750 flex items-center gap-1 cursor-pointer"
-              >
-                Explore Structural Blueprints & Courses <ArrowRight className="w-3.5 h-3.5 text-gold-450" />
-              </button>
-            </div>
-          </div>
-          
-          <div className="lg:col-span-5 relative rounded-2xl overflow-hidden border border-gold-500/20 shadow-lg">
-            <img
-              src={combatAssetsImg}
-              alt="Indian warship, supersonic fighter aircraft, and combat tank collage"
-              className="w-full h-64 lg:h-72 object-cover hover:scale-105 transition-transform duration-500"
-              referrerPolicy="no-referrer"
+          <div className="max-w-2xl mx-auto relative mt-8">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-400 w-6 h-6" />
+            <input
+              type="text"
+              placeholder="Search careers, colleges, exams..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-navy-950/80 border-2 border-gold-500/40 rounded-full py-4 pl-14 pr-32 text-lightyellow-100 focus:outline-none focus:border-gold-400 shadow-2xl text-lg backdrop-blur-sm"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-transparent"></div>
-            <div className="absolute bottom-3 left-4">
-              <span className="text-[10px] font-mono text-stone-300 uppercase tracking-widest bg-navy-950/95 px-2 py-0.5 rounded border border-gold-500/25">Combat Assets Composite</span>
-            </div>
+            <button 
+              onClick={() => {
+                onSearchSelection(searchQuery);
+                onTabChange("career-library");
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-gold-450 hover:bg-gold-500 text-navy-950 font-bold px-6 py-2 rounded-full transition cursor-pointer"
+            >
+              Search
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Primary National Security Sectors Mapped */}
-      <section className="space-y-6" id="mapped_sectors_section">
-        <div className="text-center space-y-1">
-          <p className="text-[10px] font-mono tracking-widest uppercase text-gold-400 font-bold">Comprehensive Scopes</p>
-          <h2 className="text-xl md:text-2xl font-extrabold text-lightyellow-100 font-sans uppercase">The Four Pillars Of National Sovereignty</h2>
-          <p className="text-xs text-lightyellow-200/80 max-w-lg mx-auto">Sankalp is specialized in guidance mapping across these critical domains.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-navy-900 p-6 rounded-xl border border-gold-500/20 hover:border-gold-500/40 transition shadow-md space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-navy-850 border border-gold-500/30 text-gold-400 flex items-center justify-center font-bold text-lg">
-              ⚔️
-            </div>
-            <h3 className="font-bold text-lightyellow-100 text-sm font-sans uppercase tracking-tight">1. Defence Services</h3>
-            <p className="text-xs text-lightyellow-200/70 leading-relaxed">
-              Commissions inside the Indian Army, Indian Navy, & Indian Air Force. Prep for NDA, CDS, TGC, AFCAT, INET & live SSB personality interviews.
-            </p>
-          </div>
-
-          <div className="bg-navy-900 p-6 rounded-xl border border-gold-500/20 hover:border-gold-500/40 transition shadow-md space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-navy-850 border border-gold-500/30 text-gold-400 flex items-center justify-center font-bold text-lg">
-              🎖️
-            </div>
-            <h3 className="font-bold text-lightyellow-100 text-sm font-sans uppercase tracking-tight">2. Paramilitary Forces</h3>
-            <p className="text-xs text-lightyellow-200/70 leading-relaxed">
-              Border Guarding and Internal Security operations: BSF, CRPF, CISF, ITBP, SSB & Assam Rifles. UPSC CAPF and SSC CPO screening rules.
-            </p>
-          </div>
-
-          <div className="bg-navy-900 p-6 rounded-xl border border-gold-500/20 hover:border-gold-500/40 transition shadow-md space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-navy-850 border border-gold-500/30 text-gold-400 flex items-center justify-center font-bold text-lg">
-              📡
-            </div>
-            <h3 className="font-bold text-lightyellow-100 text-sm font-sans uppercase tracking-tight">3. Scientific R&D</h3>
-            <p className="text-xs text-lightyellow-200/70 leading-relaxed">
-              Elite scientific laboratories pushing boundary technologies. Targeted prep guidelines for DRDO RAC, ISRO ICRB, and academic BARC OCES.
-            </p>
-          </div>
-
-          <div className="bg-navy-900 p-6 rounded-xl border border-gold-500/20 hover:border-gold-500/40 transition shadow-md space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-navy-850 border border-gold-500/30 text-gold-400 flex items-center justify-center font-bold text-lg">
-              ⚙️
-            </div>
-            <h3 className="font-bold text-lightyellow-100 text-sm font-sans uppercase tracking-tight">4. Defence Civilian</h3>
-            <p className="text-xs text-lightyellow-200/70 leading-relaxed">
-              Crucial logistic networks: Military Engineer Services (MES), Ordnance factories, IDES land admins & Directorate of Quality Assurance (DGQA).
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Futuristic Border surveillance drone row */}
-      <section className="relative rounded-3xl overflow-hidden border border-gold-600/35 shadow-xl" id="drones_technology_banner">
-        <div className="h-56 sm:h-64 w-full relative">
-          <img
-            src={droneImg}
-            alt="Advanced stealth military drone over dynamic border borders"
-            className="w-full h-full object-cover filter brightness-[0.7] contrast-[1.02]"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-900/60 to-transparent"></div>
+      
+      {/* Project Sankalp Vision */}
+      <section className="bg-navy-900 border border-gold-600/30 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
+        <div className="max-w-4xl mx-auto space-y-12">
           
-          <div className="absolute top-0 bottom-0 left-6 sm:left-12 flex flex-col justify-center space-y-2 max-w-xl z-10 text-left">
-            <span className="inline-flex items-center gap-1 bg-[#c5a059]/25 text-lightyellow-100 border border-gold-400/40 text-[9px] uppercase tracking-widest px-2 py-0.5 rounded-full font-mono max-w-max">
-              🚀 Cutting Edge Technology
-            </span>
-            <h2 className="text-lg sm:text-2xl font-extrabold text-lightyellow-150 uppercase font-sans leading-none">
-              Stealth UAV & Border Telemetry
+          {/* Vision Statement Header */}
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-5xl font-black text-lightyellow-100 uppercase font-sans tracking-tight">
+              {t("home.vision_title")}
             </h2>
-            <p className="text-xs sm:text-sm text-lightyellow-100/90 leading-snug">
-              Modern defense requires persistent eyes-in-the-sky. Our scientific modules prepare you for military electronics, radio modulation, and radar target echoes required inside BARC, DRDO, and ISRO divisions.
+            <p className="text-base md:text-lg text-lightyellow-200/90 leading-relaxed max-w-3xl mx-auto font-medium">
+              {t("home.vision_intro")}
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* Interactive Counselling: "My Career Matcher" */}
-      <section className="bg-navy-900 rounded-3xl p-6 md:p-8 border border-gold-600/25 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center" id="career_matcher_tool">
-        <div className="space-y-4">
-          <span className="text-[10px] font-mono bg-navy-800 text-lightyellow-200 border border-gold-500/25 px-3 py-1 rounded-full uppercase tracking-wider font-semibold">
-            Interactive Diagnostics
-          </span>
-          <h2 className="text-xl md:text-2xl font-bold text-lightyellow-100 tracking-tight leading-tight uppercase font-sans">
-            Consult Your Security Entrance Trajectory
-          </h2>
-          <p className="text-xs md:text-sm text-lightyellow-200/80 leading-relaxed font-sans">
-            Unsure of which exams match your academic field or core interests? Select your credentials below, and
-            allow SANKALP’s evaluation engine to highlight exactly which defense pathways, eligibility windows,
-            and preparation tactics fit your current background.
-          </p>
-
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 pt-2">
-            <div className="flex items-center gap-2">
-              <GraduationCap className="text-gold-450 w-5 h-5 flex-shrink-0" />
-              <div>
-                <h4 className="text-xs font-bold text-lightyellow-100 font-sans uppercase">Any Qualification</h4>
-                <p className="text-[10px] text-lightyellow-100/60 font-mono">NDA up to PG/PhD levels</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Atom className="text-gold-450 w-5 h-5 flex-shrink-0" />
-              <div>
-                <h4 className="text-xs font-bold text-lightyellow-100 font-sans uppercase">Niche Specialists</h4>
-                <p className="text-[10px] text-lightyellow-100/60 font-mono">Engineering, physics, telecom</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Input Selector Box */}
-        <div className="bg-navy-950 rounded-xl border border-gold-600/20 p-6 shadow-inner">
-          <form onSubmit={handleMatchCareer} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-lightyellow-200 flex items-center gap-1 font-sans">
-                🎓 1. What is your Education/Aspirations Level?
-              </label>
-              <select
-                id="matcher_education"
-                required
-                className="w-full bg-navy-900 border border-gold-500/20 rounded-lg p-2.5 text-xs font-sans text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450 focus:border-transparent"
-                value={userEducation}
-                onChange={(e) => {
-                  setUserEducation(e.target.value);
-                  setIsCalculated(false);
-                }}
-              >
-                <option value="">-- Choose qualification status --</option>
-                {degrees.map((d) => (
-                  <option key={d.value} value={d.value} className="bg-navy-950 text-lightyellow-100">
-                    {d.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-lightyellow-200 flex items-center gap-1 font-sans">
-                ⚡ 2. Select Your Core Objective:
-              </label>
-              <select
-                id="matcher_interest"
-                required
-                className="w-full bg-navy-900 border border-gold-500/20 rounded-lg p-2.5 text-xs font-sans text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450 focus:border-transparent"
-                value={userCategory}
-                onChange={(e) => {
-                  setUserCategory(e.target.value);
-                  setIsCalculated(false);
-                }}
-              >
-                <option value="">-- Choose primary goal --</option>
-                {interests.map((i) => (
-                  <option key={i.value} value={i.value} className="bg-navy-950 text-lightyellow-100">
-                    {i.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              id="matcher_calculate_btn"
-              type="submit"
-              className="w-full py-2.5 bg-gold-450 hover:bg-gold-500 text-navy-950 font-sans font-bold text-xs rounded-lg transition shadow-md hover:shadow-xl cursor-pointer"
-            >
-              Analyze Career Mappings
-            </button>
-          </form>
-
-          {/* Results Output */}
-          {isCalculated && matchResult && (
-            <motion.div
-              id="matcher_output_block"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 pt-5 border-t border-gold-600/20 space-y-3"
-            >
-              <div className="bg-navy-900 border border-gold-500/30 text-lightyellow-100 p-3 rounded-lg space-y-1 shadow-inner">
-                <span className="text-[9px] font-mono uppercase tracking-wider text-gold-400 font-bold block">
-                  Recommended Stream
-                </span>
-                <h4 className="text-xs font-extrabold leading-tight text-lightyellow-200 uppercase tracking-tight">
-                  {matchResult.stream}
-                </h4>
-              </div>
-
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-mono text-lightyellow-200/60 tracking-wider uppercase block">Target Admissions / Exams</span>
-                <div className="flex flex-wrap gap-1">
-                  {matchResult.exams.map((ex, exIdx) => (
-                    <span
-                      key={exIdx}
-                      className="text-[9.5px] bg-navy-900 text-lightyellow-250 border border-gold-500/15 px-2.5 py-1 rounded font-semibold font-sans text-stone-200"
-                    >
-                      {ex}
-                    </span>
-                  ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Our Vision */}
+            <div className="space-y-4 bg-navy-950/50 p-6 rounded-2xl border border-gold-500/20">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-400">
+                  <Eye className="w-5 h-5" />
                 </div>
+                <h3 className="text-xl font-bold text-lightyellow-100 uppercase tracking-widest">{t("home.our_vision_title")}</h3>
               </div>
-
-              <p className="text-[11px] text-lightyellow-200/80 leading-relaxed font-sans">
-                {matchResult.description}
+              <p className="text-sm text-lightyellow-200/80 leading-relaxed font-sans">
+                {t("home.our_vision_desc")}
               </p>
+            </div>
 
-              <div className="pt-2">
-                <button
-                  id="matcher_dashboard_redirect"
-                  onClick={() => onTabChange("dashboard")}
-                  className="text-xs text-gold-400 hover:text-gold-300 font-bold flex items-center gap-1 cursor-pointer hover:underline"
-                >
-                  Configure study plan in student dashboard <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+            {/* Our Mission */}
+            <div className="space-y-4 bg-navy-950/50 p-6 rounded-2xl border border-gold-500/20">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-400">
+                  <Target className="w-5 h-5" />
+                </div>
+                <h3 className="text-xl font-bold text-lightyellow-100 uppercase tracking-widest">{t("home.our_mission_title")}</h3>
               </div>
-            </motion.div>
-          )}
+              <ul className="text-sm text-lightyellow-200/80 leading-relaxed font-sans space-y-2 list-disc list-inside">
+                <li>{t("home.our_mission_item1")}</li>
+                <li>{t("home.our_mission_item2")}</li>
+                <li>{t("home.our_mission_item3")}</li>
+                <li>{t("home.our_mission_item4")}</li>
+                <li>{t("home.our_mission_item5")}</li>
+                <li>{t("home.our_mission_item6")}</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Motto and Tagline */}
+          <div className="text-center space-y-6 pt-6 border-t border-gold-500/20">
+            <div>
+              <h4 className="text-xs font-mono font-bold tracking-widest text-gold-400 uppercase mb-2">{t("home.motto_title")}</h4>
+              <p className="text-xl md:text-2xl font-black text-lightyellow-100 italic">
+                {t("home.motto_text")}
+              </p>
+            </div>
+            <div className="bg-gold-500/10 rounded-xl py-3 px-6 inline-block border border-gold-500/30">
+              <p className="text-sm md:text-base font-bold text-gold-400 uppercase tracking-wide">
+                {t("home.tagline_text")}
+              </p>
+            </div>
+          </div>
+          
         </div>
       </section>
 
-      {/* Testimonials Banner Row */}
-      <section className="bg-gradient-to-r from-navy-950 to-navy-900 text-white rounded-3xl p-8 border border-gold-600/30 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden" id="explore_testimonials_row">
-        <div className="space-y-2">
-          <h3 className="text-lg md:text-xl font-bold font-sans tracking-tight text-lightyellow-100 uppercase">Our Aspirants Have Served Across The Nation</h3>
-          <p className="text-xs text-lightyellow-100/70">Discover insights, preparation routines, and recommendations from index 1 to 50.</p>
-          <div className="flex flex-wrap gap-2 pt-2">
-            <button
-              id="chip_drdo"
-              onClick={() => handleQuickTopicSearch("DRDO")}
-              className="px-2.5 py-1 text-[10.5px] font-mono border border-gold-650/20 bg-navy-900 rounded hover:border-gold-500 text-lightyellow-200 hover:text-lightyellow-100 cursor-pointer"
-            >
-              DRDO (Scientific Assistants)
-            </button>
-            <button
-              id="chip_isro"
-              onClick={() => handleQuickTopicSearch("ISRO")}
-              className="px-2.5 py-1 text-[10.5px] font-mono border border-gold-650/20 bg-navy-900 rounded hover:border-gold-500 text-lightyellow-200 hover:text-lightyellow-100 cursor-pointer"
-            >
-              ISRO (Astro Propulsion)
-            </button>
-            <button
-              id="chip_shb"
-              onClick={() => handleQuickTopicSearch("SSB")}
-              className="px-2.5 py-1 text-[10.5px] font-mono border border-gold-650/20 bg-navy-900 rounded hover:border-gold-500 text-lightyellow-200 hover:text-lightyellow-100 cursor-pointer"
-            >
-              SSB Recommendation (Army/Navy/AirForce)
-            </button>
-            <button
-              id="chip_capf"
-              onClick={() => handleQuickTopicSearch("CAPF")}
-              className="px-2.5 py-1 text-[10.5px] font-mono border border-gold-650/20 bg-navy-900 rounded hover:border-gold-500 text-lightyellow-200 hover:text-lightyellow-100 cursor-pointer"
-            >
-              UPSC CAPF (Paramilitary Commandants)
-            </button>
-          </div>
+      {/* 2. Explore Career Library (Categories) */}
+      <section className="space-y-8">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl md:text-4xl font-black text-lightyellow-100 font-sans uppercase">Explore Career Library</h2>
+          <p className="text-sm text-lightyellow-200/80">Discover in-depth information about 500+ career paths.</p>
         </div>
-        <div className="flex-shrink-0">
-          <button
-            id="explore_all_testimonials_btn"
-            onClick={() => onTabChange("testimonials")}
-            className="px-5 py-2.5 bg-gold-450 hover:bg-gold-500 text-navy-950 rounded-xl text-xs font-sans font-bold flex items-center gap-1.5 cursor-pointer shadow-lg"
-          >
-            Read All 50 Testimonials <ArrowRight className="w-4 h-4 text-navy-950" />
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {[
+            { n: 'Engineering', i: <Cpu /> },
+            { n: 'Medical', i: <HeartHandshake /> },
+            { n: 'Defence', i: <Shield /> },
+            { n: 'Civil Services', i: <Landmark /> },
+            { n: 'Law', i: <Gavel /> },
+            { n: 'Research', i: <Atom /> }
+          ].map(cat => (
+            <div key={cat.n} onClick={() => onTabChange("career-library")} className="bg-navy-900 border border-gold-500/20 rounded-2xl p-6 text-center hover:border-gold-400 cursor-pointer transition hover:-translate-y-1 shadow-lg group">
+              <div className="w-12 h-12 mx-auto bg-navy-950 rounded-full flex items-center justify-center text-gold-400 mb-4 group-hover:scale-110 transition-transform">
+                {cat.i}
+              </div>
+              <h3 className="text-sm font-bold text-lightyellow-100 uppercase tracking-tight">{cat.n}</h3>
+            </div>
+          ))}
+        </div>
+        <div className="text-center">
+          <button onClick={() => onTabChange("career-library")} className="text-gold-400 hover:text-gold-300 font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 mx-auto cursor-pointer">
+            View All Careers <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </section>
+
+      {/* 3. Defence Careers (Featured Flagship) */}
+      <section className="bg-navy-900 border border-gold-600/30 rounded-3xl overflow-hidden shadow-2xl relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          <div className="p-8 md:p-12 space-y-6 flex flex-col justify-center">
+            <span className="text-[10px] font-mono tracking-widest uppercase bg-gold-500/10 text-gold-400 border border-gold-500/20 px-3 py-1 rounded inline-block w-max">
+              ⭐ Flagship Category
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black font-sans text-lightyellow-100 uppercase leading-tight">
+              Defence & Strategic Careers
+            </h2>
+            <p className="text-sm text-lightyellow-200/80 leading-relaxed font-sans">
+              Dedicated portal for Military Careers (NDA, CDS, AFCAT), Research Organisations (DRDO, ISRO, BARC), and Paramilitary forces. Get SSB Interview guidance, physical standards, and exam calendars.
+            </p>
+            <div className="grid grid-cols-2 gap-4 pt-4">
+              <ul className="space-y-2 text-sm font-bold text-lightyellow-100">
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-gold-400" /> NDA / CDS / AFCAT</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-gold-400" /> Indian Army / Navy / IAF</li>
+              </ul>
+              <ul className="space-y-2 text-sm font-bold text-lightyellow-100">
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-gold-400" /> DRDO / ISRO / BARC</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-gold-400" /> CAPF Assistant Commandant</li>
+              </ul>
+            </div>
+            <button onClick={() => onTabChange("career-library")} className="mt-4 w-max px-6 py-3 bg-navy-800 text-lightyellow-100 hover:text-white border border-gold-500/40 font-bold text-xs uppercase tracking-widest rounded-xl transition hover:bg-navy-750 cursor-pointer flex items-center gap-2">
+              Explore Defence Portal <ChevronRight className="w-4 h-4 text-gold-400" />
+            </button>
+          </div>
+          <div className="relative h-64 lg:h-auto">
+            <img src={flagsImg} alt="Indian Flags" className="absolute inset-0 w-full h-full object-cover filter brightness-75" />
+            <div className="absolute inset-0 bg-gradient-to-r from-navy-900 to-transparent"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Book Career Counselling & Assessment */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-gradient-to-br from-gold-900/40 to-navy-900 border border-gold-500/30 rounded-3xl p-8 shadow-xl flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-gold-450 text-navy-950 flex items-center justify-center">
+              <Target className="w-6 h-6 font-bold" />
+            </div>
+            <h3 className="text-2xl font-black text-lightyellow-100 uppercase">Career Assessment Test</h3>
+            <p className="text-sm text-lightyellow-200/80">Not sure which path to choose? Take our AI-powered psychometric and aptitude test to discover careers that match your personality and skills.</p>
+          </div>
+          <button className="mt-8 px-6 py-3 bg-gold-450 hover:bg-gold-500 text-navy-950 font-bold text-sm uppercase tracking-widest rounded-xl transition cursor-pointer">
+            Start Free Assessment
+          </button>
+        </div>
+
+        <div className="bg-navy-900 border border-gold-500/20 rounded-3xl p-8 shadow-xl flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-navy-800 border border-gold-500/40 text-gold-400 flex items-center justify-center">
+              <Users className="w-6 h-6" />
+            </div>
+            <h3 className="text-2xl font-black text-lightyellow-100 uppercase">Book 1-on-1 Counselling</h3>
+            <p className="text-sm text-lightyellow-200/80">Connect with industry experts, veterans, and career psychologists to map out your exact educational and professional trajectory.</p>
+          </div>
+          <button onClick={() => onTabChange("appointment")} className="mt-8 px-6 py-3 bg-navy-800 border-2 border-gold-500 hover:bg-navy-750 text-lightyellow-100 font-bold text-sm uppercase tracking-widest rounded-xl transition cursor-pointer">
+            Schedule Appointment
+          </button>
+        </div>
+      </section>
+
+      {/* 5. Latest News & Entrance Exams */}
+      <section className="space-y-8">
+        <div className="flex justify-between items-end border-b border-gold-600/30 pb-4">
+          <div>
+            <h2 className="text-2xl font-black text-lightyellow-100 font-sans uppercase">News & Exam Updates</h2>
+            <p className="text-xs text-lightyellow-200/60 font-mono mt-1">Live recruitment notifications</p>
+          </div>
+          <button className="text-xs text-gold-400 font-bold uppercase hover:underline">View All</button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { date: '15 Jul 2026', title: 'UPSC NDA II 2026 Notification Released', tag: 'Exam Alert' },
+            { date: '12 Jul 2026', title: 'JEE Main 2027 Registration Dates Announced', tag: 'Engineering' },
+            { date: '10 Jul 2026', title: 'ISRO Scientist Recruitment - Apply Now', tag: 'Research' }
+          ].map((news, i) => (
+            <div key={i} className="bg-navy-950 border border-gold-500/10 rounded-2xl p-5 hover:border-gold-500/40 transition group cursor-pointer">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-[10px] font-mono text-gold-400 border border-gold-500/20 px-2 py-0.5 rounded">{news.tag}</span>
+                <span className="text-[10px] text-lightyellow-200/50">{news.date}</span>
+              </div>
+              <h4 className="text-sm font-bold text-lightyellow-100 group-hover:text-gold-400 transition">{news.title}</h4>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. Success Stories & Testimonials */}
+      <section className="bg-navy-900 rounded-3xl p-8 border border-gold-600/20 relative overflow-hidden text-center">
+        <h2 className="text-2xl md:text-3xl font-black text-lightyellow-100 font-sans uppercase mb-8">Student Success Stories</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { name: "Rahul S.", to: "NDA Khadakwasla", text: "The counselling helped me clear my SSB interview in the first attempt!" },
+            { name: "Priya M.", to: "IIT Delhi", text: "I was confused between medical and engineering. The assessment test gave me clarity." },
+            { name: "Arjun K.", to: "DRDO Scientist", text: "The personalized mentorship mapped out my exact PG path to enter DRDO." }
+          ].map((t, i) => (
+            <div key={i} className="bg-navy-950 p-6 rounded-2xl border border-gold-500/10">
+              <p className="text-sm text-lightyellow-200/80 italic mb-4">"{t.text}"</p>
+              <h4 className="text-sm font-bold text-lightyellow-100">{t.name}</h4>
+              <p className="text-[10px] text-gold-400 font-mono uppercase tracking-widest">{t.to}</p>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => onTabChange("testimonials")} className="mt-8 px-6 py-2 bg-transparent border border-gold-500 text-gold-400 font-bold text-xs uppercase tracking-widest rounded-full hover:bg-gold-500/10 transition cursor-pointer">
+          Read More Stories
+        </button>
+      </section>
+
+      {/* 7. FAQ */}
+      <section className="max-w-4xl mx-auto space-y-8">
+        <h2 className="text-2xl md:text-3xl font-black text-center text-lightyellow-100 font-sans uppercase">Frequently Asked Questions</h2>
+        <div className="space-y-4">
+          {faqs.map((faq, i) => (
+            <div key={i} className="bg-navy-900 border border-gold-500/20 rounded-2xl p-6">
+              <h4 className="text-sm font-bold text-lightyellow-100 flex items-start gap-3">
+                <HelpCircle className="w-5 h-5 text-gold-400 flex-shrink-0" />
+                {faq.q}
+              </h4>
+              <p className="text-sm text-lightyellow-200/70 mt-2 pl-8">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
     </div>
   );
 }
+
+const CheckCircle = ({className}: {className?: string}) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+  </svg>
+)

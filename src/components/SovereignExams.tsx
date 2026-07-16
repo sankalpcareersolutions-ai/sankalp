@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Shield, BookOpen, Clock, FileText, Compass, Award, HelpCircle, CheckCircle, GraduationCap, ChevronDown, Sparkles, Send, MapPin, Milestone, Target, UserCheck } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Shield, BookOpen, Clock, FileText, Compass, Award, HelpCircle, CheckCircle, GraduationCap, ChevronDown, Sparkles, Send, MapPin, Milestone, Target, UserCheck, Bell, BellOff } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { ExamAnnouncement } from "../types";
 
 interface ExamDetail {
   code: string;
@@ -15,12 +16,42 @@ interface ExamDetail {
   preparationAdvice: string;
 }
 
-export default function SovereignExams() {
+interface SovereignExamsProps {
+  subscribedExams?: string[];
+  onToggleSubscribe?: (examCodeOrCategory: string) => void;
+  subscribedEmail?: string;
+  onSaveEmailSubscription?: (email: string, categories: string[]) => void;
+  onSaveAnnouncement?: (announcement: Omit<ExamAnnouncement, "id" | "date" | "read">) => void;
+}
+
+export default function SovereignExams({
+  subscribedExams = [],
+  onToggleSubscribe = () => {},
+  subscribedEmail = "",
+  onSaveEmailSubscription = () => {},
+  onSaveAnnouncement = () => {},
+}: SovereignExamsProps) {
   const [activeCategory, setActiveCategory] = useState<"UPSC" | "MNS" | "SCIENTIFIC">("UPSC");
   const [expandedExamCode, setExpandedExamCode] = useState<string | null>(null);
 
   // Search state for specific exams
   const [examSearch, setExamSearch] = useState("");
+
+  // Subscription Preferences & Email State
+  const [subscriptionSuccess, setSubscriptionSuccess] = useState(false);
+  const [emailVal, setEmailVal] = useState(subscribedEmail);
+
+  useEffect(() => {
+    setEmailVal(subscribedEmail);
+  }, [subscribedEmail]);
+
+  // Simulation State for creating announcements
+  const [simExamCode, setSimExamCode] = useState("UPSC-NDA");
+  const [simConductingBody, setSimConductingBody] = useState("UPSC");
+  const [simTitle, setSimTitle] = useState("");
+  const [simContent, setSimContent] = useState("");
+  const [simSuccess, setSimSuccess] = useState(false);
+
 
   const upscExams: ExamDetail[] = [
     {
@@ -353,8 +384,25 @@ export default function SovereignExams() {
                         </p>
                       </div>
 
-                      <div className="p-1 rounded-lg bg-navy-950 border border-gold-550/20 text-gold-400">
-                        <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => onToggleSubscribe(ex.code)}
+                          className={`px-3 py-1.5 rounded-xl text-[10px] font-mono font-extrabold uppercase tracking-wider border transition-all cursor-pointer flex items-center gap-1.5 ${
+                            subscribedExams.includes(ex.code)
+                              ? "bg-gold-450 text-navy-950 border-gold-500 hover:bg-gold-500"
+                              : "bg-navy-950 text-gold-400 border-gold-600/25 hover:border-gold-400/50 hover:bg-navy-900"
+                          }`}
+                        >
+                          <Bell className={`w-3 h-3 ${subscribedExams.includes(ex.code) ? "fill-navy-950 text-navy-950" : "text-gold-400"}`} />
+                          <span>{subscribedExams.includes(ex.code) ? "Subscribed" : "Get Alerts"}</span>
+                        </button>
+
+                        <div 
+                          onClick={() => toggleExam(ex.code)}
+                          className="p-1.5 rounded-lg bg-navy-950 border border-gold-550/20 text-gold-400 hover:text-gold-300 transition-colors cursor-pointer"
+                        >
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                        </div>
                       </div>
                     </div>
 
@@ -448,6 +496,123 @@ export default function SovereignExams() {
         {/* Right Side: Scientific Internships, Fellowships, and Cadet Admissions */}
         <div className="lg:col-span-4 space-y-6 text-left">
           
+          {/* Get Exam Alerts Card */}
+          <div className="bg-navy-900 border border-gold-600/35 rounded-3xl p-6 shadow-xl space-y-4 animate-fade-in" id="get_exam_alerts_card">
+            <div className="flex items-center gap-2 border-b border-gold-600/15 pb-3">
+              <div className="p-1.5 rounded-lg bg-navy-950 border border-gold-550/20 text-gold-400">
+                <Bell className="w-5 h-5 animate-bounce text-gold-400" />
+              </div>
+              <h3 className="text-sm font-black text-lightyellow-101 uppercase tracking-wider">
+                Get Exam Alerts
+              </h3>
+            </div>
+            
+            <p className="text-xs text-lightyellow-200/70 leading-relaxed">
+              Subscribe to real-time notification alerts. Be the first to know when national board notifications, application windows, or SSB schedules are announced.
+            </p>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const form = e.currentTarget;
+              const emailInput = form.elements.namedItem("email") as HTMLInputElement;
+              
+              const categories: string[] = [];
+              if ((form.elements.namedItem("cat-upsc") as HTMLInputElement)?.checked) categories.push("UPSC");
+              if ((form.elements.namedItem("cat-mns") as HTMLInputElement)?.checked) categories.push("MNS");
+              if ((form.elements.namedItem("cat-sci") as HTMLInputElement)?.checked) categories.push("SCIENTIFIC");
+              
+              onSaveEmailSubscription(emailInput.value, categories);
+              setSubscriptionSuccess(true);
+              setTimeout(() => setSubscriptionSuccess(false), 3000);
+            }} className="space-y-3.5">
+              <div>
+                <label className="block text-[10px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={emailVal}
+                  onChange={(e) => setEmailVal(e.target.value)}
+                  required
+                  placeholder="cadet@sankalp.com"
+                  className="w-full bg-navy-950 text-lightyellow-100 border border-gold-500/20 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-gold-450 placeholder-navy-300 font-sans"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-[10px] font-mono text-gold-400 uppercase tracking-wider">Alert Categories</label>
+                
+                <label className="flex items-center gap-2.5 text-xs text-lightyellow-200/90 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    name="cat-upsc"
+                    checked={subscribedExams.includes("UPSC")}
+                    onChange={() => onToggleSubscribe("UPSC")}
+                    className="accent-gold-500 cursor-pointer rounded"
+                  />
+                  <span>🛡️ Defence & UPSC Board updates</span>
+                </label>
+
+                <label className="flex items-center gap-2.5 text-xs text-lightyellow-200/90 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    name="cat-mns"
+                    checked={subscribedExams.includes("MNS")}
+                    onChange={() => onToggleSubscribe("MNS")}
+                    className="accent-gold-500 cursor-pointer rounded"
+                  />
+                  <span>🩺 Military Nursing (MNS) alerts</span>
+                </label>
+
+                <label className="flex items-center gap-2.5 text-xs text-lightyellow-200/90 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    name="cat-sci"
+                    checked={subscribedExams.includes("SCIENTIFIC")}
+                    onChange={() => onToggleSubscribe("SCIENTIFIC")}
+                    className="accent-gold-500 cursor-pointer rounded"
+                  />
+                  <span>🚀 Scientific (ISRO, DRDO, BARC)</span>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gold-450 hover:bg-gold-500 text-navy-950 font-black text-xs py-2.5 rounded-xl uppercase tracking-wider transition-colors duration-200 cursor-pointer flex items-center justify-center gap-1.5 font-sans"
+              >
+                {subscriptionSuccess ? (
+                  <>
+                    <CheckCircle className="w-4 h-4" /> Preferences Saved!
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3.5 h-3.5" /> Save Preferences
+                  </>
+                )}
+              </button>
+            </form>
+
+            {subscribedExams.length > 0 && (
+              <div className="pt-2 border-t border-gold-600/15">
+                <span className="text-[9px] font-mono text-gold-400 block mb-1.5 uppercase tracking-wider">Active Alert Topics:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {subscribedExams.map((sub) => (
+                    <span key={sub} className="text-[9.5px] font-mono px-2 py-0.5 bg-navy-950 border border-gold-500/25 text-gold-400 rounded-full flex items-center gap-1 font-semibold">
+                      🔔 {sub}
+                      <button 
+                        type="button"
+                        onClick={() => onToggleSubscribe(sub)}
+                        className="text-red-400 hover:text-red-300 font-bold ml-0.5 text-[9px] cursor-pointer"
+                        title="Unsubscribe"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Scientific R&D Internship & Fellowship Standards Card */}
           <div className="bg-navy-900 border border-gold-600/25 rounded-3xl p-6 shadow-xl space-y-5" id="scientific_internship_norms_card">
             <h3 className="text-md font-bold text-lightyellow-101 uppercase tracking-widest flex items-center gap-1.5 border-b border-gold-600/15 pb-3">
@@ -532,6 +697,105 @@ export default function SovereignExams() {
             <div className="text-[11px] text-lightyellow-250/50 border-t border-gold-600/10 pt-3 leading-relaxed">
               *Prepare your psychology test profile (TAT, WAT, SRT) and command task routines perfectly inside SANKALP’s curated live courses.*
             </div>
+          </div>
+
+          {/* Announcement Creator Command Deck (Simulator) */}
+          <div className="bg-navy-900 border border-gold-600/35 rounded-3xl p-6 shadow-xl space-y-4" id="announcement_creator_simulator">
+            <h3 className="text-xs font-black text-gold-450 uppercase tracking-widest flex items-center gap-1.5 border-b border-gold-600/15 pb-3 font-sans">
+              <Sparkles className="w-4 h-4 text-gold-450 animate-spin" style={{ animationDuration: "5s" }} />
+              ALERT COMMAND DECK
+            </h3>
+            
+            <p className="text-xs text-lightyellow-200/70 leading-relaxed font-sans">
+              <b>Simulation Hub:</b> Post a new official national announcement. Subscribed students will immediately receive a new notification on their dashboards!
+            </p>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              onSaveAnnouncement({
+                examCode: simExamCode,
+                conductingBody: simConductingBody,
+                title: simTitle,
+                content: simContent,
+              });
+              setSimTitle("");
+              setSimContent("");
+              setSimSuccess(true);
+              setTimeout(() => setSimSuccess(false), 3000);
+            }} className="space-y-3">
+              <div>
+                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Target Exam Update</label>
+                <select
+                  value={simExamCode}
+                  onChange={(e) => {
+                    setSimExamCode(e.target.value);
+                    const val = e.target.value;
+                    if (val.startsWith("UPSC") || val === "NDA" || val === "CDS" || val === "CAPF") {
+                      setSimConductingBody("UPSC");
+                    } else if (val.startsWith("MILITARY") || val === "MNS" || val === "MILITARY-NURSING") {
+                      setSimConductingBody("Armed Forces Medical Services");
+                    } else if (val.includes("ISRO")) {
+                      setSimConductingBody("ISRO");
+                    } else if (val.includes("DRDO")) {
+                      setSimConductingBody("DRDO");
+                    } else if (val.includes("BARC")) {
+                      setSimConductingBody("BARC");
+                    } else {
+                      setSimConductingBody("National Exam Board");
+                    }
+                  }}
+                  className="w-full bg-navy-950 text-lightyellow-101 border border-gold-500/25 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-gold-450 cursor-pointer font-sans"
+                >
+                  <option value="UPSC-NDA">NDA & NA Examination (UPSC-NDA)</option>
+                  <option value="UPSC-CDS">Combined Defence Services (UPSC-CDS)</option>
+                  <option value="UPSC-CAPF">Central Armed Police (UPSC-CAPF)</option>
+                  <option value="AFCAT">Air Force Exam (AFCAT)</option>
+                  <option value="MILITARY-NURSING">Military Nursing Services (MILITARY-NURSING)</option>
+                  <option value="DRDO-RAC">DRDO Scientist 'B' (DRDO-RAC)</option>
+                  <option value="BARC-OCES">BARC Scientific Officer (BARC-OCES)</option>
+                  <option value="ISRO-ICRB">ISRO Scientist SC (ISRO-ICRB)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Announcement Title</label>
+                <input
+                  type="text"
+                  required
+                  value={simTitle}
+                  onChange={(e) => setSimTitle(e.target.value)}
+                  placeholder="e.g. 2026 Application Portal Open!"
+                  className="w-full bg-navy-950 text-lightyellow-100 border border-gold-500/20 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-gold-450 placeholder-navy-300 font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Content & Details</label>
+                <textarea
+                  required
+                  rows={2}
+                  value={simContent}
+                  onChange={(e) => setSimContent(e.target.value)}
+                  placeholder="e.g. Official notification is now out. Eligible cadets must submit documentation by end of this month."
+                  className="w-full bg-navy-950 text-lightyellow-100 border border-gold-500/20 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-gold-450 placeholder-navy-300 font-sans resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-emerald-800 hover:bg-emerald-700 text-stone-100 font-black text-xs py-2 rounded-xl uppercase tracking-wider transition-colors duration-200 cursor-pointer flex items-center justify-center gap-1.5 font-sans"
+              >
+                {simSuccess ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-emerald-400" /> Alert Fired Successfully!
+                  </>
+                ) : (
+                  <>
+                    <span>📢 Publish & Save Announcement</span>
+                  </>
+                )}
+              </button>
+            </form>
           </div>
 
         </div>

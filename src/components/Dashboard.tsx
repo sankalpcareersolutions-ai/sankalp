@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Course, Mentor, Internship, DailyTrivia, UserStats } from "../types";
+import { Course, Mentor, Internship, DailyTrivia, UserStats, ExamAnnouncement } from "../types";
 import { dailyTriviaPool } from "../data/portalData";
-import { CheckCircle, Award, Calendar, BookOpen, Clock, Activity, Zap, Star, Shield, ArrowRight, Save, Flame, Compass, RefreshCw } from "lucide-react";
+import { CheckCircle, Award, Calendar, BookOpen, Clock, Activity, Zap, Star, Shield, ArrowRight, Save, Flame, Compass, RefreshCw, Bell, BellOff, Info, Download } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { supabase } from "../lib/supabase";
+import jsPDF from "jspdf";
 
 interface DashboardProps {
   enrolledCourses: Course[];
@@ -13,6 +14,10 @@ interface DashboardProps {
   updateUserStats: (stats: Partial<UserStats>) => void;
   markCourseProgress: (courseId: string, delta: number) => void;
   cancelAppointment: (id: string) => void;
+  announcements?: ExamAnnouncement[];
+  subscribedExams?: string[];
+  onMarkAlertRead?: (id: string) => void;
+  onMarkAllAlertsRead?: () => void;
 }
 
 export default function Dashboard({
@@ -23,6 +28,10 @@ export default function Dashboard({
   updateUserStats,
   markCourseProgress,
   cancelAppointment,
+  announcements = [],
+  subscribedExams = [],
+  onMarkAlertRead = () => {},
+  onMarkAllAlertsRead = () => {},
 }: DashboardProps) {
   // Sector Customizer States
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -42,7 +51,7 @@ export default function Dashboard({
           .order('timestamp', { ascending: false });
           
         if (error) {
-          console.error("Error fetching appointments in Dashboard:", error);
+          // Graceful local cache fallback if Supabase table isn't created yet
           const cached = localStorage.getItem("sankalp_founder_appointments");
           if (cached) setFounderAppointments(JSON.parse(cached));
         } else if (data) {
@@ -50,7 +59,9 @@ export default function Dashboard({
           localStorage.setItem("sankalp_founder_appointments", JSON.stringify(data));
         }
       } catch (err) {
-        console.error("Supabase connection error:", err);
+        // Fallback silently during development/testing
+        const cached = localStorage.getItem("sankalp_founder_appointments");
+        if (cached) setFounderAppointments(JSON.parse(cached));
       }
     }
     
@@ -68,11 +79,10 @@ export default function Dashboard({
         .eq('id', id);
         
       if (error) {
-        console.error("Error deleting from Supabase:", error);
         localStorage.setItem("sankalp_founder_appointments", JSON.stringify(updated));
       }
     } catch (err) {
-      console.error("Supabase delete error:", err);
+      // Ignore delete issues during offline simulation
     }
   };
 
@@ -141,11 +151,132 @@ export default function Dashboard({
     { name: "Interview Posture", value: 55, color: "bg-amber-600" },
   ];
 
+  // Filter announcements matching subscribed topics
+  const relevantAlerts = announcements.filter((ann) => {
+    return (
+      subscribedExams.includes(ann.examCode) ||
+      subscribedExams.includes(ann.conductingBody) ||
+      (ann.conductingBody === "UPSC" && subscribedExams.includes("UPSC")) ||
+      (ann.conductingBody === "ISRO" && subscribedExams.includes("SCIENTIFIC")) ||
+      (ann.conductingBody === "DRDO" && subscribedExams.includes("SCIENTIFIC")) ||
+      (ann.conductingBody === "BARC" && subscribedExams.includes("SCIENTIFIC")) ||
+      (ann.conductingBody === "Armed Forces Medical Services" && subscribedExams.includes("MNS"))
+    );
+  });
+
+  const unreadAlertsCount = relevantAlerts.filter((a) => !a.read).length;
+
+  const handleDownloadRoadmap = () => {
+    const doc = new jsPDF();
+    
+    // Add background color
+    doc.setFillColor(250, 248, 245);
+    doc.rect(0, 0, 210, 297, "F");
+
+    // Header section
+    doc.setFillColor(2, 44, 34); // emerald-950
+    doc.rect(0, 0, 210, 40, "F");
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("SANKALP ACADEMY", 20, 20);
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(197, 160, 89); // gold accent
+    doc.text("SOVEREIGN CAREER ROADMAP", 20, 30);
+
+    // Objective Section
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Active Objective", 20, 55);
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    doc.text(`Sector: ${userStats.targetSector}`, 20, 65);
+    doc.text(`Target Exam: ${userStats.targetExam}`, 20, 75);
+    doc.text(`Evaluation Timeline: ${userStats.examDate}`, 20, 85);
+
+    // Diagnostics Section
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Performance Metrics", 20, 105);
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    doc.text(`Day Streak: ${userStats.streak} Days`, 20, 115);
+    doc.text(`Tests Completed: ${userStats.testsCompleted}`, 20, 125);
+    doc.text(`Average Score: ${userStats.avgScore}%`, 20, 135);
+
+    // Enrolled Courses
+    doc.setTextColor(20, 20, 20);
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Active Training Modules", 20, 155);
+
+    let yOffset = 165;
+    if (enrolledCourses.length === 0) {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(100, 100, 100);
+      doc.text("No active training courses enrolled.", 20, yOffset);
+    } else {
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      enrolledCourses.forEach((c) => {
+        doc.setTextColor(2, 64, 44);
+        doc.text(`• ${c.title} (${c.progress}%)`, 20, yOffset);
+        yOffset += 8;
+        doc.setTextColor(100, 100, 100);
+        doc.setFontSize(9);
+        doc.text(`  Category: ${c.category} | Provider: ${c.provider}`, 20, yOffset);
+        yOffset += 10;
+        doc.setFontSize(11);
+      });
+    }
+
+    // Save the PDF
+    doc.save("Sankalp_Career_Roadmap.pdf");
+  };
+
   return (
     <div className="space-y-8" id="dashboard_tab_root">
+      {/* Dynamic Unread Alerts Headline Banner */}
+      {unreadAlertsCount > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm"
+          id="dashboard_alerts_banner_headline"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-700 flex items-center justify-center animate-pulse flex-shrink-0">
+              <Bell className="w-5 h-5 fill-amber-700/20" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-amber-900">Active Sovereign Alerts Dispensed</h4>
+              <p className="text-xs text-amber-700">
+                You have <span className="font-extrabold">{unreadAlertsCount} unread exam update{unreadAlertsCount > 1 ? 's' : ''}</span> matching your subscribed topics ({subscribedExams.join(", ")}).
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onMarkAllAlertsRead}
+            className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-sans font-bold shadow-sm transition-all cursor-pointer flex-shrink-0"
+          >
+            Mark All as Read
+          </button>
+        </motion.div>
+      )}
+
       {/* Target Ribbon */}
-      <div className="bg-white rounded-2xl border border-stone-200/80 p-6 shadow-sm" id="dashboard_top_ribbon">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-white rounded-2xl border border-stone-200/80 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6" id="dashboard_top_ribbon">
+        <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-emerald-800 text-stone-100 flex items-center justify-center font-mono font-bold text-lg shadow-inner">
               HQ
@@ -211,26 +342,36 @@ export default function Dashboard({
             </div>
           </div>
 
-          {/* Quick Metrics */}
-          <div className="flex gap-4">
-            <div className="bg-stone-50/50 border border-stone-100 p-3 rounded-lg text-center min-w-[70px]">
-              <div className="text-emerald-800 font-extrabold text-lg leading-none flex items-center justify-center gap-0.5">
-                <Flame className="w-4 h-4 fill-emerald-700 text-emerald-700" />
-                {userStats.streak}
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            {/* Download Roadmap Button */}
+            <button
+              onClick={handleDownloadRoadmap}
+              className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-sm w-full sm:w-auto justify-center"
+            >
+              <Download className="w-4 h-4" /> Export Roadmap
+            </button>
+            
+            {/* Quick Metrics */}
+            <div className="flex gap-4">
+              <div className="bg-stone-50/50 border border-stone-100 p-3 rounded-lg text-center min-w-[70px]">
+                <div className="text-emerald-800 font-extrabold text-lg leading-none flex items-center justify-center gap-0.5">
+                  <Flame className="w-4 h-4 fill-emerald-700 text-emerald-700" />
+                  {userStats.streak}
+                </div>
+                <p className="text-[10px] font-mono uppercase tracking-wider text-stone-400 mt-1">Day Streak</p>
               </div>
-              <p className="text-[10px] font-mono uppercase tracking-wider text-stone-400 mt-1">Day Streak</p>
-            </div>
-            <div className="bg-stone-50/50 border border-stone-100 p-3 rounded-lg text-center min-w-[70px]">
-              <div className="text-teal-800 font-extrabold text-lg leading-none">
-                {userStats.testsCompleted}
+              <div className="bg-stone-50/50 border border-stone-100 p-3 rounded-lg text-center min-w-[70px]">
+                <div className="text-teal-800 font-extrabold text-lg leading-none">
+                  {userStats.testsCompleted}
+                </div>
+                <p className="text-[10px] font-mono uppercase tracking-wider text-stone-400 mt-1">Tests Done</p>
               </div>
-              <p className="text-[10px] font-mono uppercase tracking-wider text-stone-400 mt-1">Tests Done</p>
-            </div>
-            <div className="bg-stone-50/50 border border-stone-100 p-3 rounded-lg text-center min-w-[70px]">
-              <div className="text-amber-700 font-extrabold text-lg leading-none">
-                {userStats.avgScore}%
+              <div className="bg-stone-50/50 border border-stone-100 p-3 rounded-lg text-center min-w-[70px]">
+                <div className="text-amber-700 font-extrabold text-lg leading-none">
+                  {userStats.avgScore}%
+                </div>
+                <p className="text-[10px] font-mono uppercase tracking-wider text-stone-400 mt-1">Avg Score</p>
               </div>
-              <p className="text-[10px] font-mono uppercase tracking-wider text-stone-400 mt-1">Avg Score</p>
             </div>
           </div>
         </div>
@@ -239,6 +380,104 @@ export default function Dashboard({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Course Progress & Mentor Sessions - Left 2 Columns */}
         <div className="lg:col-span-2 space-y-8">
+          
+          {/* Exam Alerts & Announcement Desk */}
+          <div className="bg-white rounded-2xl border border-stone-200/80 p-6 shadow-sm space-y-6" id="dashboard_exam_alerts_desk">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-100 pb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-800 flex items-center justify-center">
+                  <Bell className="w-4 h-4 text-emerald-800" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-800 text-sm md:text-base">Exam Alerts & Announcements Desk</h3>
+                  <p className="text-[11px] text-stone-400 font-sans">Direct updates mapped to your subscribed sectors & agencies</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {unreadAlertsCount > 0 && (
+                  <span className="text-[10px] bg-amber-600 text-white font-black px-2.5 py-0.5 rounded-full animate-pulse uppercase tracking-wider font-mono">
+                    {unreadAlertsCount} New
+                  </span>
+                )}
+                <span className="text-xs bg-stone-100 text-stone-600 border border-stone-200 px-2.5 py-0.5 rounded-xl font-mono font-bold">
+                  {relevantAlerts.length} Total Alerts
+                </span>
+              </div>
+            </div>
+
+            {relevantAlerts.length === 0 ? (
+              <div className="text-center py-8 border border-stone-100 rounded-xl bg-stone-50/20 space-y-2">
+                <BellOff className="w-8 h-8 text-stone-300 mx-auto" />
+                <p className="text-xs text-stone-500 font-sans font-semibold">No matching exam updates compiled yet.</p>
+                <p className="text-[10.5px] text-stone-400 max-w-sm mx-auto leading-normal">
+                  Sankalp alerts are targeted to your interests. Head over to the <b className="text-emerald-800 uppercase">Sovereign Exams</b> tab and subscribe to agencies like <b>UPSC</b>, <b>ISRO</b>, or specific exam codes to build your alerts feed.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-[11px] text-stone-400 border-b border-stone-100/50 pb-2">
+                  <span>Filtered Alerts for: {subscribedExams.join(", ") || "None selected"}</span>
+                  {unreadAlertsCount > 0 && (
+                    <button 
+                      onClick={onMarkAllAlertsRead}
+                      className="text-emerald-800 hover:underline font-bold cursor-pointer"
+                    >
+                      Mark all read
+                    </button>
+                  )}
+                </div>
+
+                <div className="divide-y divide-stone-100 space-y-4">
+                  {relevantAlerts.map((alert) => (
+                    <div 
+                      key={alert.id} 
+                      className={`pt-3 flex flex-col md:flex-row justify-between items-start gap-4 transition-all ${
+                        !alert.read ? "bg-emerald-50/15 border-l-2 border-emerald-600 pl-3 -ml-3 py-2 rounded-r-xl" : "opacity-80"
+                      }`}
+                      id={`alert_item_${alert.id}`}
+                    >
+                      <div className="space-y-1.5 flex-1 text-left">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[9px] font-mono tracking-wider font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-100 px-2 py-0.5 rounded">
+                            📢 {alert.examCode}
+                          </span>
+                          <span className="text-[9px] font-mono bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded font-bold">
+                            {alert.conductingBody}
+                          </span>
+                          <span className="text-[9.5px] font-mono text-stone-400">
+                            Released: {alert.date}
+                          </span>
+                        </div>
+                        <h4 className="text-xs font-extrabold text-stone-900 uppercase">
+                          {alert.title}
+                        </h4>
+                        <p className="text-[11.5px] text-stone-500 leading-relaxed font-sans font-medium">
+                          {alert.content}
+                        </p>
+                      </div>
+
+                      <div className="flex-shrink-0 flex items-center self-end md:self-center">
+                        {alert.read ? (
+                          <span className="text-[10px] text-stone-400 font-mono font-bold flex items-center gap-1 bg-stone-50 border border-stone-100 px-2 py-1 rounded">
+                            <CheckCircle className="w-3.5 h-3.5 text-stone-400" /> Acknowledged
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => onMarkAlertRead(alert.id)}
+                            className="px-3 py-1 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-[10px] font-sans font-bold flex items-center gap-1 shadow-sm transition-colors cursor-pointer"
+                          >
+                            Acknowledge
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Active Courses */}
           <div className="bg-white rounded-2xl border border-stone-200/80 p-6 shadow-sm space-y-6">
             <div className="flex justify-between items-center">

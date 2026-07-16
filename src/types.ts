@@ -56,3 +56,14 @@ export interface UserStats {
   avgScore: number; // e.g., 78
   streak: number; // e.g., 7 days
 }
+
+export interface ExamAnnouncement {
+  id: string;
+  examCode: string; // e.g. "UPSC-NDA", "ISRO-ICRB", or conducting body like "UPSC", "ISRO"
+  conductingBody: string;
+  title: string;
+  content: string;
+  date: string;
+  read: boolean;
+}
+
