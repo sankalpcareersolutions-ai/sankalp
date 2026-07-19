@@ -135,7 +135,7 @@ export default function Mentorship({ onBookBriefing, bookedAppointments }: Mento
                 <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between pb-6 border-b border-gold-600/20">
                   <div className="flex items-center gap-4">
                     {/* Decorative Avatar with Naval Icon */}
-                    <div className="w-16 h-16 rounded-2xl bg-gold-450/10 border border-gold-450 flex items-center justify-center shadow-xl flex-shrink-0 text-gold-400">
+                    <div className="w-16 h-16 rounded-2xl bg-gold-450/10 border border-gold-450 flex items-center justify-center shadow-xl flex-shrink-0 text-gold-400 font-semibold">
                       <ShieldCheck className="w-9 h-9" />
                     </div>
 
@@ -307,7 +307,7 @@ export default function Mentorship({ onBookBriefing, bookedAppointments }: Mento
               <button
                 id="close_booking_modal_btn"
                 onClick={() => setSelectedMentorForBooking(null)}
-                className="absolute right-4 top-4 text-gold-400 hover:text-white transition duration-150 cursor-pointer p-1"
+                className="absolute right-4 top-4 text-gold-400 hover:text-white transition duration-150 cursor-pointer p-1 font-semibold"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -358,7 +358,7 @@ export default function Mentorship({ onBookBriefing, bookedAppointments }: Mento
                             }`}
                           >
                             <span className="flex items-center gap-2">
-                              <Clock className={`w-3.5 h-3.5 ${chosenSlot === slot ? "text-navy-950" : "text-gold-400"}`} /> {slot}
+                              <Clock className={`w-3.5 h-3.5 ${chosenSlot === slot ? "text-navy-950" : "text-gold-400"} font-semibold`} /> {slot}
                             </span>
                             {isAlreadyBooked ? (
                               <span className="text-[9px] bg-navy-900 border border-gold-600/10 text-navy-300 px-1.5 py-0.5 rounded font-mono font-medium">
@@ -376,7 +376,7 @@ export default function Mentorship({ onBookBriefing, bookedAppointments }: Mento
                   </div>
 
                   <div className="bg-navy-950 border border-gold-500/15 p-4 rounded-2xl text-[11px] text-lightyellow-200/70 leading-normal flex gap-2">
-                    <AlertCircle className="w-5 h-5 text-gold-400 flex-shrink-0 mt-0.5 animate-bounce" />
+                    <AlertCircle className="w-5 h-5 text-gold-400 flex-shrink-0 mt-0.5 animate-bounce font-semibold" />
                     <span>
                       <b>Advisory Notice:</b> Make sure to attend the platform at least 5 minutes prior to scheduling. Private sessions cannot be fast-tracked or re-scheduled.
                     </span>

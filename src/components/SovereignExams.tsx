@@ -22,6 +22,8 @@ interface SovereignExamsProps {
   subscribedEmail?: string;
   onSaveEmailSubscription?: (email: string, categories: string[]) => void;
   onSaveAnnouncement?: (announcement: Omit<ExamAnnouncement, "id" | "date" | "read">) => void;
+  subscribedExamDates?: Record<string, string>;
+  onSetExamDate?: (examCode: string, date: string) => void;
 }
 
 export default function SovereignExams({
@@ -30,7 +32,7 @@ export default function SovereignExams({
   subscribedEmail = "",
   onSaveEmailSubscription = () => {},
   onSaveAnnouncement = () => {},
-}: SovereignExamsProps) {
+  subscribedExamDates = {}, onSetExamDate = () => {}}: SovereignExamsProps) {
   const [activeCategory, setActiveCategory] = useState<"UPSC" | "MNS" | "SCIENTIFIC">("UPSC");
   const [expandedExamCode, setExpandedExamCode] = useState<string | null>(null);
 
@@ -325,7 +327,7 @@ export default function SovereignExams({
             onChange={(e) => setExamSearch(e.target.value)}
             className="w-full bg-navy-950 text-lightyellow-100 border border-gold-500/25 rounded-xl pl-3 pr-8 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-gold-450 placeholder-navy-300 font-medium"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 text-xs">🔍</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 text-xs font-semibold">🔍</span>
         </div>
       </div>
 
@@ -371,7 +373,7 @@ export default function SovereignExams({
                             {ex.conductingBody}
                           </span>
                           {ex.isPopular && (
-                            <span className="inline-flex items-center gap-0.5 text-[8.5px] font-extrabold uppercase tracking-widest bg-amber-600 text-white px-2 py-0.2 rounded-full">
+                            <span className="inline-flex items-center gap-0.5 text-[8.5px] font-extrabold uppercase tracking-widest bg-primary text-[#0B1F3A] px-2 py-0.2 rounded-full">
                               🔥 Star Entry
                             </span>
                           )}
@@ -393,13 +395,24 @@ export default function SovereignExams({
                               : "bg-navy-950 text-gold-400 border-gold-600/25 hover:border-gold-400/50 hover:bg-navy-900"
                           }`}
                         >
-                          <Bell className={`w-3 h-3 ${subscribedExams.includes(ex.code) ? "fill-navy-950 text-navy-950" : "text-gold-400"}`} />
+                          <Bell className={`w-3 h-3 ${subscribedExams.includes(ex.code) ? "fill-navy-950 text-navy-950" : "text-gold-400"} font-semibold`} />
                           <span>{subscribedExams.includes(ex.code) ? "Subscribed" : "Get Alerts"}</span>
                         </button>
+                        {subscribedExams.includes(ex.code) && (
+                          <div className="flex flex-col ml-3">
+                            <label className="text-[9px] text-lightyellow-200/50 mb-0.5">Exam Date</label>
+                            <input
+                              type="date"
+                              value={subscribedExamDates[ex.code] || ""}
+                              onChange={(e) => onSetExamDate(ex.code, e.target.value)}
+                              className="bg-navy-950 border border-gold-600/30 text-lightyellow-100 text-[10px] px-1.5 py-1 rounded"
+                            />
+                          </div>
+                        )}
 
                         <div 
                           onClick={() => toggleExam(ex.code)}
-                          className="p-1.5 rounded-lg bg-navy-950 border border-gold-550/20 text-gold-400 hover:text-gold-300 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg bg-navy-950 border border-gold-550/20 text-gold-400 hover:text-gold-300 transition-colors cursor-pointer font-semibold"
                         >
                           <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                         </div>
@@ -473,11 +486,11 @@ export default function SovereignExams({
 
                             {/* Preparation Secret */}
                             <div className="p-4 bg-gold-450/5 border border-gold-500/30 rounded-2xl space-y-1 text-left">
-                              <div className="flex items-center gap-1.5 text-gold-400">
+                              <div className="flex items-center gap-1.5 text-gold-400 font-semibold">
                                 <Sparkles className="w-4 h-4 text-gold-450" />
                                 <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-gold-450">Founder's Strategic Briefing:</span>
                               </div>
-                              <p className="text-[11.5px] text-lightyellow-200 leading-relaxed font-serif italic">
+                              <p className="text-[11.5px] text-lightyellow-200 leading-relaxed font-serif italic font-semibold">
                                 "{ex.preparationAdvice}"
                               </p>
                             </div>
@@ -499,8 +512,8 @@ export default function SovereignExams({
           {/* Get Exam Alerts Card */}
           <div className="bg-navy-900 border border-gold-600/35 rounded-3xl p-6 shadow-xl space-y-4 animate-fade-in" id="get_exam_alerts_card">
             <div className="flex items-center gap-2 border-b border-gold-600/15 pb-3">
-              <div className="p-1.5 rounded-lg bg-navy-950 border border-gold-550/20 text-gold-400">
-                <Bell className="w-5 h-5 animate-bounce text-gold-400" />
+              <div className="p-1.5 rounded-lg bg-navy-950 border border-gold-550/20 text-gold-400 font-semibold">
+                <Bell className="w-5 h-5 animate-bounce text-gold-400 font-semibold" />
               </div>
               <h3 className="text-sm font-black text-lightyellow-101 uppercase tracking-wider">
                 Get Exam Alerts
@@ -526,7 +539,7 @@ export default function SovereignExams({
               setTimeout(() => setSubscriptionSuccess(false), 3000);
             }} className="space-y-3.5">
               <div>
-                <label className="block text-[10px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Email Address</label>
+                <label className="block text-[10px] font-mono text-gold-400 mb-1 uppercase tracking-wider font-semibold">Email Address</label>
                 <input
                   type="email"
                   name="email"
@@ -539,7 +552,7 @@ export default function SovereignExams({
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[10px] font-mono text-gold-400 uppercase tracking-wider">Alert Categories</label>
+                <label className="block text-[10px] font-mono text-gold-400 uppercase tracking-wider font-semibold">Alert Categories</label>
                 
                 <label className="flex items-center gap-2.5 text-xs text-lightyellow-200/90 cursor-pointer select-none">
                   <input
@@ -593,7 +606,7 @@ export default function SovereignExams({
 
             {subscribedExams.length > 0 && (
               <div className="pt-2 border-t border-gold-600/15">
-                <span className="text-[9px] font-mono text-gold-400 block mb-1.5 uppercase tracking-wider">Active Alert Topics:</span>
+                <span className="text-[9px] font-mono text-gold-400 block mb-1.5 uppercase tracking-wider font-semibold">Active Alert Topics:</span>
                 <div className="flex flex-wrap gap-1.5">
                   {subscribedExams.map((sub) => (
                     <span key={sub} className="text-[9.5px] font-mono px-2 py-0.5 bg-navy-950 border border-gold-500/25 text-gold-400 rounded-full flex items-center gap-1 font-semibold">
@@ -616,7 +629,7 @@ export default function SovereignExams({
           {/* Scientific R&D Internship & Fellowship Standards Card */}
           <div className="bg-navy-900 border border-gold-600/25 rounded-3xl p-6 shadow-xl space-y-5" id="scientific_internship_norms_card">
             <h3 className="text-md font-bold text-lightyellow-101 uppercase tracking-widest flex items-center gap-1.5 border-b border-gold-600/15 pb-3">
-              <Target className="w-5 h-5 text-gold-400" />
+              <Target className="w-5 h-5 text-gold-400 font-semibold" />
               R&D INTERNSHIP RULES
             </h3>
 
@@ -724,7 +737,7 @@ export default function SovereignExams({
               setTimeout(() => setSimSuccess(false), 3000);
             }} className="space-y-3">
               <div>
-                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Target Exam Update</label>
+                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider font-semibold">Target Exam Update</label>
                 <select
                   value={simExamCode}
                   onChange={(e) => {
@@ -758,7 +771,7 @@ export default function SovereignExams({
               </div>
 
               <div>
-                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Announcement Title</label>
+                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider font-semibold">Announcement Title</label>
                 <input
                   type="text"
                   required
@@ -770,7 +783,7 @@ export default function SovereignExams({
               </div>
 
               <div>
-                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider">Content & Details</label>
+                <label className="block text-[9px] font-mono text-gold-400 mb-1 uppercase tracking-wider font-semibold">Content & Details</label>
                 <textarea
                   required
                   rows={2}

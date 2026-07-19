@@ -287,11 +287,11 @@ export default function AboutAndAppointment() {
                 <div className="space-y-2">
                   <label className="flex items-start gap-2">
                     <input type="checkbox" required className="mt-1" />
-                    <span className="text-xs text-lightyellow-200">I agree to the Privacy Policy and Terms & Conditions.</span>
+                    <span className="text-xs text-lightyellow-200 font-semibold">I agree to the Privacy Policy and Terms & Conditions.</span>
                   </label>
                   <label className="flex items-start gap-2">
                     <input type="checkbox" required className="mt-1" />
-                    <span className="text-xs text-lightyellow-200">I consent to receive communication from Sankalp regarding my appointment and career resources.</span>
+                    <span className="text-xs text-lightyellow-200 font-semibold">I consent to receive communication from Sankalp regarding my appointment and career resources.</span>
                   </label>
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function AboutAndAppointment() {
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-navy-900 border border-gold-600/20 rounded-3xl p-6 text-left">
             <h4 className="text-sm font-bold text-lightyellow-100 uppercase tracking-widest flex items-center gap-2 mb-4">
-              <Calendar className="w-4 h-4 text-gold-400" />
+              <Calendar className="w-4 h-4 text-gold-400 font-semibold" />
               Your Appointments
             </h4>
             
@@ -343,10 +343,10 @@ export default function AboutAndAppointment() {
                   <div key={booking.id} className="p-4 bg-navy-950 border border-gold-550/15 rounded-2xl flex flex-col gap-2">
                     <div className="flex justify-between items-center">
                       <span className="text-xs font-bold text-lightyellow-100">{booking.name}</span>
-                      <span className="text-[9px] font-mono bg-navy-800 text-gold-400 px-2 py-0.5 rounded tracking-widest border border-gold-500/20">{booking.ticket_number}</span>
+                      <span className="text-[9px] font-mono bg-navy-800 text-gold-400 px-2 py-0.5 rounded tracking-widest border border-gold-500/20 font-semibold">{booking.ticket_number}</span>
                     </div>
                     <p className="text-[10.5px] font-mono text-lightyellow-200/60 flex items-center gap-1.5">
-                      <Clock className="w-3 h-3 text-gold-400" />
+                      <Clock className="w-3 h-3 text-gold-400 font-semibold" />
                       {booking.preferredDate} • {booking.preferredTime}
                     </p>
                     <p className="text-[11px] text-lightyellow-200/80 font-sans font-medium">Interest: {booking.careerInterest}</p>

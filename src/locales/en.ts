@@ -1,6 +1,6 @@
 export default {
   navbar: {
-    brand: "Sankalp",
+    brand: "Career Counselling Hub",
     subtitle: "India's Trusted Career Guidance",
     search: "Query training, mentors, or exams...",
     nav_overview: "Overview",
@@ -11,12 +11,13 @@ export default {
     nav_appointment: "Book Counselling",
     nav_courses: "Academy Courses",
     nav_placements: "Placements",
-    nav_testimonials: "Call of Honor"
+    nav_testimonials: "Call of Honor",
+    nav_study_material: "Study Material"
   },
   home: {
 
-    vision_title: "Project Sankalp – Vision Statement",
-    vision_intro: "\"Sankalp\" is more than a project—it's a commitment to empowering every student and aspirant with the right career guidance, reliable information, and informed decision-making. We believe that no student should choose a career based on confusion, pressure, or lack of awareness. Every dream deserves the right direction.",
+    vision_title: "Project Career Counselling Hub – Vision Statement",
+    vision_intro: "\"Career Counselling Hub\" is more than a project—it's a commitment to empowering every student and aspirant with the right career guidance, reliable information, and informed decision-making. We believe that no student should choose a career based on confusion, pressure, or lack of awareness. Every dream deserves the right direction.",
     our_vision_title: "Our Vision",
     our_vision_desc: "To become India's most trusted career guidance platform, empowering every student and aspirant to discover their true potential, make informed career decisions, and build a future filled with purpose, confidence, and success through accessible, unbiased, and personalized career counselling.",
     our_mission_title: "Our Mission",
@@ -26,9 +27,9 @@ export default {
     our_mission_item4: "Specialize in Defence career guidance while providing comprehensive guidance across all career streams.",
     our_mission_item5: "Support Hindi and English medium students through bilingual resources.",
     our_mission_item6: "Build a comprehensive Career Library that enables students to explore careers, entrance examinations, eligibility, and future opportunities—all in one place.",
-    motto_title: "Project Sankalp Motto",
+    motto_title: "Project Career Counselling Hub Motto",
     motto_text: "\"Right Guidance. Right Career. Bright Future.\"",
-    tagline_text: "\"Project Sankalp – Every Dream Deserves the Right Direction.\"",
+    tagline_text: "\"Project Career Counselling Hub – Every Dream Deserves the Right Direction.\"",
 
     hero_badge: "NATIONAL SECURITY DESK: LIVE COUNSELING SESSIONS ACTIVE",
     hero_title1: "Find Your",
@@ -58,7 +59,7 @@ export default {
     feature_assessment: "Skill Assessments",
     feature_assessment_desc: "Identify your strengths with our scientifically designed aptitude tests.",
     cta_bottom_title: "Ready to take command of your future?",
-    cta_bottom_subtitle: "Join thousands of students who have found their true calling with Sankalp.",
+    cta_bottom_subtitle: "Join thousands of students who have found their true calling with Career Counselling Hub.",
     cta_bottom_btn: "Begin Your Journey Now"
   },
   footer: {
@@ -77,7 +78,7 @@ export default {
     contact_email: "sankalpcareersolutions@gmail.com",
     contact_phone: "Toll Free Cadet Line: 1800-SSB-SRVC",
     contact_address: "National Defense Cluster HQ, New Delhi",
-    rights: "© {year} Sankalp. All rights reserved.",
+    rights: "© {year} Career Counselling Hub. All rights reserved.",
     admin_access: "Admin Access",
     cleared: "Sovereign Security Cleared",
     made_in_india: "Made for India"

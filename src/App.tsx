@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import Dashboard from "./components/Dashboard";
-import Mentorship from "./components/Mentorship";
-import CareerLibrary from "./components/CareerLibrary";
-import Courses from "./components/Courses";
-import Placements from "./components/Placements";
-import TestimonialsPage from "./components/TestimonialsPage";
-import AboutAndAppointment from "./components/AboutAndAppointment";
-import SovereignExams from "./components/SovereignExams";
-import AdminPanel from "./components/AdminPanel";
+const Home = lazy(() => import("./components/Home"));
+const Dashboard = lazy(() => import("./components/Dashboard"));
+const Mentorship = lazy(() => import("./components/Mentorship"));
+const CareerLibrary = lazy(() => import("./components/CareerLibrary"));
+const Courses = lazy(() => import("./components/Courses"));
+const Placements = lazy(() => import("./components/Placements"));
+const TestimonialsPage = lazy(() => import("./components/TestimonialsPage"));
+const AboutAndAppointment = lazy(() => import("./components/AboutAndAppointment"));
+const SovereignExams = lazy(() => import("./components/SovereignExams"));
+const AdminPanel = lazy(() => import("./components/AdminPanel"));
+const StudyMaterial = lazy(() => import("./components/StudyMaterial"));
 import { Course, Mentor, Internship, UserStats, ExamAnnouncement } from "./types";
 import { initialCourses, mentors, initialInternships } from "./data/portalData";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -50,54 +51,54 @@ import logoImg from "./assets/images/sankalp_epic_logo_1780997195913.png";
 
 const metaTagsByTab: Record<string, { title: string; description: string; keywords: string }> = {
   home: {
-    title: "Sankalp - India's Trusted Career Hub | Defence & General Careers",
-    description: "Sankalp is India's premier career guidance platform for Class 9th students to graduates. Specializing in Defence & Strategic Careers, Engineering, Medical, Civil Services, and Research.",
-    keywords: "Sankalp, career counselling, career guidance India, NDA prep, CDS exam, DRDO careers, ISRO, stream selection, Sankalp counselling",
+    title: "Career Counselling Hub - India's Trusted Career Hub | Defence & General Careers",
+    description: "Career Counselling Hub is India's premier career guidance platform for Class 9th students to graduates. Specializing in Defence & Strategic Careers, Engineering, Medical, Civil Services, and Research.",
+    keywords: "Career Counselling Hub, career counselling, career guidance India, NDA prep, CDS exam, DRDO careers, ISRO, stream selection, Career Counselling Hub counselling",
   },
   "career-library": {
-    title: "Sankalp - Comprehensive Career Library",
+    title: "Career Counselling Hub - Comprehensive Career Library",
     description: "Explore 500+ in-depth Indian career profiles including eligibility, salaries, promotions, exams, and educational pathways with a focus on Strategic & Defence sectors.",
-    keywords: "Sankalp, career options, careers after 12th, UPSC exams, law eligibility, medical stream, DRDO scientist pathway, career library",
+    keywords: "Career Counselling Hub, career options, careers after 12th, UPSC exams, law eligibility, medical stream, DRDO scientist pathway, career library",
   },
   exams: {
-    title: "Sankalp - Sovereign Entrance Exams & Defence Calendar",
+    title: "Career Counselling Hub - Sovereign Entrance Exams & Defence Calendar",
     description: "Get updated dates, notifications, previous year trends, and preparation strategies for NDA, CDS, AFCAT, CAPF, ISRO, BARC, and CSIR.",
-    keywords: "Sankalp, defence calendar, exam dates, NDA 2026 notification, SSB interview calendar, UPSC notification, government recruitment",
+    keywords: "Career Counselling Hub, defence calendar, exam dates, NDA 2026 notification, SSB interview calendar, UPSC notification, government recruitment",
   },
   dashboard: {
-    title: "Sankalp - Cadet Hub - Your Career Dashboard",
+    title: "Career Counselling Hub - Cadet Hub - Your Career Dashboard",
     description: "Track your customized study plans, enrolled courses, mentorship bookings, and internship applications in your student center.",
-    keywords: "Sankalp, cadet hub, student dashboard, study tracker, counselling progress, learning dashboard",
+    keywords: "Career Counselling Hub, cadet hub, student dashboard, study tracker, counselling progress, learning dashboard",
   },
   mentorship: {
-    title: "Sankalp - Personalized Mentorship & SSB Guidance",
+    title: "Career Counselling Hub - Personalized Mentorship & SSB Guidance",
     description: "Connect 1-on-1 with retired Armed Forces veterans, senior scientific consultants, and industrial leaders for authentic guidance.",
-    keywords: "Sankalp, defence mentor, SSB guidance, army veteran advice, career mentor India, scientific officer coach",
+    keywords: "Career Counselling Hub, defence mentor, SSB guidance, army veteran advice, career mentor India, scientific officer coach",
   },
   appointment: {
-    title: "Sankalp - Book 1-on-1 Career Counselling Session",
+    title: "Career Counselling Hub - Book 1-on-1 Career Counselling Session",
     description: "Book an online or offline appointment with India's best career coaches for school students, graduates, and defence aspirants.",
-    keywords: "Sankalp, counselling booking, career counsellor near me, psychometric test booking, online career guidance, educational counselling",
+    keywords: "Career Counselling Hub, counselling booking, career counsellor near me, psychometric test booking, online career guidance, educational counselling",
   },
   courses: {
-    title: "Sankalp - SSB Masterclasses & Officer Courses",
+    title: "Career Counselling Hub - SSB Masterclasses & Officer Courses",
     description: "Accelerate your path with our premier masterclasses covering Officer Like Qualities (OLQ), scientific reasoning, and core preparation strategies.",
-    keywords: "Sankalp, ssb online course, OLQ training, cadet academy, exam preparation classes, officer training",
+    keywords: "Career Counselling Hub, ssb online course, OLQ training, cadet academy, exam preparation classes, officer training",
   },
   placements: {
-    title: "Sankalp - Elite Internships & Strategic Placements",
+    title: "Career Counselling Hub - Elite Internships & Strategic Placements",
     description: "Explore strategic internships and job roles in defence technologies, research labs, space startups, and top private sectors.",
-    keywords: "Sankalp, defence startups, research internships, engineering placements, public sector undertakings, tech fellowships",
+    keywords: "Career Counselling Hub, defence startups, research internships, engineering placements, public sector undertakings, tech fellowships",
   },
   testimonials: {
-    title: "Sankalp - Call of Honor - Inspiring Success Stories",
+    title: "Career Counselling Hub - Call of Honor - Inspiring Success Stories",
     description: "Read about our students who cleared NDA, CDS, DRDO, ISRO, and elite corporate selections after counselling at SANKALP.",
-    keywords: "Sankalp, success stories, ssb selections, student testimonials, career counselling success, client reviews",
+    keywords: "Career Counselling Hub, success stories, ssb selections, student testimonials, career counselling success, client reviews",
   },
   admin: {
-    title: "Sankalp - Administration Command Control Panel",
+    title: "Career Counselling Hub - Administration Command Control Panel",
     description: "Secure, credentialed access to manage student assessments, bookings, resources, and portal configurations.",
-    keywords: "Sankalp, admin login, client records, administrative backend",
+    keywords: "Career Counselling Hub, admin login, client records, administrative backend",
   },
 };
 
@@ -150,7 +151,58 @@ export default function App() {
     return cached ? JSON.parse(cached) : ["UPSC", "SCIENTIFIC", "UPSC-NDA", "ISRO-ICRB"];
   });
 
-  const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
+  const [subscribedExamDates, setSubscribedExamDates] = useState<Record<string, string>>(() => {
+    const cached = localStorage.getItem("sankalp_subscribed_exam_dates");
+    return cached ? JSON.parse(cached) : {};
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sankalp_subscribed_exam_dates", JSON.stringify(subscribedExamDates));
+  }, [subscribedExamDates]);
+
+  useEffect(() => {
+    if ("Notification" in window) {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkNotifications = () => {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const now = new Date();
+
+      // Check userStats.examDate
+      const allDates = { ...subscribedExamDates };
+      if (userStats.examDate) {
+        allDates["Target_Exam"] = userStats.examDate;
+      }
+
+      Object.entries(allDates).forEach(([key, dateStr]) => {
+        if (!dateStr) return;
+        const examDate = new Date(dateStr as string);
+        const timeDiff = examDate.getTime() - now.getTime();
+        const hoursDiff = timeDiff / (1000 * 3600);
+        
+        const notificationKey = `notified_${key}_${dateStr}`;
+        const hasNotified = localStorage.getItem(notificationKey);
+        
+        // Alert if within 24 hours
+        if (hoursDiff > 0 && hoursDiff <= 24 && !hasNotified) {
+          const title = key === "Target_Exam" ? "Target Exam Reminder" : `Upcoming Exam: ${key}`;
+          new Notification(title, {
+            body: `Your exam is scheduled in less than 24 hours on ${dateStr}!`,
+            icon: logoImg
+          });
+          localStorage.setItem(notificationKey, "true");
+        }
+      });
+    };
+
+    checkNotifications();
+    const intervalId = setInterval(checkNotifications, 3600000); // Check every hour
+    return () => clearInterval(intervalId);
+  }, [userStats.examDate, subscribedExamDates]);
+const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
     const cached = localStorage.getItem("sankalp_subscribed_email");
     return cached ? JSON.parse(cached) : "cadet@sankalp.com";
   });
@@ -318,7 +370,8 @@ export default function App() {
 
   return (
     <HelmetProvider>
-      <div className="min-h-screen bg-navy-950 text-lightyellow-100 flex flex-col justify-between" id="app_scaffold_root">
+      <div className="min-h-screen bg-bg-main text-text-main flex flex-col justify-between" id="app_scaffold_root">
+      <div className="bg-pattern"></div>
         <Helmet>
           <title>{currentMeta.title}</title>
           <meta name="description" content={currentMeta.description} />
@@ -327,7 +380,7 @@ export default function App() {
           <link rel="canonical" href={`https://careercounsellinghub.com/${currentTab === 'home' ? '' : currentTab}`} />
         </Helmet>
       {/* Top Banner Warning or Notice Board */}
-      <div className="bg-navy-900 text-gold-400 text-[12.5px] font-mono py-2 px-4 text-center border-b border-gold-500/25 flex items-center justify-center gap-2 shadow-md uppercase font-black" id="sovereign_announcement">
+      <div className="bg-white/10 text-white text-[12.5px] font-mono py-2 px-4 text-center border-b border-white/20 flex items-center justify-center gap-2 shadow-md uppercase font-black" id="sovereign_announcement">
         <span className="inline-block w-2.5 h-2.5 rounded-full bg-gold-450 animate-pulse"></span>
         <span><b>SANKALP NATIONAL SECURITY DESK:</b> LIVE COUNSELING SESSIONS & DIRECT TRAINING ASSIGNMENTS ARE ACTIVE.</span>
       </div>
@@ -353,6 +406,7 @@ export default function App() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
+            <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin"></div></div>}>
             {currentTab === "home" && (
               <Home
                 onSearchSelection={handleSearchSelection}
@@ -366,6 +420,9 @@ export default function App() {
                 subscribedEmail={subscribedEmail}
                 onSaveEmailSubscription={handleSaveEmailSubscription}
                 onSaveAnnouncement={handleSaveAnnouncement}
+              
+                subscribedExamDates={subscribedExamDates}
+                onSetExamDate={(examCode, date) => setSubscribedExamDates(prev => ({ ...prev, [examCode]: date }))}
               />
             )}
             {currentTab === "dashboard" && (
@@ -415,94 +472,94 @@ export default function App() {
                 setSearchTerm={setSearchTerm}
               />
             )}
+            {currentTab === "study-material" && (
+              <StudyMaterial />
+            )}
             {currentTab === "admin" && (
               <AdminPanel />
             )}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
 
       {/* Footer Section */}
-      <footer className="bg-navy-900 border-t-4 border-gold-500 text-lightyellow-100 py-12 px-4 sm:px-6 lg:px-8 mt-12 shadow-2xl" id="unified_footer">
+      <footer className="bg-[#0B1F3A] border-t border-primary/30 text-white py-12 px-4 sm:px-6 lg:px-8 mt-12 shadow-2xl" id="unified_footer">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Intro Column */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <img
-                src={logoImg}
-                alt="Logo"
-                className="w-12 h-12 object-contain rounded-xl border border-gold-400 p-0.5 shadow-md"
-                referrerPolicy="no-referrer"
-              />
-              <span className="text-lightyellow-50 font-black text-xl uppercase tracking-widest font-sans leading-none">
-                {t("navbar.brand")}
+              <span className="text-white font-black text-xl uppercase tracking-widest font-poppins leading-none">
+                Career Counselling Hub
               </span>
             </div>
-            <p className="text-sm text-lightyellow-100/90 font-medium leading-relaxed font-sans">
-              {t("footer.brand_desc")}
+            <p className="text-sm text-white/80 font-medium leading-relaxed font-sans">
+              Empowering students and aspirants to make informed career decisions through expert counselling.
             </p>
           </div>
 
           {/* Quick Core Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-mono font-extrabold tracking-wider uppercase text-gold-400">{t("footer.col1_title")}</h4>
+            <h4 className="text-sm font-poppins font-extrabold tracking-wider uppercase text-secondary">Quick Links</h4>
             <ul className="space-y-2 text-sm font-semibold">
               <li>
-                <button id="foot_link_army" onClick={() => setCurrentTab("home")} className="hover:text-gold-400 transition hover:underline cursor-pointer text-lightyellow-100">
-                  {t("footer.col1_1")}
+                <button onClick={() => setCurrentTab("home")} className="hover:text-secondary transition hover:underline cursor-pointer text-white/80">
+                  Home
                 </button>
               </li>
               <li>
-                <button id="foot_link_para" onClick={() => setCurrentTab("home")} className="hover:text-gold-400 transition hover:underline cursor-pointer text-lightyellow-100">
-                  {t("footer.col1_2")}
+                <button onClick={() => setCurrentTab("career-library")} className="hover:text-secondary transition hover:underline cursor-pointer text-white/80">
+                  Career Library
                 </button>
               </li>
               <li>
-                <button id="foot_link_sciences" onClick={() => setCurrentTab("home")} className="hover:text-gold-400 transition hover:underline cursor-pointer text-lightyellow-100">
-                  {t("footer.col1_3")}
+                <button onClick={() => setCurrentTab("exams")} className="hover:text-secondary transition hover:underline cursor-pointer text-white/80">
+                  Entrance Exams
                 </button>
               </li>
               <li>
-                <button id="foot_link_civilian" onClick={() => setCurrentTab("home")} className="hover:text-gold-400 transition hover:underline cursor-pointer text-lightyellow-100">
-                  {t("footer.col1_4")}
+                <button onClick={() => setCurrentTab("appointment")} className="hover:text-secondary transition hover:underline cursor-pointer text-white/80">
+                  Book Appointment
                 </button>
               </li>
             </ul>
           </div>
 
+          {/* Legal Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-mono font-extrabold tracking-wider uppercase text-gold-400">{t("footer.col2_title")}</h4>
-            <ul className="space-y-2 text-sm font-semibold text-lightyellow-200">
-              <li>• {t("footer.col2_1")}</li>
-              <li>• {t("footer.col2_2")}</li>
-              <li>• {t("footer.col2_3")}</li>
-              <li>• {t("footer.col2_4")}</li>
+            <h4 className="text-sm font-poppins font-extrabold tracking-wider uppercase text-secondary">Legal</h4>
+            <ul className="space-y-2 text-sm font-semibold text-white/80">
+              <li><a href="#" className="hover:text-secondary">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-secondary">Terms & Conditions</a></li>
             </ul>
           </div>
 
           {/* Contact Details */}
           <div className="space-y-3">
-            <h4 className="text-xs font-mono font-extrabold tracking-wider uppercase text-gold-400">{t("footer.col3_title")}</h4>
-            <ul className="space-y-2 text-sm font-bold text-lightyellow-105">
+            <h4 className="text-sm font-poppins font-extrabold tracking-wider uppercase text-secondary">Contact Us</h4>
+            <ul className="space-y-2 text-sm font-bold text-white/80">
               <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gold-400" /> {t("footer.contact_email")}
+                <Mail className="w-4 h-4 text-secondary font-semibold" /> sankalpcareersolutions@gmail.com
+              </li>
+              
+              
+              <li className="flex items-center gap-2 mt-2">
+                 <a href="https://www.careercounsellinghub.com" className="text-secondary hover:underline">www.careercounsellinghub.com</a>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Legal Row */}
-        <div className="max-w-7xl mx-auto mt-8 pt-8 border-t border-gold-600/30 flex flex-col md:flex-row justify-between items-center text-xs text-lightyellow-200/70 font-semibold gap-4" id="footer_copyright_banner">
-          <p>{t("footer.rights", { year: new Date().getFullYear() })}</p>
+        <div className="max-w-7xl mx-auto mt-8 pt-8 border-t border-primary/20 flex flex-col md:flex-row justify-between items-center text-xs text-white/60 font-semibold gap-4" id="footer_copyright_banner">
+          <p>© {new Date().getFullYear()} Career Counselling Hub. All rights reserved.</p>
           <div className="flex gap-4 items-center">
             <button 
               onClick={() => setCurrentTab("admin")}
-              className="text-gold-500 hover:text-gold-400 font-mono tracking-widest uppercase transition-colors mr-4"
+              className="text-white/40 hover:text-white font-mono tracking-widest uppercase transition-colors mr-4"
             >
-              {t("footer.admin_access")}
+              Admin Access
             </button>
-            <span className="text-gold-400">{t("footer.cleared")}</span>
-            <span className="text-gold-400">{t("footer.made_in_india")}</span>
           </div>
         </div>
       </footer>

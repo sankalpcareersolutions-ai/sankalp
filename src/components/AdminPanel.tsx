@@ -88,7 +88,7 @@ export default function AdminPanel() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-gold-400">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center text-gold-400 font-semibold">Loading...</div>;
   }
 
   if (!session) {
@@ -101,7 +101,7 @@ export default function AdminPanel() {
         >
           <div className="flex justify-center mb-6">
             <div className="bg-navy-950 p-4 rounded-full border border-gold-500/30">
-              <Shield className="w-8 h-8 text-gold-400" />
+              <Shield className="w-8 h-8 text-gold-400 font-semibold" />
             </div>
           </div>
           <h2 className="text-2xl font-black text-center text-lightyellow-100 mb-6 uppercase tracking-wider font-sans">
@@ -116,7 +116,7 @@ export default function AdminPanel() {
 
           <form onSubmit={handleAuth} className="space-y-4">
             <div>
-              <label className="block text-xs font-mono text-gold-400 mb-1 uppercase tracking-wider">Admin Email</label>
+              <label className="block text-xs font-mono text-gold-400 mb-1 uppercase tracking-wider font-semibold">Admin Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gold-400/50" />
                 <input
@@ -130,7 +130,7 @@ export default function AdminPanel() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-mono text-gold-400 mb-1 uppercase tracking-wider">Passcode</label>
+              <label className="block text-xs font-mono text-gold-400 mb-1 uppercase tracking-wider font-semibold">Passcode</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gold-400/50" />
                 <input
@@ -155,7 +155,7 @@ export default function AdminPanel() {
           <div className="mt-6 text-center">
             <button 
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-xs text-gold-400 hover:text-lightyellow-100 transition-colors uppercase tracking-wider font-mono border-b border-gold-400/30 hover:border-lightyellow-100"
+              className="text-xs text-gold-400 hover:text-lightyellow-100 transition-colors uppercase tracking-wider font-mono border-b border-gold-400/30 hover:border-lightyellow-100 font-semibold"
             >
               {isSignUp ? "Already have access? Login" : "Need access? Sign Up"}
             </button>
@@ -170,7 +170,7 @@ export default function AdminPanel() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-navy-900 p-6 rounded-2xl border border-gold-500/20">
         <div>
           <h1 className="text-2xl font-black text-lightyellow-100 uppercase tracking-widest flex items-center gap-3">
-            <Shield className="text-gold-400 w-8 h-8" />
+            <Shield className="text-gold-400 w-8 h-8 font-semibold" />
             Central Command Panel
           </h1>
           <p className="text-gold-400/80 font-mono text-sm mt-1 uppercase tracking-wider">
@@ -191,14 +191,14 @@ export default function AdminPanel() {
           <h2 className="text-xl font-bold text-lightyellow-100 font-sans">Counseling Appointments</h2>
           <button 
             onClick={fetchAppointments}
-            className="text-gold-400 hover:text-lightyellow-100 text-sm font-mono uppercase tracking-wider border border-gold-400/30 px-3 py-1 rounded"
+            className="text-gold-400 hover:text-lightyellow-100 text-sm font-mono uppercase tracking-wider border border-gold-400/30 px-3 py-1 rounded font-semibold"
           >
             Refresh Data
           </button>
         </div>
         
         {loadingData ? (
-          <div className="text-center py-12 text-gold-400 font-mono animate-pulse">Loading secure data...</div>
+          <div className="text-center py-12 text-gold-400 font-mono animate-pulse font-semibold">Loading secure data...</div>
         ) : appointments.length === 0 ? (
           <div className="text-center py-12 bg-navy-950/50 rounded-xl border border-navy-800">
             <p className="text-lightyellow-100/50 font-mono">No appointments found in the database.</p>
@@ -208,11 +208,11 @@ export default function AdminPanel() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-gold-500/20">
-                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider">Nominee Details</th>
-                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider">Contact</th>
-                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider">Schedule</th>
-                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider">Focus Area</th>
-                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider">Ticket / Date</th>
+                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider font-semibold">Nominee Details</th>
+                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider font-semibold">Contact</th>
+                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider font-semibold">Schedule</th>
+                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider font-semibold">Focus Area</th>
+                  <th className="p-4 text-xs font-mono text-gold-400 uppercase tracking-wider font-semibold">Ticket / Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gold-500/10">
@@ -221,29 +221,29 @@ export default function AdminPanel() {
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-navy-950 border border-gold-500/30 flex items-center justify-center">
-                          <User className="w-4 h-4 text-gold-400" />
+                          <User className="w-4 h-4 text-gold-400 font-semibold" />
                         </div>
                         <span className="font-bold text-lightyellow-100 text-sm">{appt.name}</span>
                       </div>
                     </td>
                     <td className="p-4 space-y-1">
                       <div className="flex items-center gap-2 text-xs text-lightyellow-100/80">
-                        <Mail className="w-3 h-3 text-gold-400" /> {appt.email}
+                        <Mail className="w-3 h-3 text-gold-400 font-semibold" /> {appt.email}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-lightyellow-100/80">
-                        <Phone className="w-3 h-3 text-gold-400" /> {appt.phone}
+                        <Phone className="w-3 h-3 text-gold-400 font-semibold" /> {appt.phone}
                       </div>
                     </td>
                     <td className="p-4 space-y-1">
                       <div className="flex items-center gap-2 text-xs text-lightyellow-100/90 font-bold">
-                        <Calendar className="w-3 h-3 text-gold-400" /> {appt.slot_date}
+                        <Calendar className="w-3 h-3 text-gold-400 font-semibold" /> {appt.slot_date}
                       </div>
                       <div className="flex items-center gap-2 text-[11px] font-mono text-gold-400/80">
                         <Clock className="w-3 h-3" /> {appt.slot_time}
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className="inline-block px-2 py-1 bg-navy-950 border border-gold-500/20 text-gold-400 text-[10px] uppercase tracking-wider rounded font-mono">
+                      <span className="inline-block px-2 py-1 bg-navy-950 border border-gold-500/20 text-gold-400 text-[10px] uppercase tracking-wider rounded font-mono font-semibold">
                         {appt.focus_area}
                       </span>
                     </td>

@@ -5,14 +5,17 @@ import { jsPDF } from "jspdf";
 import { hindiCareers, hindiRoadmaps } from "../data/hindiRoadmaps";
 
 const careers = [
-  { id: 'nda', category: 'Defence', title: 'National Defence Academy (NDA)', icon: <Shield className="w-6 h-6 text-gold-400" />, shortDesc: 'Join the Indian Army, Navy, or Air Force directly after 12th.', stream: 'Any Stream (PCM for Navy/AF)', qualification: '12th Pass' },
-  { id: 'cds', category: 'Defence', title: 'Combined Defence Services (CDS)', icon: <Target className="w-6 h-6 text-gold-400" />, shortDesc: 'Officer entry into the Armed Forces after graduation.', stream: 'Any Stream (Engg/Science for specific branches)', qualification: 'Graduation' },
+  { id: 'nda', category: 'Defence', title: 'National Defence Academy (NDA)', icon: <Shield className="w-6 h-6 text-gold-400 font-semibold" />, shortDesc: 'Join the Indian Army, Navy, or Air Force directly after 12th.', stream: 'Any Stream (PCM for Navy/AF)', qualification: '12th Pass' },
+  { id: 'cds', category: 'Defence', title: 'Combined Defence Services (CDS)', icon: <Target className="w-6 h-6 text-gold-400 font-semibold" />, shortDesc: 'Officer entry into the Armed Forces after graduation.', stream: 'Any Stream (Engg/Science for specific branches)', qualification: 'Graduation' },
   { id: 'drdo', category: 'Research', title: 'DRDO Scientist', icon: <Cpu className="w-6 h-6 text-blue-400" />, shortDesc: 'Research and development for India\'s defence systems.', stream: 'Engineering/Sciences', qualification: 'B.Tech/M.Sc/Ph.D' },
   { id: 'isro', category: 'Research', title: 'ISRO Scientist/Engineer', icon: <Plane className="w-6 h-6 text-indigo-400" />, shortDesc: 'Build India\'s future in space technology and exploration.', stream: 'Engineering/Sciences', qualification: 'B.Tech/M.Sc' },
   { id: 'engineering', category: 'Engineering', title: 'Software Engineering', icon: <Cpu className="w-6 h-6 text-emerald-400" />, shortDesc: 'Design and develop software systems and applications.', stream: 'PCM', qualification: 'B.Tech/B.E.' },
   { id: 'medical', category: 'Medical', title: 'Medicine (MBBS)', icon: <HeartPulse className="w-6 h-6 text-red-400" />, shortDesc: 'Become a doctor and serve in healthcare.', stream: 'PCB', qualification: 'MBBS' },
   { id: 'law', category: 'Law', title: 'Corporate Law', icon: <Gavel className="w-6 h-6 text-amber-400" />, shortDesc: 'Legal advisory for corporations and businesses.', stream: 'Any Stream', qualification: 'LLB/BA LLB' },
-  { id: 'civil', category: 'Civil Services', title: 'UPSC Civil Services (IAS/IPS)', icon: <Landmark className="w-6 h-6 text-orange-400" />, shortDesc: 'Top administrative roles in the Indian government.', stream: 'Any Stream', qualification: 'Graduation' }
+  { id: 'civil', category: 'Civil Services', title: 'UPSC Civil Services (IAS/IPS)', icon: <Landmark className="w-6 h-6 text-orange-400" />, shortDesc: 'Top administrative roles in the Indian government.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'sainik', category: 'School Entrances (Class 5th-9th)', title: 'Sainik School Entrance (AISSEE)', icon: <Shield className="w-6 h-6 text-primary" />, shortDesc: 'Entrance to prestigious Sainik Schools for young cadets.', stream: 'Class 5th, 8th, 9th Students', qualification: 'School Level' },
+  { id: 'rms', category: 'School Entrances (Class 5th-9th)', title: 'Rashtriya Military Schools (RMS)', icon: <Target className="w-6 h-6 text-primary" />, shortDesc: 'Top military colleges for developing future officers.', stream: 'Class 5th, 8th, 9th Students', qualification: 'School Level' },
+  { id: 'rimc', category: 'School Entrances (Class 5th-9th)', title: 'Rashtriya Indian Military College (RIMC)', icon: <Award className="w-6 h-6 text-primary" />, shortDesc: 'Premier feeder institution for NDA.', stream: 'Class 7th Students', qualification: 'School Level' }
 ];
 
 interface RoadmapStep {
@@ -25,6 +28,21 @@ interface RoadmapStep {
 }
 
 const roadmaps: Record<string, RoadmapStep[]> = {
+  sainik: [
+    { number: 1, title: 'Early Preparation', duration: 'Class 4 & 5', description: 'Start basic preparation in Math, English, Intelligence, and GK.', tip: 'Enroll in foundation courses specifically for Sainik School.', milestone: 'Mock Test Readiness' },
+    { number: 2, title: 'AISSEE Exam', duration: 'January', description: 'Clear the All India Sainik School Entrance Examination.', tip: 'Practice OMR filling and time management.', milestone: 'Written Clear' },
+    { number: 3, title: 'Medical & Interview', duration: 'March-April', description: 'Clear the medical board fitness tests and personal interviews.', tip: 'Maintain physical fitness and confident communication.', milestone: 'Final Merit List' }
+  ],
+  rms: [
+    { number: 1, title: 'Early Preparation', duration: 'Class 4 & 5', description: 'Start basic preparation in Math, English, Intelligence, and GK.', tip: 'Enroll in foundation courses specifically for RMS.', milestone: 'Mock Test Readiness' },
+    { number: 2, title: 'CET Exam', duration: 'December', description: 'Clear the Common Entrance Test for RMS.', tip: 'Focus on high accuracy in Intelligence section.', milestone: 'Written Clear' },
+    { number: 3, title: 'Interview & Medical', duration: 'Feb-March', description: 'Clear the final interview and medical examination.', tip: 'Develop good general awareness.', milestone: 'Final Merit List' }
+  ],
+  rimc: [
+    { number: 1, title: 'Intensive Prep', duration: 'Class 6 & 7', description: 'Master English, Mathematics, and General Knowledge.', tip: 'RIMC subjective English and Math require rigorous writing practice.', milestone: 'Subjective Readiness' },
+    { number: 2, title: 'Written Exam', duration: 'June/December', description: 'Clear the All India Entrance for RIMC.', tip: 'Speed and neat handwriting are crucial.', milestone: 'Written Clear' },
+    { number: 3, title: 'Viva-Voce & Medical', duration: 'Post-Written', description: 'Clear the rigorous viva-voce and medical checkup.', tip: 'Exhibit officer-like qualities early on.', milestone: 'Final Merit List' }
+  ],
   nda: [
     {
       number: 1,
@@ -599,7 +617,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
     doc.save(`Sankalp_Roadmap_${career.id}.pdf`);
   };
 
-  const categories = ["All", "Defence", "Research", "Engineering", "Medical", "Law", "Civil Services"];
+  const categories = ["All", "Defence", "Research", "Engineering", "Medical", "Law", "Civil Services", "School Entrances (Class 5th-9th)"];
 
   const filteredCareers = careers.filter(c => {
     const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase()) || c.shortDesc.toLowerCase().includes(searchTerm.toLowerCase());
@@ -795,7 +813,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
 
         {/* Search Bar */}
         <div className="max-w-xl mx-auto relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-400 w-5 h-5" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-400 w-5 h-5 font-semibold" />
           <input 
             type="text" 
             placeholder="Search careers, exams, or streams..." 
@@ -850,7 +868,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
               {detailedCareer.icon}
             </div>
             <div>
-              <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest border border-gold-500/30 px-2 py-0.5 rounded-full mb-2 inline-block">
+              <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest border border-gold-500/30 px-2 py-0.5 rounded-full mb-2 inline-block font-semibold">
                 {translatedCareer.category} {language === 'hi' ? "" : "Sector"}
               </span>
               <h2 className="text-2xl md:text-4xl font-black text-lightyellow-100 uppercase tracking-tight">{translatedCareer.title}</h2>
@@ -962,8 +980,8 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
                   <Download className="w-4 h-4" />
                   <span>{language === 'hi' ? "पीडीएफ गाइड डाउनलोड करें" : "Download PDF Guide"}</span>
                 </button>
-                <div className="flex items-center gap-2 bg-navy-900 border border-gold-500/20 px-3.5 py-2.5 rounded-xl text-xs font-mono text-gold-400">
-                  <Clock className="w-4 h-4 text-gold-400 animate-spin" style={{ animationDuration: '6s' }} />
+                <div className="flex items-center gap-2 bg-navy-900 border border-gold-500/20 px-3.5 py-2.5 rounded-xl text-xs font-mono text-gold-400 font-semibold">
+                  <Clock className="w-4 h-4 text-gold-400 animate-spin font-semibold" style={{ animationDuration: '6s' }} />
                   <span>{language === 'hi' ? "कस्टम शिक्षण पथ" : "Custom Learning Path"}</span>
                 </div>
               </div>
@@ -1006,7 +1024,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
                           <ChevronRight
                             className={`w-4 h-4 text-gold-400/50 shrink-0 transition-transform ${
                               isActive ? "translate-x-1" : "group-hover:translate-x-0.5"
-                            }`}
+                            } font-semibold`}
                           />
                         </div>
                         <p className="text-[10px] text-lightyellow-200/60 font-mono font-semibold">
@@ -1048,7 +1066,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
                             {activeStepObj.title}
                           </h4>
                         </div>
-                        <div className="p-2 bg-gold-500/10 rounded-xl border border-gold-500/20 text-gold-400 shrink-0">
+                        <div className="p-2 bg-gold-500/10 rounded-xl border border-gold-500/20 text-gold-400 shrink-0 font-semibold">
                           <Award className="w-5 h-5" />
                         </div>
                       </div>
@@ -1067,7 +1085,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
                         {/* Tactical Insider Tips */}
                         <div className="bg-gold-500/5 border border-gold-500/20 rounded-xl p-4 space-y-1.5">
                           <h5 className="text-[11px] font-mono uppercase tracking-widest text-gold-400 font-bold flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" /> {language === 'hi' ? "संकल्प विशेषज्ञ सलाह" : "SANKALP SPECIALIST ADVICE"}
+                            <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse font-semibold" /> {language === 'hi' ? "संकल्प विशेषज्ञ सलाह" : "SANKALP SPECIALIST ADVICE"}
                           </h5>
                           <p className="text-xs text-lightyellow-200/90 italic leading-relaxed">
                             "{activeStepObj.tip}"
@@ -1077,7 +1095,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
 
                       {/* Milestone Achievement */}
                       <div className="flex items-center gap-3 bg-navy-950 border border-gold-500/20 p-3.5 rounded-xl">
-                        <CheckCircle className="w-5 h-5 text-gold-400 shrink-0" />
+                        <CheckCircle className="w-5 h-5 text-gold-400 shrink-0 font-semibold" />
                         <div>
                           <span className="text-[9px] font-mono uppercase text-lightyellow-200/50">
                             {language === 'hi' ? "आवश्यक सत्यापन मील का पत्थर" : "Required Verification Milestone"}
@@ -1131,7 +1149,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
                   <div className="p-3 bg-navy-950 rounded-xl border border-gold-500/20 group-hover:scale-110 transition-transform">
                     {career.icon}
                   </div>
-                  <span className="text-[10px] font-mono text-gold-400 uppercase tracking-wider bg-navy-950 px-2 py-1 rounded border border-gold-500/20">
+                  <span className="text-[10px] font-mono text-gold-400 uppercase tracking-wider bg-navy-950 px-2 py-1 rounded border border-gold-500/20 font-semibold">
                     {career.category}
                   </span>
                 </div>

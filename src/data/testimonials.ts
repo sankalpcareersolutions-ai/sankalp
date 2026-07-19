@@ -19,7 +19,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Army",
     achievement: "Cleared CDS & SSB (21 SSB Bhopal)",
-    content: "Sankalp's SSB prep module turned my dream into reality. The simulated psychological tests and mock interview sessions with seasoned army veterans gave me the confidence to stand out and earn my recommendation.",
+    content: "Career Counselling Hub's SSB prep module turned my dream into reality. The simulated psychological tests and mock interview sessions with seasoned army veterans gave me the confidence to stand out and earn my recommendation.",
     rating: 5
   },
   {
@@ -30,7 +30,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "ISRO",
     achievement: "Passed ISRO ICRB Exam & Technical Panel Interview",
-    content: "Transitioning into space technology requires a very specific skillset. The Rocket Propulsion and Satellite Systems courses on Sankalp bridged the gap between my engineering syllabus and ISRO’s exact screening requirements.",
+    content: "Transitioning into space technology requires a very specific skillset. The Rocket Propulsion and Satellite Systems courses on Career Counselling Hub bridged the gap between my engineering syllabus and ISRO’s exact screening requirements.",
     rating: 5
   },
   {
@@ -41,7 +41,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "BARC",
     achievement: "Cleared BARC OCES Chemical Engineering Entry",
-    content: "Sankalp’s intensive nuclear physics concepts and sample mock interviews with retired BARC Panel members helped me demystify the rigorous technical interview. Truly a consolidated solution for national security careers.",
+    content: "Career Counselling Hub’s intensive nuclear physics concepts and sample mock interviews with retired BARC Panel members helped me demystify the rigorous technical interview. Truly a consolidated solution for national security careers.",
     rating: 5
   },
   {
@@ -52,7 +52,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "BSF",
     achievement: "Cleared UPSC CAPF (AC) Exam & Medical/Physical Board",
-    content: "CAPF is distinct from the regular army in terms of security dynamics. SANKALP provided localized material on internal security, border management, and physical conditioning that was crucial for my interview stage.",
+    content: "CAPF is distinct from the regular army in terms of security dynamics. Career Counselling Hub provided localized material on internal security, border management, and physical conditioning that was crucial for my interview stage.",
     rating: 5
   },
   {
@@ -63,7 +63,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "DRDO",
     achievement: "Cleared DRDO CEPTAM Entry & Tech Assessment",
-    content: "The dedicated lectures on RADAR systems and defense electronics on SANKALP prepared me flawlessly for the CEPTAM exams. SANKALP is an absolute boon for civilian entrants looking to serve in DRDO labs.",
+    content: "The dedicated lectures on RADAR systems and defense electronics on Career Counselling Hub prepared me flawlessly for the CEPTAM exams. Career Counselling Hub is an absolute boon for civilian entrants looking to serve in DRDO labs.",
     rating: 5
   },
   {
@@ -74,7 +74,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Air Force",
     achievement: "Cleared AFCAT & AFSB (1 AFSB Dehradun)",
-    content: "Sankalp's CPSS (Computerised Pilot Selection System) guidance was the closest representation of the actual assessment I found anywhere. Their mentorship program is top-notch and highly accurate.",
+    content: "Career Counselling Hub's CPSS (Computerised Pilot Selection System) guidance was the closest representation of the actual assessment I found anywhere. Their mentorship program is top-notch and highly accurate.",
     rating: 5
   },
   {
@@ -85,7 +85,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "CRPF",
     achievement: "Cleared SSC CPO (Sub-Inspector Rank 14)",
-    content: "In paramilitary entries, physical endurance is evaluated of the same order as written aptitude. Sankalp's diet planning and physical evaluation frameworks saved me months of directionless training.",
+    content: "In paramilitary entries, physical endurance is evaluated of the same order as written aptitude. Career Counselling Hub's diet planning and physical evaluation frameworks saved me months of directionless training.",
     rating: 4
   },
   {
@@ -107,7 +107,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Military Engineer Services (MES)",
     achievement: "Cleared MES Officer Recruitment Scheme",
-    content: "Civilian roles like MES don't have the standard SSB, but the technical legal round evaluates knowledge of military contracts and real estate laws. Sankalp's structured courses cover these niche areas perfectly.",
+    content: "Civilian roles like MES don't have the standard SSB, but the technical legal round evaluates knowledge of military contracts and real estate laws. Career Counselling Hub's structured courses cover these niche areas perfectly.",
     rating: 5
   },
   {
@@ -118,7 +118,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Navy",
     achievement: "Selected in Navy Executive (Logistics) Direct Entry",
-    content: "Sankalp's mock personality interviews mapped closely with actual Navy requirements in Bangalore. The mentors are retired commanders themselves, ensuring simulated evaluations are authentic.",
+    content: "Career Counselling Hub's mock personality interviews mapped closely with actual Navy requirements in Bangalore. The mentors are retired commanders themselves, ensuring simulated evaluations are authentic.",
     rating: 5
   },
   {
@@ -129,7 +129,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "CRPF",
     achievement: "Cleared UPSC CAPF with Rank 8",
-    content: "SANKALP’s current affairs analysis for security-related issues is the best. The essay writing corrections from experienced mentors helped me secure high marks in general studies Paper-II.",
+    content: "Career Counselling Hub’s current affairs analysis for security-related issues is the best. The essay writing corrections from experienced mentors helped me secure high marks in general studies Paper-II.",
     rating: 5
   },
   {
@@ -140,7 +140,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "PXE (DRDO Lab)",
     achievement: "Cleared RAC DRDO Direct Recruitment",
-    content: "DRDO’s Recruitment & Assessment Centre (RAC) expects high-level Core Metallurgical knowledge. The metallurgy-focused modules and test series on SANKALP helped me brush up on exact industry and defence application concepts.",
+    content: "DRDO’s Recruitment & Assessment Centre (RAC) expects high-level Core Metallurgical knowledge. The metallurgy-focused modules and test series on Career Counselling Hub helped me brush up on exact industry and defence application concepts.",
     rating: 5
   },
   {
@@ -151,7 +151,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "BARC",
     achievement: "Cleared BARC Diploma in Radiological Physics Entry",
-    content: "The radiation physics course on Sankalp is exceptional. I spent months searching for decent preparation resources online, but SANKALP had a curated repository and active Q&A forum that sorted everything.",
+    content: "The radiation physics course on Career Counselling Hub is exceptional. I spent months searching for decent preparation resources online, but Career Counselling Hub had a curated repository and active Q&A forum that sorted everything.",
     rating: 4
   },
   {
@@ -162,7 +162,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "VSSC (ISRO Lab)",
     achievement: "Placed in Avionics & Navigation Internship",
-    content: "I landed an internship at Vikram Sarabhai Space Centre through guidance from SANKALP. The application template reviews and guidance from former ISRO directors on my CV were game changers.",
+    content: "I landed an internship at Vikram Sarabhai Space Centre through guidance from Career Counselling Hub. The application template reviews and guidance from former ISRO directors on my CV were game changers.",
     rating: 5
   },
   {
@@ -173,7 +173,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "Assam Rifles",
     achievement: "Cleared SSC CPO - Assam Rifles Sub-Division",
-    content: "Sankalp's specific strategy webinars on insurgency in Northeast India and physical preparedness rules for high-altitude fitness levels were the major factors in my successful selection.",
+    content: "Career Counselling Hub's specific strategy webinars on insurgency in Northeast India and physical preparedness rules for high-altitude fitness levels were the major factors in my successful selection.",
     rating: 5
   },
   {
@@ -184,7 +184,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Army",
     achievement: "Cleared TGC (Technical Graduate Course) & SSB",
-    content: "As an engineering graduate, SSB can feel overwhelmingly psychological. SANKALP showed me how to pitch my technical projects under Officer-Like Qualities (OLQs) during the interview board.",
+    content: "As an engineering graduate, SSB can feel overwhelmingly psychological. Career Counselling Hub showed me how to pitch my technical projects under Officer-Like Qualities (OLQs) during the interview board.",
     rating: 4
   },
   {
@@ -195,7 +195,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Directorate General of Quality Assurance (DGQA)",
     achievement: "Cleared UPSC DGQA Direct Entry exam",
-    content: "DGQA civilian roles require expertise in engineering materials testing and ballistic standards. SANKALP provided precise notes on military quality assurance protocols, making the preparation highly targeted.",
+    content: "DGQA civilian roles require expertise in engineering materials testing and ballistic standards. Career Counselling Hub provided precise notes on military quality assurance protocols, making the preparation highly targeted.",
     rating: 5
   },
   {
@@ -206,7 +206,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "IPRC (ISRO Lab)",
     achievement: "Cleared ISRO Propulsion Complex selection",
-    content: "My technical interview focused deeply on cryogenic propellants. SANKALP’s aerospace engineering concepts masterclass taught by ex-ISRO scientists was critical in preparing me for these questions.",
+    content: "My technical interview focused deeply on cryogenic propellants. Career Counselling Hub’s aerospace engineering concepts masterclass taught by ex-ISRO scientists was critical in preparing me for these questions.",
     rating: 5
   },
   {
@@ -217,7 +217,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "BSF",
     achievement: "Cleared BSF SI (Tech/Water Wing) Examination",
-    content: "Water Wing exams of BSF are extremely niche. The marine diesel engine and navigation fundamentals course on SANKALP was a hidden gem, absolutely perfect for this selection process.",
+    content: "Water Wing exams of BSF are extremely niche. The marine diesel engine and navigation fundamentals course on Career Counselling Hub was a hidden gem, absolutely perfect for this selection process.",
     rating: 5
   },
   {
@@ -228,7 +228,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "VECC (BARC Division)",
     achievement: "Selected in Variable Energy Cyclotron Centre",
-    content: "Thanks to SANKALP's particle accelerators courses and technical advisory forums, I was able to successfully clear the VECC examination and technical panel interview without any external coaching.",
+    content: "Thanks to Career Counselling Hub's particle accelerators courses and technical advisory forums, I was able to successfully clear the VECC examination and technical panel interview without any external coaching.",
     rating: 5
   },
   {
@@ -239,7 +239,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Army",
     achievement: "Cleared NDA & SSB (NDA 149 Course)",
-    content: "Entering NDA right after school can be incredibly daunting. SANKALP's foundation course on NDA math, general studies, and OLQ personality grooming built exactly the profile SSB was searching for.",
+    content: "Entering NDA right after school can be incredibly daunting. Career Counselling Hub's foundation course on NDA math, general studies, and OLQ personality grooming built exactly the profile SSB was searching for.",
     rating: 5
   },
   {
@@ -250,7 +250,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "DRDO",
     achievement: "Cleared CEPTAM Technical Division Recruitment",
-    content: "With SANKALP, I was able to streamline my preparation for the computer science screening test. The dynamic practice portal on SANKALP lets you gauge performance against hundreds of other aspirants.",
+    content: "With Career Counselling Hub, I was able to streamline my preparation for the computer science screening test. The dynamic practice portal on Career Counselling Hub lets you gauge performance against hundreds of other aspirants.",
     rating: 4
   },
   {
@@ -261,7 +261,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "SSB",
     achievement: "Rank 19 in UPSC CAPF 2024 Exam",
-    content: "A major part of the Assistant Commandant preparation is expressing clear strategic positions in the physical interview. Sankalp’s personality sessions under former IPS officers made raw confidence natural.",
+    content: "A major part of the Assistant Commandant preparation is expressing clear strategic positions in the physical interview. Career Counselling Hub’s personality sessions under former IPS officers made raw confidence natural.",
     rating: 5
   },
   {
@@ -272,7 +272,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Cantonment Boards (Defence Estates)",
     achievement: "Cleared IDES Junior Group-A Recruitment",
-    content: "Civilian administration in Cantonment boards involves complex land laws and city planning codes. Sankalp’s IDES preparatory course is the only one in India covering this with such rich clarity.",
+    content: "Civilian administration in Cantonment boards involves complex land laws and city planning codes. Career Counselling Hub’s IDES preparatory course is the only one in India covering this with such rich clarity.",
     rating: 5
   },
   {
@@ -283,7 +283,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "DLRL (DRDO Lab)",
     achievement: "Direct PhD R&D Entry in Electronics",
-    content: "Sankalp’s webinars with electronics and telemetry heads helped me structure my PhD defense thesis in a way that aligned with DLRL's active electronic warfare research mandates.",
+    content: "Career Counselling Hub’s webinars with electronics and telemetry heads helped me structure my PhD defense thesis in a way that aligned with DLRL's active electronic warfare research mandates.",
     rating: 4
   },
   {
@@ -294,7 +294,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "CISF",
     achievement: "SSC CPO Central Industrial Security Force Select",
-    content: "Airport and industrial asset protection profiles are different from border security. Sankalp's webinars on modern security architecture and physical screening tactics were extremely helpful.",
+    content: "Airport and industrial asset protection profiles are different from border security. Career Counselling Hub's webinars on modern security architecture and physical screening tactics were extremely helpful.",
     rating: 5
   },
   {
@@ -305,7 +305,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Army",
     achievement: "Cleared NCC Special Entry to SSB Recommendation",
-    content: "NCC entry has no written exam, meaning SSB is the sole deciding factor. I practiced thematic apperception tests and group planning exercises daily on SANKALP under continuous mentor review.",
+    content: "NCC entry has no written exam, meaning SSB is the sole deciding factor. I practiced thematic apperception tests and group planning exercises daily on Career Counselling Hub under continuous mentor review.",
     rating: 5
   },
   {
@@ -316,7 +316,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Ordnance Factory Board (OFB)",
     achievement: "Cleared OFB Technical Cadre Entrance",
-    content: "I prepared manufacturing tech and ballistics mechanics through SANKALP. The interactive tests provided detailed feedback on weak areas, ensuring I cleared OFB with great scores.",
+    content: "I prepared manufacturing tech and ballistics mechanics through Career Counselling Hub. The interactive tests provided detailed feedback on weak areas, ensuring I cleared OFB with great scores.",
     rating: 4
   },
   {
@@ -327,7 +327,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "ITR (ISRO/DRDO Range)",
     achievement: "Selected as Range Telemetry Operator",
-    content: "Working at Integrated Test Range (ITR) requires real-time signal processing proficiency. The mentorship group of SANKALP with retired DRDO scientists was directly instrumental in clearing the interview.",
+    content: "Working at Integrated Test Range (ITR) requires real-time signal processing proficiency. The mentorship group of Career Counselling Hub with retired DRDO scientists was directly instrumental in clearing the interview.",
     rating: 5
   },
   {
@@ -338,7 +338,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Navy",
     achievement: "Selected in INET Naval Aviator Selection",
-    content: "Personalized mentorship sessions at SANKALP helped me realize where my spatial awareness answers fell short. The corrective techniques taught by former pilots on the portal are golden.",
+    content: "Personalized mentorship sessions at Career Counselling Hub helped me realize where my spatial awareness answers fell short. The corrective techniques taught by former pilots on the portal are golden.",
     rating: 5
   },
   {
@@ -349,7 +349,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "BARC (IGCAR)",
     achievement: "Cleared BARC Scientific Officer Selection",
-    content: "Fast Breeder Reactor physics has complex fundamentals that are skipped in generic college. SANKALP’s reactor technology lectures with retired BARC directors prepared me for the core technical board.",
+    content: "Fast Breeder Reactor physics has complex fundamentals that are skipped in generic college. Career Counselling Hub’s reactor technology lectures with retired BARC directors prepared me for the core technical board.",
     rating: 5
   },
   {
@@ -360,7 +360,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "ITBP",
     achievement: "Cleared ITBP SI (GD) and Physical Assessment",
-    content: "ITBP is deployed in extremely cold environments, and preparation under SANKALP's High Altitude physical conditioning routines made sure I was fit enough to pass the grueling training standards.",
+    content: "ITBP is deployed in extremely cold environments, and preparation under Career Counselling Hub's High Altitude physical conditioning routines made sure I was fit enough to pass the grueling training standards.",
     rating: 4
   },
   {
@@ -371,7 +371,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Military Engineer Services (MES)",
     achievement: "Cleared UPSC Assistant Director (Civil)",
-    content: "Military structural guidelines and terrain engineering are rare topics. SANKALP had accurate, organized learning pathways that gave me an early advantage in this highly selective examination.",
+    content: "Military structural guidelines and terrain engineering are rare topics. Career Counselling Hub had accurate, organized learning pathways that gave me an early advantage in this highly selective examination.",
     rating: 5
   },
   {
@@ -382,7 +382,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "ISRO (URSC)",
     achievement: "U R Rao Satellite Centre R&D Direct Intake",
-    content: "Getting into satellite integration requires advanced knowledge of thermal controls and electromagnetics. SANKALP’s technical test Series replicated URSC's screening perfectly.",
+    content: "Getting into satellite integration requires advanced knowledge of thermal controls and electromagnetics. Career Counselling Hub’s technical test Series replicated URSC's screening perfectly.",
     rating: 5
   },
   {
@@ -393,7 +393,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "BSF",
     achievement: "Cleared SSC CPO BSF Radio Telecom Select",
-    content: "I recommend SANKALP's telecom physics course to anyone preparing for the telecom divisions in paramilitary forces. The conceptual lessons and short formula sheets are incredibly useful.",
+    content: "I recommend Career Counselling Hub's telecom physics course to anyone preparing for the telecom divisions in paramilitary forces. The conceptual lessons and short formula sheets are incredibly useful.",
     rating: 5
   },
   {
@@ -403,8 +403,8 @@ export const testimonials: Testimonial[] = [
     location: "Gurugram, Haryana",
     sector: "Defence Services",
     subSector: "Indian Air Force",
-    achievement: "Former AFSB President - now SANKALP Advisor",
-    content: "As a mentor, I have watched SANKALP curate high-fidelity preparation materials that capture actual testing standards. The students trained on this platform demonstrate superior planning and spatial awareness skills.",
+    achievement: "Former AFSB President - now Career Counselling Hub Advisor",
+    content: "As a mentor, I have watched Career Counselling Hub curate high-fidelity preparation materials that capture actual testing standards. The students trained on this platform demonstrate superior planning and spatial awareness skills.",
     rating: 5
   },
   {
@@ -415,7 +415,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Defence Research & Development Service (DRDS)",
     achievement: "Cleared DRDS Senior Tech Officer Entry",
-    content: "Navigating civilian service exams inside the defense network can be highly unstructured. SANKALP brought a clean timeline and organized mock tests that turned the tide for me.",
+    content: "Navigating civilian service exams inside the defense network can be highly unstructured. Career Counselling Hub brought a clean timeline and organized mock tests that turned the tide for me.",
     rating: 4
   },
   {
@@ -426,7 +426,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "CISF",
     achievement: "Rank 12 in CAPF (AC) Women Category",
-    content: "Sankalp’s focused physical masterclasses and mock interview schedules with senior security specialists gave me the exact insights required to score 100+ marks in physical viva.",
+    content: "Career Counselling Hub’s focused physical masterclasses and mock interview schedules with senior security specialists gave me the exact insights required to score 100+ marks in physical viva.",
     rating: 5
   },
   {
@@ -437,7 +437,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "DRDO (DRDE Lab)",
     achievement: "Direct JSO Recruitment Exam Cleared",
-    content: "The specific bio-defense and toxicology notes on SANKALP were exceptionally helpful for the DRDE laboratory screening. A highly consolidated and useful platform.",
+    content: "The specific bio-defense and toxicology notes on Career Counselling Hub were exceptionally helpful for the DRDE laboratory screening. A highly consolidated and useful platform.",
     rating: 5
   },
   {
@@ -448,7 +448,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "ISRO (SAC)",
     achievement: "Space Applications Centre Specialist (SAC)",
-    content: "Remote sensing and synthetic aperture radar technologies are complex topics. Sankalp’s Space Tech syllabus is compiled by retired SAC veterans, which makes it unmatched in depth.",
+    content: "Remote sensing and synthetic aperture radar technologies are complex topics. Career Counselling Hub’s Space Tech syllabus is compiled by retired SAC veterans, which makes it unmatched in depth.",
     rating: 5
   },
   {
@@ -459,7 +459,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Army (OTA)",
     achievement: "Selected in OTA Chennai via CDS Entry",
-    content: "The CDS general knowledge course on SANKALP is unbelievably effective. Their subject matter experts analyze past trends with surgical precision, reducing prep time by half.",
+    content: "The CDS general knowledge course on Career Counselling Hub is unbelievably effective. Their subject matter experts analyze past trends with surgical precision, reducing prep time by half.",
     rating: 5
   },
   {
@@ -470,7 +470,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "DRDO (DMSRDE Lab)",
     achievement: "Secured Project Internship in Polymers & Ballistics",
-    content: "Landing a material science internship at DMSRDE was made possible by Sankalp's technical CV reviews. The platform connects you with active civilian scientists who guide you through every process.",
+    content: "Landing a material science internship at DMSRDE was made possible by Career Counselling Hub's technical CV reviews. The platform connects you with active civilian scientists who guide you through every process.",
     rating: 5
   },
   {
@@ -481,7 +481,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Ordnance Factory Board (Gun Carriage Factory)",
     achievement: "Passed OFB Special Apprentices Group",
-    content: "Sankalp's mechanical blueprint readings and metallurgy video lectures made complex engineering problems clear. Safe to say, SANKALP is the absolute top platform for defense civilian jobs.",
+    content: "Career Counselling Hub's mechanical blueprint readings and metallurgy video lectures made complex engineering problems clear. Safe to say, Career Counselling Hub is the absolute top platform for defense civilian jobs.",
     rating: 4
   },
   {
@@ -492,7 +492,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "ITBP",
     achievement: "Cleared SSC CPO ITBP Command selection",
-    content: "I recommend SANKALP to all young jawans and direct entrants who want to clear departmental exams. The mock tests and current security situation summaries are incredibly accurate.",
+    content: "I recommend Career Counselling Hub to all young jawans and direct entrants who want to clear departmental exams. The mock tests and current security situation summaries are incredibly accurate.",
     rating: 5
   },
   {
@@ -503,7 +503,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Army",
     achievement: "Cleared SSB (31 SSB Kapurthala)",
-    content: "The psychological tests (TAT, WAT, SRT) on SANKALP have timed timers that simulate the exact stress of SSB. Knowing how to write short, positive responses under time limits made all the difference.",
+    content: "The psychological tests (TAT, WAT, SRT) on Career Counselling Hub have timed timers that simulate the exact stress of SSB. Knowing how to write short, positive responses under time limits made all the difference.",
     rating: 5
   },
   {
@@ -514,7 +514,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "BARC",
     achievement: "Direct entry exam cleared for Reactor Diagnostics",
-    content: "Nuclear instrumentation modules on SANKALP are stellar. Navigating the selection syllabus was simplified because everything is placed in beautiful, responsive video formats.",
+    content: "Nuclear instrumentation modules on Career Counselling Hub are stellar. Navigating the selection syllabus was simplified because everything is placed in beautiful, responsive video formats.",
     rating: 5
   },
   {
@@ -525,7 +525,7 @@ export const testimonials: Testimonial[] = [
     sector: "Paramilitary",
     subSector: "Assam Rifles",
     achievement: "Cleared Sub-Inspector Departmental Exams",
-    content: "Sankalp’s courses outline border security and narcotics challenges beautifully. The lessons are relevant both for direct recruitment and internal departmental screening exams.",
+    content: "Career Counselling Hub’s courses outline border security and narcotics challenges beautifully. The lessons are relevant both for direct recruitment and internal departmental screening exams.",
     rating: 4
   },
   {
@@ -536,7 +536,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Civilian",
     subSector: "Joint Cipher Bureau (JCB)",
     achievement: "Appointed in Cryptography & Cybersecurity Internship",
-    content: "Sankalp’s defensive coding and military network security lectures are of world-class standard. The course material directly lined up with the interview panel's technical expectations.",
+    content: "Career Counselling Hub’s defensive coding and military network security lectures are of world-class standard. The course material directly lined up with the interview panel's technical expectations.",
     rating: 5
   },
   {
@@ -547,7 +547,7 @@ export const testimonials: Testimonial[] = [
     sector: "Defence Services",
     subSector: "Indian Air Force (Aeronautical Branch)",
     achievement: "Cleared AFCAT Engineering Knowledge Test (EKT)",
-    content: "Preparing EKT electronics can be frustrating as reference books are dry. SANKALP's communication and radar masterclasses with animated physics layouts made the exam layout incredibly simple to ace.",
+    content: "Preparing EKT electronics can be frustrating as reference books are dry. Career Counselling Hub's communication and radar masterclasses with animated physics layouts made the exam layout incredibly simple to ace.",
     rating: 5
   },
   {
@@ -558,7 +558,7 @@ export const testimonials: Testimonial[] = [
     sector: "Scientific / R&D",
     subSector: "ISRO (LEOS Lab)",
     achievement: "Secured Lunar Optics Research Internship",
-    content: "My dream of working with planetary payloads came alive through SANKALP. The optical sensor engineering study guide and direct guidance sessions from ex-LEOS staff helped me secure this rare opportunity.",
+    content: "My dream of working with planetary payloads came alive through Career Counselling Hub. The optical sensor engineering study guide and direct guidance sessions from ex-LEOS staff helped me secure this rare opportunity.",
     rating: 5
   }
 ];
