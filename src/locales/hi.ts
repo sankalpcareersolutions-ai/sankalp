@@ -11,7 +11,7 @@ export default {
     nav_appointment: "काउंसलिंग बुक करें",
     nav_courses: "अकादमी कोर्स",
     nav_placements: "प्लेसमेंट",
-    nav_testimonials: "सफलता की कहानियाँ",
+    nav_testimonials: "समीक्षा और प्रतिक्रिया",
     nav_study_material: "अध्ययन सामग्री"
   },
   home: {

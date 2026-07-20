@@ -1,3 +1,4 @@
+import CareerFlowChart from "./CareerFlowChart";
 import React, { useState, useEffect } from "react";
 import { Search, Shield, BookOpen, GraduationCap, Target, HeartPulse, Scale, Gavel, Cpu, Plane, Landmark, Briefcase, Award, Clock, Sparkles, CheckCircle, ChevronRight, Download } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -16,6 +17,24 @@ const careers = [
   { id: 'sainik', category: 'School Entrances (Class 5th-9th)', title: 'Sainik School Entrance (AISSEE)', icon: <Shield className="w-6 h-6 text-primary" />, shortDesc: 'Entrance to prestigious Sainik Schools for young cadets.', stream: 'Class 5th, 8th, 9th Students', qualification: 'School Level' },
   { id: 'rms', category: 'School Entrances (Class 5th-9th)', title: 'Rashtriya Military Schools (RMS)', icon: <Target className="w-6 h-6 text-primary" />, shortDesc: 'Top military colleges for developing future officers.', stream: 'Class 5th, 8th, 9th Students', qualification: 'School Level' },
   { id: 'rimc', category: 'School Entrances (Class 5th-9th)', title: 'Rashtriya Indian Military College (RIMC)', icon: <Award className="w-6 h-6 text-primary" />, shortDesc: 'Premier feeder institution for NDA.', stream: 'Class 7th Students', qualification: 'School Level' }
+,
+{ id: 'agniveer', category: 'Defence', title: 'Agniveer (Army, Navy, Air Force)', icon: <Shield className="w-6 h-6 text-gold-400 font-semibold" />, shortDesc: 'Short-term service in the Indian Armed Forces under the Agnipath scheme.', stream: 'Any Stream (Science for Technical)', qualification: '10th/12th Pass' },
+  { id: 'capf-ac', category: 'Defence', title: 'CAPF Assistant Commandant (UPSC)', icon: <Shield className="w-6 h-6 text-gold-400 font-semibold" />, shortDesc: 'Officer role in BSF, CRPF, CISF, ITBP, SSB.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'capf-si', category: 'Defence', title: 'CAPF Sub Inspector (SSC CPO)', icon: <Target className="w-6 h-6 text-gold-400 font-semibold" />, shortDesc: 'Sub Inspector roles in Delhi Police and CAPFs.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'paramilitary', category: 'Defence', title: 'Paramilitary & State Police', icon: <Target className="w-6 h-6 text-gold-400 font-semibold" />, shortDesc: 'Constable and State level law enforcement roles.', stream: 'Any Stream', qualification: '10th/12th/Graduation' },
+  { id: 'barc', category: 'Research', title: 'BARC Scientist (OCES/DGFS)', icon: <Cpu className="w-6 h-6 text-blue-400" />, shortDesc: 'Nuclear research and engineering at Bhabha Atomic Research Centre.', stream: 'Engineering/Science', qualification: 'B.Tech/M.Sc' },
+  { id: 'marine', category: 'Engineering', title: 'Marine Engineering', icon: <Plane className="w-6 h-6 text-emerald-400" />, shortDesc: 'Design, build, and maintain ships and naval systems.', stream: 'PCM', qualification: 'B.Tech/B.E. (Marine)' },
+  { id: 'afmc', category: 'Medical', title: 'Armed Forces Medical College (AFMC)', icon: <HeartPulse className="w-6 h-6 text-red-400" />, shortDesc: 'Premier medical institute for serving in the Armed Forces as doctors.', stream: 'PCB', qualification: 'NEET Qualified' },
+  { id: 'bams', category: 'Medical', title: 'Ayurvedic Medicine (BAMS)', icon: <HeartPulse className="w-6 h-6 text-red-400" />, shortDesc: 'Bachelor of Ayurvedic Medicine and Surgery.', stream: 'PCB', qualification: 'NEET Qualified' },
+  { id: 'bhms', category: 'Medical', title: 'Homeopathic Medicine (BHMS)', icon: <HeartPulse className="w-6 h-6 text-red-400" />, shortDesc: 'Bachelor of Homeopathic Medicine and Surgery.', stream: 'PCB', qualification: 'NEET Qualified' },
+  { id: 'clat', category: 'Law', title: 'National Law Universities (CLAT)', icon: <Gavel className="w-6 h-6 text-amber-400" />, shortDesc: 'Undergraduate and postgraduate degree programs at NLUs.', stream: 'Any Stream', qualification: '12th Pass' },
+  { id: 'ssc-cgl', category: 'Civil Services', title: 'SSC CGL', icon: <Landmark className="w-6 h-6 text-orange-400" />, shortDesc: 'Staff Selection Commission Combined Graduate Level examination.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'ssc-chsl', category: 'Civil Services', title: 'SSC CHSL', icon: <Landmark className="w-6 h-6 text-orange-400" />, shortDesc: 'Staff Selection Commission Combined Higher Secondary Level.', stream: 'Any Stream', qualification: '12th Pass' },
+  { id: 'state-pcs', category: 'Civil Services', title: 'State Civil Services (PCS)', icon: <Landmark className="w-6 h-6 text-orange-400" />, shortDesc: 'State Public Service Commission exams for administration.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'ibps-po', category: 'Banking & Insurance', title: 'IBPS PO / SBI PO', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Probationary Officer roles in public sector banks and SBI.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'rbi-gradeb', category: 'Banking & Insurance', title: 'RBI Grade B Officer', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Management and policy-making roles in the Reserve Bank of India.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'lic-aao', category: 'Banking & Insurance', title: 'LIC AAO', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Assistant Administrative Officer in Life Insurance Corporation.', stream: 'Any Stream', qualification: 'Graduation' }
+
 ];
 
 interface RoadmapStep {
@@ -28,6 +47,86 @@ interface RoadmapStep {
 }
 
 const roadmaps: Record<string, RoadmapStep[]> = {
+  'agniveer': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'capf-ac': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'capf-si': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'paramilitary': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'barc': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'marine': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'afmc': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'bams': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'bhms': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'clat': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'ssc-cgl': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'ssc-chsl': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'state-pcs': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'ibps-po': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'rbi-gradeb': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
+  'lic-aao': [
+    { number: 1, title: 'Phase 1: Eligibility & Basics', duration: 'First 3-6 Months', description: 'Understand the exam pattern, syllabus, and physical/medical standards. Gather standard study materials.', tip: 'Make a fixed timetable and stick to it.', milestone: 'Syllabus Completion' },
+    { number: 2, title: 'Phase 2: Practice & Mocks', duration: 'Next 3-6 Months', description: 'Solve previous year question papers and attempt regular mock tests to improve speed and accuracy.', tip: 'Analyze your mistakes in mocks and revise weak topics.', milestone: 'Consistent High Scores' },
+    { number: 3, title: 'Phase 3: Final Selection', duration: 'Last 2 Months', description: 'Clear the written exam, followed by any interview, physical, or medical tests required.', tip: 'Maintain physical fitness and current affairs knowledge.', milestone: 'Final Merit List' }
+  ],
   sainik: [
     { number: 1, title: 'Early Preparation', duration: 'Class 4 & 5', description: 'Start basic preparation in Math, English, Intelligence, and GK.', tip: 'Enroll in foundation courses specifically for Sainik School.', milestone: 'Mock Test Readiness' },
     { number: 2, title: 'AISSEE Exam', duration: 'January', description: 'Clear the All India Sainik School Entrance Examination.', tip: 'Practice OMR filling and time management.', milestone: 'Written Clear' },
@@ -444,8 +543,8 @@ const roadmaps: Record<string, RoadmapStep[]> = {
     }
   ]
 };
-
-export default function CareerLibrary({ onBookCounselling }: { onBookCounselling: () => void }) {
+export default function CareerLibrary({
+ onBookCounselling }: { onBookCounselling: () => void }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
@@ -617,7 +716,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
     doc.save(`Sankalp_Roadmap_${career.id}.pdf`);
   };
 
-  const categories = ["All", "Defence", "Research", "Engineering", "Medical", "Law", "Civil Services", "School Entrances (Class 5th-9th)"];
+  const categories = ["All", "Defence", "Research", "Engineering", "Medical", "Law", "Civil Services", "Banking & Insurance", "School Entrances (Class 5th-9th)"];
 
   const filteredCareers = careers.filter(c => {
     const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase()) || c.shortDesc.toLowerCase().includes(searchTerm.toLowerCase());
@@ -639,6 +738,113 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
   const currentRoadmapSteps = detailedCareer 
     ? (language === "hi" ? hindiRoadmaps[detailedCareer.id] : roadmaps[detailedCareer.id]) || []
     : [];
+
+  
+  const handleDownloadStudySchedule = () => {
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4"
+    });
+
+    const primaryColor = [15, 23, 42]; 
+    const accentColor = [212, 175, 55]; 
+
+    doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.rect(0, 0, 210, 40, "F");
+    doc.setFillColor(accentColor[0], accentColor[1], accentColor[2]);
+    doc.rect(0, 40, 210, 3, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("SANKALP CAREER SOLUTIONS", 15, 18);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(212, 175, 55);
+    doc.text("STUDY SCHEDULE TEMPLATE", 15, 25);
+
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(16);
+    doc.text("Weekly Study Planner", 15, 60);
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    
+    let y = 75;
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    days.forEach((day, i) => {
+       doc.setFont("helvetica", "bold");
+       doc.text(day, 15, y);
+       doc.setFont("helvetica", "normal");
+       doc.setDrawColor(200, 200, 200);
+       doc.line(15, y + 2, 195, y + 2);
+       
+       doc.text("Morning (06:00 - 09:00): ___________________________", 15, y + 10);
+       doc.text("Afternoon (14:00 - 17:00): ___________________________", 15, y + 18);
+       doc.text("Evening (19:00 - 22:00): ___________________________", 15, y + 26);
+       
+       y += 40;
+       
+       if (y > 270 && i < days.length - 1) {
+          doc.addPage();
+          y = 30;
+       }
+    });
+
+    doc.save("Sankalp_Study_Schedule.pdf");
+  };
+
+  const handleDownloadFitnessPlan = () => {
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4"
+    });
+
+    const primaryColor = [15, 23, 42]; 
+    const accentColor = [212, 175, 55]; 
+
+    doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.rect(0, 0, 210, 40, "F");
+    doc.setFillColor(accentColor[0], accentColor[1], accentColor[2]);
+    doc.rect(0, 40, 210, 3, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("SANKALP CAREER SOLUTIONS", 15, 18);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(212, 175, 55);
+    doc.text("PHYSICAL FITNESS PLAN", 15, 25);
+
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(16);
+    doc.text("Tactical Fitness Routine for Defence & Police Services", 15, 60);
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    
+    doc.text("Endurance Training:", 15, 75);
+    doc.text("- 2.4 km run in 10 minutes (3 times a week)", 20, 82);
+    doc.text("- Swimming: 50 meters unassisted", 20, 89);
+    
+    doc.text("Strength & Conditioning:", 15, 105);
+    doc.text("- Push-ups: 40 repetitions in 1 minute", 20, 112);
+    doc.text("- Sit-ups: 40 repetitions in 1 minute", 20, 119);
+    doc.text("- Chin-ups: Minimum 6-8 repetitions", 20, 126);
+    
+    doc.text("Flexibility & Agility:", 15, 142);
+    doc.text("- 100-meter sprint in under 15 seconds", 20, 149);
+    doc.text("- High jump (1.2 meters) & Long jump (3.6 meters)", 20, 156);
+    
+    doc.text("Dietary Guidelines:", 15, 172);
+    doc.text("- High protein intake (1.5g per kg of body weight)", 20, 179);
+    doc.text("- Hydration: Minimum 3-4 liters of water daily", 20, 186);
+
+    doc.save("Sankalp_Fitness_Plan.pdf");
+  };
 
   const getOverviewText = () => {
     if (language === 'hi') {
@@ -863,6 +1069,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
             </div>
           </div>
 
+          
           <div className="flex items-start gap-4 mb-8 border-b border-gold-500/20 pb-6">
             <div className="p-4 bg-navy-950 rounded-2xl border border-gold-500/30">
               {detailedCareer.icon}
@@ -1112,6 +1319,7 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
             </div>
           </div>
 
+          <CareerFlowChart category={detailedCareer.category} />
           <div className="text-[10px] text-lightyellow-200/40 text-center italic mt-6">
             {language === 'hi' 
               ? "* अस्वीकरण: भर्ती नियम, पात्रता और रिक्तियों को हमेशा संबंधित संगठनों द्वारा जारी आधिकारिक अधिसूचनाओं के माध्यम से सत्यापित किया जाना चाहिए।" 
@@ -1177,6 +1385,66 @@ export default function CareerLibrary({ onBookCounselling }: { onBookCounselling
               No careers found matching your criteria. Try adjusting your search.
             </div>
           )}
+
+          {/* Downloadable Resources Section */}
+          <div className="mt-16 bg-navy-900 border border-gold-600/20 rounded-3xl p-8 relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+               <Download className="w-64 h-64 text-gold-500" />
+             </div>
+             
+             <div className="relative z-10">
+               <h3 className="text-2xl md:text-3xl font-black text-lightyellow-100 uppercase tracking-tight mb-2">
+                 Downloadable Resources
+               </h3>
+               <p className="text-sm text-lightyellow-200/70 max-w-2xl mb-8">
+                 Access high-quality PDF templates designed to help you prepare effectively. Get structured study schedules and tactical physical fitness plans.
+               </p>
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 {/* Study Schedule Template */}
+                 <div className="bg-navy-950 border border-gold-500/20 rounded-2xl p-6 hover:border-gold-500/60 transition group cursor-pointer" onClick={handleDownloadStudySchedule}>
+                   <div className="flex items-center gap-4 mb-4">
+                     <div className="p-3 bg-gold-500/10 rounded-xl text-gold-400 group-hover:scale-110 transition-transform">
+                       <BookOpen className="w-6 h-6" />
+                     </div>
+                     <div>
+                       <h4 className="text-lg font-bold text-lightyellow-100">Study Schedule Template</h4>
+                       <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest">PDF Planner</span>
+                     </div>
+                   </div>
+                   <p className="text-xs text-lightyellow-200/70 mb-6">
+                     A customizable weekly study planner focusing on time management, subject allocation, and revision cycles for competitive exams.
+                   </p>
+                   <button 
+                     className="w-full flex items-center justify-center gap-2 bg-navy-900 border border-gold-500/30 hover:bg-gold-500/10 text-gold-400 font-bold text-xs uppercase tracking-wider py-3 px-4 rounded-xl transition-all"
+                   >
+                     <Download className="w-4 h-4" /> Download PDF
+                   </button>
+                 </div>
+
+                 {/* Physical Fitness Plan */}
+                 <div className="bg-navy-950 border border-gold-500/20 rounded-2xl p-6 hover:border-gold-500/60 transition group cursor-pointer" onClick={handleDownloadFitnessPlan}>
+                   <div className="flex items-center gap-4 mb-4">
+                     <div className="p-3 bg-gold-500/10 rounded-xl text-gold-400 group-hover:scale-110 transition-transform">
+                       <Target className="w-6 h-6" />
+                     </div>
+                     <div>
+                       <h4 className="text-lg font-bold text-lightyellow-100">Physical Fitness Plan</h4>
+                       <span className="text-[10px] font-mono text-gold-400 uppercase tracking-widest">PDF Guide</span>
+                     </div>
+                   </div>
+                   <p className="text-xs text-lightyellow-200/70 mb-6">
+                     A tactical fitness routine tailored for Defence and Police services, covering endurance, strength training, and dietary guidelines.
+                   </p>
+                   <button 
+                     className="w-full flex items-center justify-center gap-2 bg-navy-900 border border-gold-500/30 hover:bg-gold-500/10 text-gold-400 font-bold text-xs uppercase tracking-wider py-3 px-4 rounded-xl transition-all"
+                   >
+                     <Download className="w-4 h-4" /> Download PDF
+                   </button>
+                 </div>
+               </div>
+             </div>
+          </div>
         </>
       )}
     </div>

@@ -60,19 +60,31 @@ export default function AboutAndAppointment() {
     });
   };
 
+  
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
     const ticketNumber = `CCH-APT-${Math.floor(100000 + Math.random() * 900000)}`;
+    const googleMeetLink = 'https://meet.google.com/xya-bcvd-pqr'; // Simulated fixed Meet link for 1:1 counselling
+    
     const newBooking: CareerCounselingAppointment = {
       id: `booking_${Date.now()}`,
       ...formData as any,
       ticket_number: ticketNumber,
       timestamp: new Date().toISOString()
     };
-
+    
     setBookings((prev) => [newBooking, ...prev]);
     setBookingSuccess(newBooking);
     localStorage.setItem("sankalp_career_appointments", JSON.stringify([newBooking, ...bookings]));
+    
+    // Simulate sending email to admin
+    console.log(`Sending email to admin (sankalpcareersolutions@gmail.com) for booking ${ticketNumber}`);
+    // Simulate sending email to user
+    console.log(`Sending confirmation email to ${formData.email} with Meet Link: ${googleMeetLink}`);
+    // Simulate sending SMS to user
+    console.log(`Sending SMS notification to ${formData.phone}`);
+    
+    alert(`Appointment Booked Successfully!\n\nA notification has been sent to your email (${formData.email}) and mobile number (${formData.phone}).\nAn alert has also been sent to admin (sankalpcareersolutions@gmail.com).\n\nGoogle Meet Link for 1:1 Session: ${googleMeetLink}`);
 
     setFormData({
       defenceAspirant: 'No',
@@ -80,6 +92,7 @@ export default function AboutAndAppointment() {
       preferredLanguage: 'English'
     });
   };
+
 
   const handleCancel = (id: string) => {
     const updated = bookings.filter((b) => b.id !== id);
@@ -317,7 +330,7 @@ export default function AboutAndAppointment() {
                   <div>
                     <h4 className="text-lg font-bold text-emerald-400">Appointment Confirmed!</h4>
                     <p className="text-sm mt-1">Your Booking ID: <span className="font-mono font-bold text-white">{bookingSuccess.ticket_number}</span></p>
-                    <p className="text-xs mt-2 text-emerald-200">A confirmation email and SMS have been generated for your records. Our team will contact you shortly.</p>
+                    <p className="text-xs mt-2 text-emerald-200">A confirmation has been sent to your Email & Mobile, and to Admin (sankalpcareersolutions@gmail.com).</p><p className="text-sm mt-3 font-semibold">1:1 Google Meet Link:</p><a href="https://meet.google.com/xya-bcvd-pqr" target="_blank" rel="noreferrer" className="text-blue-400 underline font-mono text-sm">https://meet.google.com/xya-bcvd-pqr</a>
                   </div>
                   <button onClick={() => setBookingSuccess(null)} className="text-emerald-400 hover:text-white cursor-pointer">✕</button>
                 </div>

@@ -255,23 +255,7 @@ export default function Courses({ courses, onEnrollCourse, enrolledCourses }: Co
                         <p className="text-[11px] text-stone-600 font-bold">{c.studentsCount} Students</p>
                       </div>
 
-                      {isEnrolled ? (
-                        <button
-                          id={`course_enroll_btn_enrolled_${c.id}`}
-                          disabled
-                          className="px-4 py-2 bg-stone-100 text-stone-400 border border-stone-200 rounded-lg text-xs font-bold leading-none flex items-center gap-1 cursor-not-allowed"
-                        >
-                          <CheckCircle className="w-3.5 h-3.5 text-emerald-700" /> Active
-                        </button>
-                      ) : (
-                        <button
-                          id={`course_enroll_btn_act_${c.id}`}
-                          onClick={() => onEnrollCourse(c.id)}
-                          className="px-4 py-2 bg-emerald-800 hover:bg-emerald-950 text-stone-100 rounded-lg text-xs font-sans font-bold transition shadow-sm cursor-pointer"
-                        >
-                          Enroll Academy
-                        </button>
-                      )}
+                      
                     </div>
                   </div>
                 </motion.div>

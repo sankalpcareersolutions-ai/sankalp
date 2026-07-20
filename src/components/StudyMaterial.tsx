@@ -3,6 +3,16 @@ import { BookOpen, FileText, Download, Calendar, Activity, ChevronRight, Newspap
 import { motion } from 'motion/react';
 
 export default function StudyMaterial() {
+  const handleDownload = (bookTitle) => {
+    const element = document.createElement('a');
+    const file = new Blob(["This is a sample document for " + bookTitle], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = bookTitle.replace(/\s+/g, '_') + '.txt';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   const [activeTab, setActiveTab] = useState<'quizzes' | 'news' | 'schedules' | 'ebooks'>('quizzes');
 
   return (
@@ -117,7 +127,7 @@ export default function StudyMaterial() {
                 <h3 className="font-poppins font-bold text-lg text-white flex-1">{book.title}</h3>
                 <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/10">
                   <span className="text-xs text-white/50">{book.format} • {book.size}</span>
-                  <button className="flex items-center gap-1 text-sm text-primary hover:text-white transition-colors">
+                  <button onClick={() => handleDownload(book.title)} className="flex items-center gap-1 text-sm text-primary hover:text-white transition-colors cursor-pointer">
                     <Download className="w-4 h-4" /> Download
                   </button>
                 </div>

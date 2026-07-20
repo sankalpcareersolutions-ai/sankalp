@@ -143,7 +143,7 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
           
           {/* Scrollable container for 50 testimonials */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[800px] overflow-y-auto p-4 custom-scrollbar">
-            {testimonials.slice(0, 50).map((t, i) => (
+            {testimonials.slice(0, 35).map((t, i) => (
               <div key={i} className="glass-card p-8 rounded-[16px] flex flex-col bg-white">
                 <div className="flex text-secondary mb-4">
                   {[...Array(t.rating)].map((_, s) => <span key={s}>★</span>)}

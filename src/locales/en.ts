@@ -11,7 +11,7 @@ export default {
     nav_appointment: "Book Counselling",
     nav_courses: "Academy Courses",
     nav_placements: "Placements",
-    nav_testimonials: "Call of Honor",
+    nav_testimonials: "Reviews & Feedback",
     nav_study_material: "Study Material"
   },
   home: {
