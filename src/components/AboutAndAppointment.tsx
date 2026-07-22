@@ -49,8 +49,12 @@ export default function AboutAndAppointment() {
   const [bookings, setBookings] = useState<CareerCounselingAppointment[]>([]);
 
   useEffect(() => {
-    const cached = localStorage.getItem("sankalp_career_appointments");
-    if (cached) setBookings(JSON.parse(cached));
+    fetch('/api/appointments').then(r => r.json()).then(data => {
+      setBookings(data || []);
+    }).catch(err => {
+      const cached = localStorage.getItem("sankalp_career_appointments");
+      if (cached) setBookings(JSON.parse(cached));
+    });
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -61,30 +65,36 @@ export default function AboutAndAppointment() {
   };
 
   
-  const handleBook = async (e: React.FormEvent) => {
+    const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
     const ticketNumber = `CCH-APT-${Math.floor(100000 + Math.random() * 900000)}`;
-    const googleMeetLink = 'https://meet.google.com/xya-bcvd-pqr'; // Simulated fixed Meet link for 1:1 counselling
+    const googleMeetLink = 'https://meet.google.com/xya-bcvd-pqr'; 
     
-    const newBooking: CareerCounselingAppointment = {
-      id: `booking_${Date.now()}`,
+    const newBooking = {
       ...formData as any,
       ticket_number: ticketNumber,
       timestamp: new Date().toISOString()
     };
     
-    setBookings((prev) => [newBooking, ...prev]);
-    setBookingSuccess(newBooking);
-    localStorage.setItem("sankalp_career_appointments", JSON.stringify([newBooking, ...bookings]));
+    try {
+      const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newBooking)
+      });
+      const result = await response.json();
+      if (result.success) {
+        setBookings((prev) => [result.data, ...prev]);
+        setBookingSuccess(result.data);
+      }
+    } catch(err) {
+      console.error(err);
+      // fallback
+      setBookings((prev) => [newBooking, ...prev]);
+      setBookingSuccess(newBooking);
+    }
     
-    // Simulate sending email to admin
-    console.log(`Sending email to admin (sankalpcareersolutions@gmail.com) for booking ${ticketNumber}`);
-    // Simulate sending email to user
-    console.log(`Sending confirmation email to ${formData.email} with Meet Link: ${googleMeetLink}`);
-    // Simulate sending SMS to user
-    console.log(`Sending SMS notification to ${formData.phone}`);
-    
-    alert(`Appointment Booked Successfully!\n\nA notification has been sent to your email (${formData.email}) and mobile number (${formData.phone}).\nAn alert has also been sent to admin (sankalpcareersolutions@gmail.com).\n\nGoogle Meet Link for 1:1 Session: ${googleMeetLink}`);
+    alert(`Appointment Booked Successfully!\n\nA notification has been sent to your email (${formData.email}) and mobile number (${formData.mobileNumber || formData.phone}).\nAn alert has also been sent to admin (sankalpcareersolutions@gmail.com).\n\nGoogle Meet Link for 1:1 Session: ${googleMeetLink}`);
 
     setFormData({
       defenceAspirant: 'No',

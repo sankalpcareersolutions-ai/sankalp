@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import SEODashboard from "./SEODashboard";
 import { Shield, Lock, Calendar, Clock, User, Mail, Phone, LogOut } from "lucide-react";
 import { motion } from "motion/react";
 import { CareerCounselingAppointment } from "./AboutAndAppointment";
@@ -15,6 +16,7 @@ export default function AdminPanel() {
 
   const [appointments, setAppointments] = useState<CareerCounselingAppointment[]>([]);
   const [loadingData, setLoadingData] = useState(false);
+  const [activeAdminTab, setActiveAdminTab] = useState("appointments");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -37,28 +39,24 @@ export default function AdminPanel() {
     }
   }, [session]);
 
+  
   const fetchAppointments = async () => {
     setLoadingData(true);
     try {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select('*')
-        .order('timestamp', { ascending: false });
-
-      if (error) {
-        // Fallback to local storage if table doesn't exist yet
-        const cached = localStorage.getItem("sankalp_founder_appointments");
-        if (cached) setAppointments(JSON.parse(cached));
-      } else if (data) {
-        setAppointments(data as CareerCounselingAppointment[]);
+      const response = await fetch('/api/appointments');
+      const data = await response.json();
+      if (data && Array.isArray(data)) {
+         setAppointments(data);
       }
-    } catch (error: any) {
+    } catch (error) {
+      console.error(error);
       const cached = localStorage.getItem("sankalp_founder_appointments");
       if (cached) setAppointments(JSON.parse(cached));
     } finally {
       setLoadingData(false);
     }
   };
+
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,7 +184,27 @@ export default function AdminPanel() {
         </button>
       </div>
 
-      <div className="bg-navy-900/50 border border-gold-500/20 rounded-2xl p-6">
+      
+      <div className="flex gap-4 border-b border-gold-500/20 pb-4">
+        <button 
+          onClick={() => setActiveAdminTab("appointments")}
+          className={`px-4 py-2 font-mono text-sm font-bold uppercase tracking-wider rounded-lg transition-colors ${activeAdminTab === 'appointments' ? 'bg-gold-500 text-navy-950' : 'text-gold-400 hover:bg-navy-800'}`}
+        >
+          Appointments
+        </button>
+        <button 
+          onClick={() => setActiveAdminTab("seo")}
+          className={`px-4 py-2 font-mono text-sm font-bold uppercase tracking-wider rounded-lg transition-colors ${activeAdminTab === 'seo' ? 'bg-gold-500 text-navy-950' : 'text-gold-400 hover:bg-navy-800'}`}
+        >
+          SEO Automation
+        </button>
+      </div>
+      
+      {activeAdminTab === "seo" ? (
+         <SEODashboard />
+      ) : (
+
+<div className="bg-navy-900/50 border border-gold-500/20 rounded-2xl p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-lightyellow-100 font-sans">Counseling Appointments</h2>
           <button 
@@ -231,7 +249,7 @@ export default function AdminPanel() {
                         <Mail className="w-3 h-3 text-gold-400 font-semibold" /> {appt.email}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-lightyellow-100/80">
-                        <Phone className="w-3 h-3 text-gold-400 font-semibold" /> {appt.phone}
+                        <Phone className="w-3 h-3 text-gold-400 font-semibold" /> {appt.mobileNumber || appt.phone}
                       </div>
                     </td>
                     <td className="p-4 space-y-1">
@@ -260,6 +278,7 @@ export default function AdminPanel() {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

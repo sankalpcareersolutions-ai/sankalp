@@ -1,0 +1,13 @@
+[
+  {
+    "id": "1784741960961",
+    "timestamp": "2026-07-22T17:39:20.961Z",
+    "ticket_number": "TKT-4972",
+    "name": "Rahul Test",
+    "email": "rahul@test.com",
+    "phone": "9876543210",
+    "slot_date": "2026-07-25",
+    "slot_time": "14:00",
+    "focus_area": "NDA Prep"
+  }
+]

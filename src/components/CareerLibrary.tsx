@@ -33,8 +33,15 @@ const careers = [
   { id: 'state-pcs', category: 'Civil Services', title: 'State Civil Services (PCS)', icon: <Landmark className="w-6 h-6 text-orange-400" />, shortDesc: 'State Public Service Commission exams for administration.', stream: 'Any Stream', qualification: 'Graduation' },
   { id: 'ibps-po', category: 'Banking & Insurance', title: 'IBPS PO / SBI PO', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Probationary Officer roles in public sector banks and SBI.', stream: 'Any Stream', qualification: 'Graduation' },
   { id: 'rbi-gradeb', category: 'Banking & Insurance', title: 'RBI Grade B Officer', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Management and policy-making roles in the Reserve Bank of India.', stream: 'Any Stream', qualification: 'Graduation' },
-  { id: 'lic-aao', category: 'Banking & Insurance', title: 'LIC AAO', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Assistant Administrative Officer in Life Insurance Corporation.', stream: 'Any Stream', qualification: 'Graduation' }
+  { id: 'lic-aao', category: 'Banking & Insurance', title: 'LIC AAO', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Assistant Administrative Officer in Life Insurance Corporation.', stream: 'Any Stream', qualification: 'Graduation' },
 
+
+  { id: 'tgt-pgt', category: 'Teaching', title: 'TGT/PGT Teacher', icon: <BookOpen className="w-6 h-6 text-purple-400" />, shortDesc: 'Trained Graduate & Post Graduate Teachers in Gov/Private schools.', stream: 'Any Stream', qualification: 'Graduation + B.Ed' },
+  { id: 'ugc-net', category: 'Teaching', title: 'University Professor (UGC NET)', icon: <BookOpen className="w-6 h-6 text-purple-400" />, shortDesc: 'Lectureship and Junior Research Fellowship at universities.', stream: 'Any Stream', qualification: 'Post Graduation' },
+  { id: 'ctet', category: 'Teaching', title: 'CTET / State TET', icon: <BookOpen className="w-6 h-6 text-purple-400" />, shortDesc: 'Central/State Eligibility Test for primary and upper primary teachers.', stream: 'Any Stream', qualification: '12th/Graduation + D.El.Ed/B.Ed' },
+  { id: 'rrb-ntpc', category: 'Railway Exams', title: 'RRB NTPC', icon: <Train className="w-6 h-6 text-blue-400" />, shortDesc: 'Non-Technical Popular Categories like Station Master, Clerk, Goods Guard.', stream: 'Any Stream', qualification: '12th/Graduation' },
+  { id: 'rrb-alp', category: 'Railway Exams', title: 'RRB Assistant Loco Pilot (ALP)', icon: <Train className="w-6 h-6 text-blue-400" />, shortDesc: 'Drive and maintain trains for Indian Railways.', stream: 'Engineering/ITI', qualification: '10th + ITI / Diploma / B.Tech' },
+  { id: 'rrb-je', category: 'Railway Exams', title: 'RRB Junior Engineer (JE)', icon: <Train className="w-6 h-6 text-blue-400" />, shortDesc: 'Supervise maintenance and construction in railways.', stream: 'Engineering', qualification: 'Diploma/B.Tech' },
 ];
 
 interface RoadmapStep {
@@ -716,7 +723,7 @@ export default function CareerLibrary({
     doc.save(`Sankalp_Roadmap_${career.id}.pdf`);
   };
 
-  const categories = ["All", "Defence", "Research", "Engineering", "Medical", "Law", "Civil Services", "Banking & Insurance", "School Entrances (Class 5th-9th)"];
+  const categories = ["All", "Defence", "Research", "Engineering", "Medical", "Law", "Civil Services", "Banking & Insurance", "Teaching", "Railway Exams", "School Entrances (Class 5th-9th)"];
 
   const filteredCareers = careers.filter(c => {
     const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase()) || c.shortDesc.toLowerCase().includes(searchTerm.toLowerCase());

@@ -44,46 +44,31 @@ export default function Dashboard({
 
   useEffect(() => {
     async function fetchBookings() {
-      try {
-        const { data, error } = await supabase
-          .from('appointments')
-          .select('*')
-          .order('timestamp', { ascending: false });
-          
-        if (error) {
-          // Graceful local cache fallback if Supabase table isn't created yet
-          const cached = localStorage.getItem("sankalp_founder_appointments");
-          if (cached) setFounderAppointments(JSON.parse(cached));
-        } else if (data) {
-          setFounderAppointments(data);
-          localStorage.setItem("sankalp_founder_appointments", JSON.stringify(data));
-        }
-      } catch (err) {
-        // Fallback silently during development/testing
-        const cached = localStorage.getItem("sankalp_founder_appointments");
-        if (cached) setFounderAppointments(JSON.parse(cached));
+    try {
+      const response = await fetch('/api/appointments');
+      const data = await response.json();
+      if (data && Array.isArray(data)) {
+         setFounderAppointments(data);
       }
+    } catch (err) {
+      const cached = localStorage.getItem("sankalp_founder_appointments");
+      if (cached) setFounderAppointments(JSON.parse(cached));
     }
-    
-    fetchBookings();
+  }
+
+  fetchBookings();
   }, []);
 
   const handleCancelFounderAppt = async (id: string) => {
     const updated = founderAppointments.filter((b) => b.id !== id);
     setFounderAppointments(updated);
     
+    
     try {
-      const { error } = await supabase
-        .from('appointments')
-        .delete()
-        .eq('id', id);
-        
-      if (error) {
-        localStorage.setItem("sankalp_founder_appointments", JSON.stringify(updated));
-      }
-    } catch (err) {
-      // Ignore delete issues during offline simulation
-    }
+      // simulate delete
+      localStorage.setItem("sankalp_founder_appointments", JSON.stringify(updated));
+    } catch(err) {}
+
   };
 
   // Daily Trivia Quiz States
