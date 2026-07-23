@@ -1,6 +1,6 @@
 import CareerFlowChart from "./CareerFlowChart";
 import React, { useState, useEffect } from "react";
-import { Search, Shield, BookOpen, GraduationCap, Target, HeartPulse, Scale, Gavel, Cpu, Plane, Landmark, Briefcase, Award, Clock, Sparkles, CheckCircle, ChevronRight, Download } from "lucide-react";
+import { Search, Shield, BookOpen, GraduationCap, Target, HeartPulse, Scale, Gavel, Cpu, Plane, Landmark, Briefcase, Award, Clock, Sparkles, CheckCircle, ChevronRight, Download , Train } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { jsPDF } from "jspdf";
 import { hindiCareers, hindiRoadmaps } from "../data/hindiRoadmaps";
@@ -35,6 +35,13 @@ const careers = [
   { id: 'rbi-gradeb', category: 'Banking & Insurance', title: 'RBI Grade B Officer', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Management and policy-making roles in the Reserve Bank of India.', stream: 'Any Stream', qualification: 'Graduation' },
   { id: 'lic-aao', category: 'Banking & Insurance', title: 'LIC AAO', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Assistant Administrative Officer in Life Insurance Corporation.', stream: 'Any Stream', qualification: 'Graduation' },
 
+  { id: 'ibps-clerk', category: 'Banking & Insurance', title: 'IBPS Clerk', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Clerical cadre roles in various public sector banks across India.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'sbi-clerk', category: 'Banking & Insurance', title: 'SBI Clerk (Junior Associate)', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Customer support and sales roles in State Bank of India branches.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'rrb-clerk', category: 'Banking & Insurance', title: 'IBPS RRB Clerk (Office Assistant)', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Clerical and administrative roles in Regional Rural Banks.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'rbi-assistant', category: 'Banking & Insurance', title: 'RBI Assistant', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Clerical roles supporting the operations of the Reserve Bank of India.', stream: 'Any Stream', qualification: 'Graduation' },
+  { id: 'lic-assistant', category: 'Banking & Insurance', title: 'LIC Assistant', icon: <Briefcase className="w-6 h-6 text-teal-400" />, shortDesc: 'Clerical duties including cashier, single window operator at LIC branches.', stream: 'Any Stream', qualification: 'Graduation' },
+
+
 
   { id: 'tgt-pgt', category: 'Teaching', title: 'TGT/PGT Teacher', icon: <BookOpen className="w-6 h-6 text-purple-400" />, shortDesc: 'Trained Graduate & Post Graduate Teachers in Gov/Private schools.', stream: 'Any Stream', qualification: 'Graduation + B.Ed' },
   { id: 'ugc-net', category: 'Teaching', title: 'University Professor (UGC NET)', icon: <BookOpen className="w-6 h-6 text-purple-400" />, shortDesc: 'Lectureship and Junior Research Fellowship at universities.', stream: 'Any Stream', qualification: 'Post Graduation' },
@@ -42,6 +49,8 @@ const careers = [
   { id: 'rrb-ntpc', category: 'Railway Exams', title: 'RRB NTPC', icon: <Train className="w-6 h-6 text-blue-400" />, shortDesc: 'Non-Technical Popular Categories like Station Master, Clerk, Goods Guard.', stream: 'Any Stream', qualification: '12th/Graduation' },
   { id: 'rrb-alp', category: 'Railway Exams', title: 'RRB Assistant Loco Pilot (ALP)', icon: <Train className="w-6 h-6 text-blue-400" />, shortDesc: 'Drive and maintain trains for Indian Railways.', stream: 'Engineering/ITI', qualification: '10th + ITI / Diploma / B.Tech' },
   { id: 'rrb-je', category: 'Railway Exams', title: 'RRB Junior Engineer (JE)', icon: <Train className="w-6 h-6 text-blue-400" />, shortDesc: 'Supervise maintenance and construction in railways.', stream: 'Engineering', qualification: 'Diploma/B.Tech' },
+
+
 ];
 
 interface RoadmapStep {
