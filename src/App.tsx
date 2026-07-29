@@ -1,17 +1,17 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import Navbar from "./components/Navbar";
-const Home = lazy(() => import("./components/Home"));
-const Dashboard = lazy(() => import("./components/Dashboard"));
-const Mentorship = lazy(() => import("./components/Mentorship"));
-const CareerLibrary = lazy(() => import("./components/CareerLibrary"));
-const Courses = lazy(() => import("./components/Courses"));
-const Placements = lazy(() => import("./components/Placements"));
-const TestimonialsPage = lazy(() => import("./components/TestimonialsPage"));
-const AboutAndAppointment = lazy(() => import("./components/AboutAndAppointment"));
-const SovereignExams = lazy(() => import("./components/SovereignExams"));
-const AdminPanel = lazy(() => import("./components/AdminPanel"));
-const StudyMaterial = lazy(() => import("./components/StudyMaterial"));
+const Home = lazy(() => import("./components/Home").catch(err => { window.location.reload(); return { default: () => null }; }));
+const Dashboard = lazy(() => import("./components/Dashboard").catch(err => { window.location.reload(); return { default: () => null }; }));
+const Mentorship = lazy(() => import("./components/Mentorship").catch(err => { window.location.reload(); return { default: () => null }; }));
+const CareerLibrary = lazy(() => import("./components/CareerLibrary").catch(err => { window.location.reload(); return { default: () => null }; }));
+const Courses = lazy(() => import("./components/Courses").catch(err => { window.location.reload(); return { default: () => null }; }));
+const Placements = lazy(() => import("./components/Placements").catch(err => { window.location.reload(); return { default: () => null }; }));
+const TestimonialsPage = lazy(() => import("./components/TestimonialsPage").catch(err => { window.location.reload(); return { default: () => null }; }));
+const AboutAndAppointment = lazy(() => import("./components/AboutAndAppointment").catch(err => { window.location.reload(); return { default: () => null }; }));
+const SovereignExams = lazy(() => import("./components/SovereignExams").catch(err => { window.location.reload(); return { default: () => null }; }));
+const AdminPanel = lazy(() => import("./components/AdminPanel").catch(err => { window.location.reload(); return { default: () => null }; }));
+const StudyMaterial = lazy(() => import("./components/StudyMaterial").catch(err => { window.location.reload(); return { default: () => null }; }));
 import { Course, Mentor, Internship, UserStats, ExamAnnouncement } from "./types";
 import { initialCourses, mentors, initialInternships } from "./data/portalData";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -45,7 +45,7 @@ const defaultAnnouncements: ExamAnnouncement[] = [
     read: true,
   }
 ];
-import { Compass, Shield, Award, Users, BookOpen, GraduationCap, HeartHandshake, ShieldCheck, Mail } from "lucide-react";
+import {  Compass, Shield, Award, Users, BookOpen, GraduationCap, HeartHandshake, ShieldCheck, Mail , Phone } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import logoImg from "./assets/images/sankalp_epic_logo_1780997195913.png";
 
@@ -539,11 +539,15 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
             <h4 className="text-sm font-poppins font-extrabold tracking-wider uppercase text-secondary">Contact Us</h4>
             <ul className="space-y-2 text-sm font-bold text-white/80">
               <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-secondary font-semibold" /> +91-8528335708
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-secondary font-semibold text-xs flex items-center justify-center font-mono">WA:</span> +91-8528335708
+              </li>
+              <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-secondary font-semibold" /> sankalpcareersolutions@gmail.com
               </li>
-              
-              
-              <li className="flex items-center gap-2 mt-2">
+              <li className="flex items-center gap-2 mt-2"> 
                  <a href="https://www.careercounsellinghub.com" className="text-secondary hover:underline">www.careercounsellinghub.com</a>
               </li>
             </ul>

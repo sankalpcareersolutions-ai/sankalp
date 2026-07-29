@@ -76,7 +76,7 @@ export default {
     col2_4: "15 Officer-Like Qualities (OLQ)",
     col3_title: "Administration",
     contact_email: "sankalpcareersolutions@gmail.com",
-    contact_phone: "Toll Free Cadet Line: 1800-SSB-SRVC",
+    contact_phone: "+91-8528335708",
     contact_address: "National Defense Cluster HQ, New Delhi",
     rights: "© {year} Career Counselling Hub. All rights reserved.",
     admin_access: "Admin Access",

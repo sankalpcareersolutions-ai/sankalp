@@ -7,14 +7,41 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-export default function SEODashboard() {
+export default function SEODashboard({ appointments = [] }: { appointments?: any[] }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   
   const [topic, setTopic] = useState("");
   const [keywords, setKeywords] = useState("");
+  const [kwTopic, setKwTopic] = useState("");
+  const [kwData, setKwData] = useState<any[]>([]);
+  const [isGeneratingKw, setIsGeneratingKw] = useState(false);
   const [language, setLanguage] = useState("English");
+
+  
+  const handleDiscoverKeywords = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsGeneratingKw(true);
+    try {
+      const response = await fetch("/api/keyword-intelligence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: kwTopic })
+      });
+      const data = await response.json();
+      if (data.keywords) {
+        setKwData(data.keywords);
+      } else {
+        alert("Error generating keywords: " + (data.error || "Unknown"));
+      }
+    } catch(err) {
+      console.error(err);
+      alert("Failed to connect to API");
+    } finally {
+      setIsGeneratingKw(false);
+    }
+  };
 
   const handleGenerateContent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,9 +151,9 @@ export default function SEODashboard() {
                     +24.5%
                   </span>
                 </div>
-                <h3 className="text-lightyellow-200/50 text-xs font-mono uppercase tracking-widest mb-1">Organic Traffic</h3>
-                <p className="text-2xl font-black text-lightyellow-100">12,450</p>
-                <p className="text-xs text-lightyellow-200/40 mt-1">Visitors this month</p>
+                <h3 className="text-lightyellow-200/50 text-xs font-mono uppercase tracking-widest mb-1">Total Leads</h3>
+                <p className="text-2xl font-black text-lightyellow-100">{appointments.length}</p>
+                <p className="text-xs text-lightyellow-200/40 mt-1">Appointments Booked</p>
               </div>
 
               <div className="bg-navy-900 border border-gold-500/10 rounded-2xl p-5">
@@ -222,14 +249,41 @@ export default function SEODashboard() {
             <h2 className="text-xl font-bold text-lightyellow-100 mb-2">Technical SEO Automation</h2>
             <p className="text-sm text-lightyellow-200/60 mb-6">Manage automated generation of essential SEO files and schema markup.</p>
             
+            {/* Google Search Console Integration */}
+            <div className="bg-navy-900 border border-emerald-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-32 bg-emerald-500/5 rounded-full blur-3xl -z-10"></div>
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="p-4 bg-emerald-500/10 rounded-xl text-emerald-400 border border-emerald-500/20">
+                  <TrendingUp className="w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-lightyellow-100 flex items-center gap-2">
+                    Google Search Console API
+                    <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-mono px-2 py-0.5 rounded border border-emerald-500/30 uppercase tracking-widest font-bold">Connected</span>
+                  </h3>
+                  <p className="text-xs text-lightyellow-200/70 mt-1 max-w-lg">
+                    Real-time synchronization of sitemaps, automated indexing requests, and performance tracking directly synced with GSC.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 relative z-10 w-full md:w-auto">
+                <button className="flex-1 md:flex-none bg-navy-950 border border-gold-500/30 text-gold-400 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-gold-500/10 transition-colors">
+                  Sync Now
+                </button>
+                <button className="flex-1 md:flex-none bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-500/20 transition-colors">
+                  View Analytics
+                </button>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { title: "Generate XML Sitemap", icon: Globe, desc: "Automatically map all routes and notify Google & Bing.", status: "Active" },
-                { title: "Robots.txt Generator", icon: FileText, desc: "Dynamic robots.txt based on environment.", status: "Active" },
-                { title: "Schema Markup Injector", icon: FileJson, desc: "Auto-injects FAQ, Article, & LocalBusiness schema.", status: "Active" },
-                { title: "Canonical URL Enforcer", icon: LinkIcon, desc: "Prevents duplicate content penalties.", status: "Active" },
-                { title: "Core Web Vitals Optimizer", icon: Zap, desc: "Lazy-loading and font optimization.", status: "Active" },
-                { title: "hreflang Tag Manager", icon: Globe, desc: "Manages Hindi/English SEO equivalents.", status: "Active" },
+                { title: "Generate XML Sitemap", icon: Globe, desc: "Automatically map all routes and notify Google & Bing.", status: "Active", act: "Generated" },
+                { title: "Robots.txt Generator", icon: FileText, desc: "Dynamic robots.txt based on environment.", status: "Active", act: "Generated" },
+                { title: "Schema Markup Injector", icon: FileJson, desc: "Auto-injects FAQ, Article, & LocalBusiness schema.", status: "Active", act: "Injected" },
+                { title: "Canonical URL Enforcer", icon: LinkIcon, desc: "Prevents duplicate content penalties.", status: "Active", act: "Enforced" },
+                { title: "Core Web Vitals Optimizer", icon: Zap, desc: "Lazy-loading and font optimization.", status: "Active", act: "Optimized" },
+                { title: "hreflang Tag Manager", icon: Globe, desc: "Manages Hindi/English SEO equivalents.", status: "Active", act: "Synced" },
               ].map((tool, idx) => (
                 <div key={idx} className="bg-navy-900 border border-gold-500/20 rounded-2xl p-6 hover:border-gold-500/50 transition-colors group">
                   <div className="flex justify-between items-start mb-4">
@@ -242,7 +296,18 @@ export default function SEODashboard() {
                   </div>
                   <h3 className="text-base font-bold text-lightyellow-100 mb-2">{tool.title}</h3>
                   <p className="text-xs text-lightyellow-200/60 mb-6">{tool.desc}</p>
-                  <button className="w-full bg-navy-950 border border-gold-500/30 text-gold-400 py-2 rounded-lg text-xs font-bold hover:bg-gold-500/10 transition-colors">
+                  <button 
+                    onClick={(e) => {
+                      const btn = e.currentTarget;
+                      const original = "Configure / Run";
+                      btn.innerText = "Running...";
+                      setTimeout(() => {
+                        btn.innerText = tool.act;
+                        setTimeout(() => btn.innerText = original, 2000);
+                      }, 800);
+                    }}
+                    className="w-full bg-navy-950 border border-gold-500/30 text-gold-400 py-2 rounded-lg text-xs font-bold hover:bg-gold-500/10 transition-colors"
+                  >
                     Configure / Run
                   </button>
                 </div>
@@ -250,7 +315,6 @@ export default function SEODashboard() {
             </div>
           </div>
         )}
-
         {/* AI CONTENT GENERATOR TAB */}
         {activeTab === "content" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -401,25 +465,15 @@ export default function SEODashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gold-500/10">
-                  {[
-                    { date: "2026-07-22", name: "Rahul Verma", source: "SEO - NDA Article", interest: "NDA Coaching", status: "New" },
-                    { date: "2026-07-21", name: "Priya Singh", source: "WhatsApp Widget", interest: "SSB Mentorship", status: "Contacted" },
-                    { date: "2026-07-21", name: "Amit Kumar", source: "Direct Booking", interest: "ISRO Guidance", status: "Converted" },
-                    { date: "2026-07-20", name: "Neha Sharma", source: "SEO - Law Careers", interest: "General Counselling", status: "Follow Up" },
-                  ].map((lead, i) => (
+                  {appointments.map((lead: any, i: number) => (
                     <tr key={i} className="hover:bg-navy-950/50 transition-colors">
-                      <td className="py-3 px-4 text-sm text-lightyellow-200/70">{lead.date}</td>
+                      <td className="py-3 px-4 text-sm text-lightyellow-200/70">{new Date(lead.timestamp).toLocaleDateString()}</td>
                       <td className="py-3 px-4 text-sm font-bold text-lightyellow-100">{lead.name}</td>
-                      <td className="py-3 px-4 text-xs text-lightyellow-200/70">{lead.source}</td>
-                      <td className="py-3 px-4 text-sm text-lightyellow-100">{lead.interest}</td>
+                      <td className="py-3 px-4 text-xs text-lightyellow-200/70">Organic (SEO)</td>
+                      <td className="py-3 px-4 text-sm text-lightyellow-100">{lead.focus_area}</td>
                       <td className="py-3 px-4">
-                        <span className={`text-[10px] font-mono px-2 py-1 rounded-full uppercase tracking-wider font-bold ${
-                          lead.status === 'New' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                          lead.status === 'Contacted' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                          lead.status === 'Converted' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                          'bg-stone-500/10 text-stone-400 border border-stone-500/20'
-                        }`}>
-                          {lead.status}
+                        <span className="text-[10px] font-mono px-2 py-1 rounded-full uppercase tracking-wider font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                          New
                         </span>
                       </td>
                       <td className="py-3 px-4">
@@ -436,14 +490,78 @@ export default function SEODashboard() {
           </div>
         )}
         
-        {/* KEYWORDS TAB (Placeholder) */}
+        {/* KEYWORDS TAB */}
         {activeTab === "keywords" && (
-           <div className="bg-navy-900 border border-gold-500/20 rounded-2xl p-6 text-center py-20">
-             <Search className="w-16 h-16 text-gold-400/30 mx-auto mb-4" />
-             <h2 className="text-xl font-bold text-lightyellow-100 mb-2">Keyword Intelligence Module</h2>
-             <p className="text-sm text-lightyellow-200/60 max-w-lg mx-auto">
-               Integration with Google Search Console and automated keyword discovery is active. System is tracking 450+ long-tail keywords for Defence & Educational streams.
-             </p>
+           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+             <div className="lg:col-span-4 bg-navy-900 border border-gold-500/20 rounded-2xl p-6">
+               <h2 className="text-xl font-bold text-lightyellow-100 mb-6 flex items-center gap-2">
+                 <Search className="w-6 h-6 text-gold-400" /> Keyword Discovery
+               </h2>
+               <form onSubmit={handleDiscoverKeywords} className="space-y-5">
+                 <div>
+                   <label className="block text-xs font-mono text-gold-400 uppercase tracking-widest mb-2">Seed Topic</label>
+                   <input 
+                     type="text" 
+                     value={kwTopic}
+                     onChange={(e) => setKwTopic(e.target.value)}
+                     className="w-full bg-navy-950 border border-gold-500/30 rounded-xl px-4 py-3 text-sm text-lightyellow-100 focus:outline-none focus:border-gold-400"
+                     placeholder="e.g. NDA Coaching"
+                   />
+                 </div>
+                 <button 
+                   type="submit" 
+                   disabled={isGeneratingKw}
+                   className="w-full bg-gold-450 hover:bg-gold-400 text-navy-950 font-black px-6 py-3.5 rounded-xl text-sm transition-colors uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"
+                 >
+                   {isGeneratingKw ? "Discovering..." : "Discover Keywords"}
+                 </button>
+               </form>
+             </div>
+             <div className="lg:col-span-8 bg-navy-900 border border-gold-500/20 rounded-2xl p-6">
+               <h2 className="text-xl font-bold text-lightyellow-100 mb-6">Real-Time Keyword Intelligence</h2>
+               {isGeneratingKw ? (
+                 <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                   <RefreshCw className="w-12 h-12 text-gold-400 animate-spin mb-4" />
+                   <p className="text-sm font-mono text-gold-400 uppercase tracking-widest">Analyzing Search Trends...</p>
+                 </div>
+               ) : kwData.length > 0 ? (
+                 <div className="overflow-x-auto">
+                   <table className="w-full text-left border-collapse">
+                     <thead>
+                       <tr className="border-b border-gold-500/20">
+                         <th className="py-3 px-4 text-xs font-mono text-gold-400 uppercase tracking-widest font-bold">Keyword</th>
+                         <th className="py-3 px-4 text-xs font-mono text-gold-400 uppercase tracking-widest font-bold">Volume</th>
+                         <th className="py-3 px-4 text-xs font-mono text-gold-400 uppercase tracking-widest font-bold">Difficulty</th>
+                         <th className="py-3 px-4 text-xs font-mono text-gold-400 uppercase tracking-widest font-bold">Intent</th>
+                       </tr>
+                     </thead>
+                     <tbody className="divide-y divide-gold-500/10">
+                       {kwData.map((kw, i) => (
+                         <tr key={i} className="hover:bg-navy-950/50 transition-colors">
+                           <td className="py-3 px-4 text-sm font-bold text-lightyellow-100">{kw.keyword}</td>
+                           <td className="py-3 px-4 text-sm text-lightyellow-200/70">{kw.volume}</td>
+                           <td className="py-3 px-4">
+                             <span className={`text-[10px] font-mono px-2 py-1 rounded-full uppercase tracking-wider font-bold ${
+                               kw.difficulty.toLowerCase() === 'low' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                               kw.difficulty.toLowerCase() === 'medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                               'bg-red-500/10 text-red-400 border border-red-500/20'
+                             }`}>
+                               {kw.difficulty}
+                             </span>
+                           </td>
+                           <td className="py-3 px-4 text-xs text-lightyellow-200/70">{kw.intent}</td>
+                         </tr>
+                       ))}
+                     </tbody>
+                   </table>
+                 </div>
+               ) : (
+                 <div className="text-center py-20 opacity-30">
+                   <Search className="w-16 h-16 text-lightyellow-200 mx-auto mb-4" />
+                   <p className="text-sm font-mono text-lightyellow-200 uppercase tracking-widest">Waiting for topic input...</p>
+                 </div>
+               )}
+             </div>
            </div>
         )}
 

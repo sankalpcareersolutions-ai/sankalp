@@ -76,7 +76,7 @@ export default {
     col2_4: "15 अधिकारी-समान गुण (OLQ)",
     col3_title: "प्रशासन (Administration)",
     contact_email: "sankalpcareersolutions@gmail.com",
-    contact_phone: "टोल फ्री कैडेट लाइन: 1800-SSB-SRVC",
+    contact_phone: "+91-8528335708",
     contact_address: "राष्ट्रीय रक्षा क्लस्टर मुख्यालय, नई दिल्ली",
     rights: "© {year} करियर काउंसलिंग हब। सर्वाधिकार सुरक्षित।",
     admin_access: "एडमिन एक्सेस",
