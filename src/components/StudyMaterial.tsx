@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, FileText, Download, Calendar, Activity, ChevronRight, Newspaper } from 'lucide-react';
+import { BookOpen, FileText, Download, Calendar, Activity, ChevronRight, Newspaper, PlayCircle, Clock } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function StudyMaterial() {
@@ -25,7 +25,7 @@ export default function StudyMaterial() {
       <div className="flex flex-wrap justify-center gap-4 mb-8">
         {[
           { id: 'quizzes', label: 'Daily Quizzes', icon: Activity },
-          { id: 'news', label: 'News & Updates', icon: Newspaper },
+          { id: 'news', label: 'News & Updates', icon: Newspaper, PlayCircle, Clock },
           { id: 'schedules', label: 'Exam Calendar 2026', icon: Calendar },
           { id: 'ebooks', label: 'E-Books (Download)', icon: Download }
         ].map(tab => (

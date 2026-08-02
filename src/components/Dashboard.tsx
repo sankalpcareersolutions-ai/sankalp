@@ -48,11 +48,22 @@ export default function Dashboard({
       const response = await fetch('/api/appointments');
       const data = await response.json();
       if (data && Array.isArray(data)) {
-         setFounderAppointments(data);
+        const mapped = data.map(d => ({
+          id: d.id,
+          name: d.aspirant_name || d.name,
+          email: d.email,
+          mobileNumber: d.mobile || d.mobileNumber,
+          preferredDate: d.date || d.preferredDate,
+          preferredTime: d.time || d.preferredTime,
+          counsellingType: d.service_type || d.counsellingType,
+          questions: d.message || d.questions,
+          ticket_number: d.id ? String(d.id).substring(0,8) : '',
+          careerInterest: 'General'
+        }));
+        setFounderAppointments(mapped as any);
       }
     } catch (err) {
-      const cached = localStorage.getItem("sankalp_founder_appointments");
-      if (cached) setFounderAppointments(JSON.parse(cached));
+      console.error(err);
     }
   }
 

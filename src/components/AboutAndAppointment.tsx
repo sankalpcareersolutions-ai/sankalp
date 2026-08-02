@@ -49,12 +49,28 @@ export default function AboutAndAppointment() {
   const [bookings, setBookings] = useState<CareerCounselingAppointment[]>([]);
 
   useEffect(() => {
-    fetch('/api/appointments').then(r => r.json()).then(data => {
-      setBookings(data || []);
-    }).catch(err => {
-      const cached = localStorage.getItem("sankalp_career_appointments");
-      if (cached) setBookings(JSON.parse(cached));
-    });
+    fetch('/api/appointments')
+      .then(r => r.json())
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          const mapped = data.map(d => ({
+            id: d.id,
+            name: d.aspirant_name || d.name,
+            email: d.email,
+            mobileNumber: d.mobile || d.mobileNumber,
+            preferredDate: d.date || d.preferredDate,
+            preferredTime: d.time || d.preferredTime,
+            counsellingType: d.service_type || d.counsellingType,
+            questions: d.message || d.questions,
+            ticket_number: d.id ? String(d.id).substring(0,8) : '',
+            careerInterest: 'General'
+          }));
+          setBookings(mapped as any);
+        }
+      })
+      .catch(err => {
+        console.error("Fetch appointments failed", err);
+      });
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -67,31 +83,33 @@ export default function AboutAndAppointment() {
   
     const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ticketNumber = `CCH-APT-${Math.floor(100000 + Math.random() * 900000)}`;
     const googleMeetLink = 'https://meet.google.com/xya-bcvd-pqr'; 
-    
-    const newBooking = {
-      ...formData as any,
-      ticket_number: ticketNumber,
-      timestamp: new Date().toISOString()
-    };
     
     try {
       const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newBooking)
+        body: JSON.stringify(formData)
       });
       const result = await response.json();
+      
       if (result.success) {
-        setBookings((prev) => [result.data, ...prev]);
-        setBookingSuccess(result.data);
+        const resultData = {
+          ...formData as any,
+          id: result.data.id,
+          ticket_number: result.data.id ? String(result.data.id).substring(0,8) : '',
+          timestamp: new Date().toISOString()
+        };
+        setBookings((prev) => [resultData, ...prev]);
+        setBookingSuccess(resultData);
+      } else {
+        alert(result.error || 'Failed to book appointment.');
+        return;
       }
     } catch(err) {
       console.error(err);
-      // fallback
-      setBookings((prev) => [newBooking, ...prev]);
-      setBookingSuccess(newBooking);
+      alert('Error booking appointment.');
+      return;
     }
     
     alert(`Appointment Booked Successfully!\n\nA notification has been sent to your email (${formData.email}) and mobile number (${formData.mobileNumber || formData.phone}).\nAn alert has also been sent to admin (sankalpcareersolutions@gmail.com).\n\nGoogle Meet Link for 1:1 Session: ${googleMeetLink}`);
@@ -105,6 +123,7 @@ export default function AboutAndAppointment() {
 
 
   const handleCancel = (id: string) => {
+    // Mock delete logic
     const updated = bookings.filter((b) => b.id !== id);
     setBookings(updated);
     localStorage.setItem("sankalp_career_appointments", JSON.stringify(updated));

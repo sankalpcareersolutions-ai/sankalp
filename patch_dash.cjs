@@ -1,11 +1,10 @@
 const fs = require('fs');
-let file = 'src/components/AdminPanel.tsx';
+let file = 'src/components/Dashboard.tsx';
 let code = fs.readFileSync(file, 'utf-8');
 
 code = code.replace(
-  /const fetchAppointments = async \(\) => {[\s\S]*?};\n\n\n  const handleAuth/,
-  `const fetchAppointments = async () => {
-    setLoadingData(true);
+  /async function fetchBookings\(\) {\s*try {\s*const response = await fetch\('\/api\/appointments'\);\s*const data = await response\.json\(\);\s*if \(data && Array\.isArray\(data\)\) {\s*setFounderAppointments\(data\);\s*}\s*} catch \(err\) {\s*const cached = localStorage\.getItem\("sankalp_founder_appointments"\);\s*if \(cached\) setFounderAppointments\(JSON\.parse\(cached\)\);\s*}\s*}/,
+  `async function fetchBookings() {
     try {
       const { data, error } = await supabase.from('appointments').select('*').order('created_at', { ascending: false });
       if (!error && data) {
@@ -21,18 +20,13 @@ code = code.replace(
           ticket_number: d.id.substring(0,8),
           careerInterest: 'General'
         }));
-        setAppointments(mapped as any);
+        setFounderAppointments(mapped as any);
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingData(false);
+    } catch (err) {
+      console.error(err);
     }
-  };
-
-
-  const handleAuth`
+  }`
 );
 
 fs.writeFileSync(file, code);
-console.log("AdminPanel patched");
+console.log("Dashboard patched");

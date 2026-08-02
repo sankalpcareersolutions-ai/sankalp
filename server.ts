@@ -1,9 +1,16 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 
-let appointments: any[] = [];
+import { createClient } from '@supabase/supabase-js';
+
+let envUrl = process.env.VITE_SUPABASE_URL || '';
+const supabaseUrl = envUrl.startsWith('http') ? envUrl : 'https://vazdxebogaeubgfzrkac.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function startServer() {
   const app = express();
@@ -11,14 +18,78 @@ async function startServer() {
 
   app.use(express.json());
 
-  app.get("/api/appointments", (req, res) => {
-    res.json(appointments);
+  app.get("/api/appointments", async (req, res) => {
+    if (supabaseUrl.includes('vazdxebogaeubgfzrkac')) {
+      return res.json([]);
+    }
+    try {
+      const { data, error } = await supabase.from('appointments').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      res.json(data);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
-  app.post("/api/appointments", (req, res) => {
-    const newApt = { id: Date.now().toString(), ...req.body };
-    appointments.push(newApt);
-    res.json({ success: true, data: newApt });
+  app.post("/api/appointments", async (req, res) => {
+    if (supabaseUrl.includes('vazdxebogaeubgfzrkac')) {
+         console.warn("Using mock Supabase. Simulating successful appointment booking.");
+         const apt = req.body;
+         return res.json({
+           success: true,
+           data: {
+             id: Date.now().toString(),
+             aspirant_name: apt.name,
+             email: apt.email,
+             mobile: apt.mobileNumber || apt.phone || '',
+             date: apt.preferredDate,
+             time: apt.preferredTime,
+             service_type: apt.counsellingType || 'General',
+             message: apt.questions || ''
+           }
+         });
+    }
+    try {
+      const apt = req.body;
+      
+      // Server-side Data Validation
+      if (!apt.name || !apt.email || !apt.preferredDate || !apt.preferredTime) {
+        return res.status(400).json({ success: false, error: "Missing required fields" });
+      }
+      
+      // Availability Checks (Mock logic for time slot conflict)
+      const { data: existing, error: checkErr } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('date', apt.preferredDate)
+        .eq('time', apt.preferredTime);
+        
+      if (checkErr) throw checkErr;
+      
+      if (existing && existing.length >= 3) {
+        return res.status(409).json({ success: false, error: "This time slot is fully booked. Please select another time." });
+      }
+      
+      // Database Insert Operation
+      const { data, error } = await supabase.from('appointments').insert([{
+        aspirant_name: apt.name,
+        email: apt.email,
+        mobile: apt.mobileNumber || apt.phone || '',
+        date: apt.preferredDate,
+        time: apt.preferredTime,
+        service_type: apt.counsellingType || 'General',
+        message: apt.questions || ''
+      }]).select();
+      
+      if (error) throw error;
+      
+      // Trigger notifications here in the future
+      
+      res.json({ success: true, data: data[0] });
+    } catch (err: any) {
+      console.error(err);
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   app.post("/api/generate-seo-content", async (req, res) => {
@@ -51,7 +122,7 @@ async function startServer() {
           config: { responseMimeType: "application/json" }
         });
         
-        data = JSON.parse(response.text());
+        data = JSON.parse(response.text);
       } catch (err) {
         console.warn("Falling back to mock SEO data due to API error:", err);
         data = {
@@ -92,7 +163,7 @@ async function startServer() {
           config: { responseMimeType: "application/json" }
         });
         
-        data = JSON.parse(response.text());
+        data = JSON.parse(response.text);
       } catch(err) {
         console.warn("Falling back to mock keyword data due to API error:", err);
         const t = topic || 'defence';
