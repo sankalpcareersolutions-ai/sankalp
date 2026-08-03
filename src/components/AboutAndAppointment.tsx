@@ -83,7 +83,7 @@ export default function AboutAndAppointment() {
   
     const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
-    const googleMeetLink = 'https://meet.google.com/xya-bcvd-pqr'; 
+     
     
     try {
       const response = await fetch('/api/appointments', {
@@ -102,6 +102,11 @@ export default function AboutAndAppointment() {
         };
         setBookings((prev) => [resultData, ...prev]);
         setBookingSuccess(resultData);
+        setFormData({
+          defenceAspirant: 'No',
+          counsellingType: 'Online',
+          preferredLanguage: 'English'
+        });
       } else {
         alert(result.error || 'Failed to book appointment.');
         return;
@@ -111,14 +116,6 @@ export default function AboutAndAppointment() {
       alert('Error booking appointment.');
       return;
     }
-    
-    alert(`Appointment Booked Successfully!\n\nA notification has been sent to your email (${formData.email}) and mobile number (${formData.mobileNumber || formData.phone}).\nAn alert has also been sent to admin (sankalpcareersolutions@gmail.com).\n\nGoogle Meet Link for 1:1 Session: ${googleMeetLink}`);
-
-    setFormData({
-      defenceAspirant: 'No',
-      counsellingType: 'Online',
-      preferredLanguage: 'English'
-    });
   };
 
 
@@ -159,15 +156,15 @@ export default function AboutAndAppointment() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Full Name *</label>
-                    <input type="text" name="name" required value={formData.name || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="name" placeholder="John Doe" required value={formData.name || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Mobile Number *</label>
-                    <input type="tel" name="mobileNumber" required value={formData.mobileNumber || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="tel" name="mobileNumber" placeholder="+91 9876543210" required value={formData.mobileNumber || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Email *</label>
-                    <input type="email" name="email" required value={formData.email || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="email" name="email" placeholder="johndoe@example.com" required value={formData.email || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Date of Birth *</label>
@@ -184,11 +181,11 @@ export default function AboutAndAppointment() {
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">State</label>
-                    <input type="text" name="state" value={formData.state || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="state" placeholder="e.g. Maharashtra" value={formData.state || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">District/City</label>
-                    <input type="text" name="city" value={formData.city || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="city" placeholder="e.g. Mumbai" value={formData.city || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                 </div>
               </div>
@@ -198,15 +195,15 @@ export default function AboutAndAppointment() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Current Class/Year *</label>
-                    <input type="text" name="currentClass" required value={formData.currentClass || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="currentClass" placeholder="e.g. 12th Grade" required value={formData.currentClass || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">School/College</label>
-                    <input type="text" name="schoolCollege" value={formData.schoolCollege || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="schoolCollege" placeholder="e.g. Delhi Public School" value={formData.schoolCollege || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Board / University</label>
-                    <input type="text" name="board" value={formData.board || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="board" placeholder="e.g. CBSE" value={formData.board || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Percentage / CGPA</label>
@@ -214,7 +211,7 @@ export default function AboutAndAppointment() {
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Stream (e.g. PCM, Commerce)</label>
-                    <input type="text" name="stream" value={formData.stream || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="stream" placeholder="e.g. PCM" value={formData.stream || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Graduation Details (if applicable)</label>
@@ -303,7 +300,7 @@ export default function AboutAndAppointment() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Parent/Guardian Name</label>
-                    <input type="text" name="parentName" value={formData.parentName || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
+                    <input type="text" name="parentName" placeholder="e.g. Ramesh Doe" value={formData.parentName || ''} onChange={handleChange} className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-lightyellow-200 block mb-1">Parent Contact Number</label>
@@ -359,7 +356,7 @@ export default function AboutAndAppointment() {
                   <div>
                     <h4 className="text-lg font-bold text-emerald-400">Appointment Confirmed!</h4>
                     <p className="text-sm mt-1">Your Booking ID: <span className="font-mono font-bold text-white">{bookingSuccess.ticket_number}</span></p>
-                    <p className="text-xs mt-2 text-emerald-200">A confirmation has been sent to your Email & Mobile, and to Admin (sankalpcareersolutions@gmail.com).</p><p className="text-sm mt-3 font-semibold">1:1 Google Meet Link:</p><a href="https://meet.google.com/xya-bcvd-pqr" target="_blank" rel="noreferrer" className="text-blue-400 underline font-mono text-sm">https://meet.google.com/xya-bcvd-pqr</a>
+                    <p className="text-xs mt-2 text-emerald-200">A confirmation has been sent to your Email & WhatsApp, and to Admin (sankalpcareersolutions@gmail.com).</p><p className="text-sm mt-3 font-semibold text-emerald-300">The Google Meet link for your 1:1 session will be shared by the admin on your Email and WhatsApp once the slot is confirmed.</p>
                   </div>
                   <button onClick={() => setBookingSuccess(null)} className="text-emerald-400 hover:text-white cursor-pointer">✕</button>
                 </div>

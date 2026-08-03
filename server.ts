@@ -35,6 +35,13 @@ async function startServer() {
     if (supabaseUrl.includes('vazdxebogaeubgfzrkac')) {
          console.warn("Using mock Supabase. Simulating successful appointment booking.");
          const apt = req.body;
+         
+         // Simulate Email and WhatsApp notifications
+         console.log(`[NOTIFICATION SYSTEM] Sending Email to Aspirant: ${apt.email}`);
+         console.log(`[NOTIFICATION SYSTEM] Sending WhatsApp to Aspirant: ${apt.mobileNumber || apt.phone}`);
+         console.log(`[NOTIFICATION SYSTEM] Sending Email to Admin: sankalpcareersolutions@gmail.com`);
+         console.log(`[NOTIFICATION SYSTEM] Sending WhatsApp to Admin`);
+
          return res.json({
            success: true,
            data: {
@@ -83,7 +90,11 @@ async function startServer() {
       
       if (error) throw error;
       
-      // Trigger notifications here in the future
+      // Simulate Email and WhatsApp notifications
+      console.log(`[NOTIFICATION SYSTEM] Sending Email to Aspirant: ${apt.email}`);
+      console.log(`[NOTIFICATION SYSTEM] Sending WhatsApp to Aspirant: ${apt.mobileNumber || apt.phone}`);
+      console.log(`[NOTIFICATION SYSTEM] Sending Email to Admin: sankalpcareersolutions@gmail.com`);
+      console.log(`[NOTIFICATION SYSTEM] Sending WhatsApp to Admin`);
       
       res.json({ success: true, data: data[0] });
     } catch (err: any) {
