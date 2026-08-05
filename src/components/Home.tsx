@@ -2,7 +2,7 @@ import React from 'react';
 import girlStudentsImg from '../assets/images/girl_students_1_1784450559085.jpg';
 import { testimonials } from '../data/testimonials';
 import { Helmet } from 'react-helmet-async';
-import { Search, Compass, Target, Shield, BookOpen, Clock, Users, ArrowRight, CheckCircle, ChevronRight, MessageCircle } from 'lucide-react';
+import { Search, Compass, Target, Shield, BookOpen, Clock, Users, ArrowRight, CheckCircle, ChevronRight, MessageCircle, Phone, Mail, Globe, Sparkles } from 'lucide-react';
 
 interface HomeProps {
   onSearchSelection?: (item: any) => void;
@@ -16,12 +16,6 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
         <title>Career Counselling Hub | Discover • Decide • Achieve</title>
         <meta name="description" content="Empowering students to make informed career decisions through expert counselling, defence career guidance, and a comprehensive career library." />
       </Helmet>
-
-      {/* AI Career Assistant Chat Widget */}
-      <div className="fixed bottom-24 right-6 z-50 bg-primary text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer group">
-        <MessageCircle className="w-6 h-6" />
-        <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-white text-primary text-sm font-poppins font-bold px-3 py-1 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">AI Career Assistant</span>
-      </div>
       
       {/* Hero Banner */}
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col-reverse lg:flex-row items-center gap-12">
@@ -166,6 +160,94 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
             <button onClick={() => onTabChange('testimonials')} className="btn-primary px-8 py-4 text-lg">
               View All Testimonials & Filters
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Contact & Immediate Assistance Section */}
+      <section className="w-full bg-[#071224] py-20 border-t border-primary/20 text-white" id="contact-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/15 border border-secondary/30 text-secondary text-xs font-mono font-bold uppercase tracking-wider mb-4">
+              <Sparkles className="w-3.5 h-3.5" /> Direct Counselling Desk
+            </div>
+            <h2 className="text-[28px] md:text-[38px] font-poppins font-extrabold text-white mb-4 drop-shadow-sm">
+              Contact & Immediate Assistance
+            </h2>
+            <p className="text-[17px] text-white/80 max-w-2xl mx-auto">
+              Have questions about higher education, stream selection, or defence career preparation? Reach out to our senior counsellors directly.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* WhatsApp Card */}
+            <div className="bg-[#0B1F3A] border border-emerald-500/30 hover:border-emerald-500/60 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col items-center group">
+              <div className="w-16 h-16 rounded-2xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <MessageCircle className="w-8 h-8 text-[#25D366]" />
+              </div>
+              <h3 className="text-xl font-poppins font-bold text-white mb-2">WhatsApp Assistance</h3>
+              <p className="text-sm text-white/70 mb-4">Instant response for admission & exam guidance</p>
+              <a 
+                href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg font-mono font-bold text-[#25D366] hover:underline mb-6 block"
+              >
+                +91 85283 35708
+              </a>
+              <a
+                href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-auto w-full py-3 px-4 bg-[#25D366] hover:bg-[#20bd5a] text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg shadow-[#25D366]/20 flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4" /> Start WhatsApp Chat
+              </a>
+            </div>
+
+            {/* Email Card */}
+            <div className="bg-[#0B1F3A] border border-secondary/30 hover:border-secondary/60 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col items-center group">
+              <div className="w-16 h-16 rounded-2xl bg-secondary/20 border border-secondary/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Mail className="w-8 h-8 text-secondary" />
+              </div>
+              <h3 className="text-xl font-poppins font-bold text-white mb-2">Email Desk</h3>
+              <p className="text-sm text-white/70 mb-4">Detailed enquiry review & official communications</p>
+              <a 
+                href="mailto:sankalpcareersolutions@gmail.com"
+                className="text-sm sm:text-base font-mono font-semibold text-secondary hover:underline mb-6 break-all block"
+              >
+                sankalpcareersolutions@gmail.com
+              </a>
+              <a
+                href="mailto:sankalpcareersolutions@gmail.com"
+                className="mt-auto w-full py-3 px-4 bg-secondary hover:bg-secondary/90 text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg shadow-secondary/20 flex items-center justify-center gap-2"
+              >
+                <Mail className="w-4 h-4" /> Send Email Enquiry
+              </a>
+            </div>
+
+            {/* Official Website & Booking */}
+            <div className="bg-[#0B1F3A] border border-blue-500/30 hover:border-blue-500/60 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col items-center group">
+              <div className="w-16 h-16 rounded-2xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Globe className="w-8 h-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-poppins font-bold text-white mb-2">Official Portal</h3>
+              <p className="text-sm text-white/70 mb-4">Discover careers & reserve 1:1 video consultation</p>
+              <a 
+                href="https://www.careercounsellinghub.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-mono text-blue-300 hover:underline mb-6 block"
+              >
+                www.careercounsellinghub.com
+              </a>
+              <button
+                onClick={() => onTabChange('appointment')}
+                className="mt-auto w-full py-3 px-4 bg-gradient-to-r from-secondary to-amber-500 hover:from-amber-400 hover:to-secondary text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+              >
+                Book 1:1 Consultation <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </section>

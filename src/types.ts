@@ -67,3 +67,80 @@ export interface ExamAnnouncement {
   read: boolean;
 }
 
+export type AppointmentStatus = 'PENDING' | 'APPROVED' | 'RESCHEDULED' | 'CANCELLED' | 'COMPLETED';
+export type ChannelDeliveryStatus = 'PENDING' | 'SENT' | 'DELIVERED' | 'SIMULATED' | 'FAILED';
+
+export interface CareerAppointment {
+  id: string;
+  ticketNumber: string;
+  name: string;
+  email: string;
+  mobileNumber: string;
+  preferredDate: string;
+  preferredTime: string;
+  counsellingType: string;
+  careerInterest: string;
+  dob?: string;
+  gender?: string;
+  state?: string;
+  city?: string;
+  currentClass?: string;
+  schoolCollege?: string;
+  board?: string;
+  stream?: string;
+  percentage?: string;
+  parentName?: string;
+  parentContact?: string;
+  questions?: string;
+  defenceAspirant?: string;
+  preferredLanguage?: string;
+  
+  status: AppointmentStatus;
+  meetLink: string;
+  meetingCode: string;
+  icsContent?: string;
+  googleCalendarUrl?: string;
+
+  emailStatus: ChannelDeliveryStatus;
+  whatsappStatus: ChannelDeliveryStatus;
+  calendarStatus: 'PENDING' | 'CREATED' | 'FAILED';
+  meetStatus: 'PENDING' | 'GENERATED' | 'SHARED';
+  
+  lastEmailId?: string;
+  lastWhatsAppId?: string;
+  retryCount: number;
+  lastNotificationAt?: string;
+  lastError?: string;
+  
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationLogItem {
+  id: string;
+  bookingId: string;
+  ticketNumber: string;
+  recipient: string;
+  channel: 'EMAIL' | 'WHATSAPP' | 'CALENDAR' | 'MEET' | 'SYSTEM';
+  type: string;
+  status: ChannelDeliveryStatus;
+  timestamp: string;
+  details?: string;
+  error?: string;
+  latencyMs?: number;
+}
+
+export interface NotificationAnalytics {
+  totalBookings: number;
+  todayBookings: number;
+  upcomingSessions: number;
+  emailsSent: number;
+  emailsFailed: number;
+  whatsappSent: number;
+  whatsappFailed: number;
+  failedNotifications: number;
+  deliveryRate: number;
+  meetLinksActive: number;
+  calendarInvitesSent: number;
+}
+

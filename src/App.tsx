@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import Navbar from "./components/Navbar";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 const Home = lazy(() => import("./components/Home").catch(err => { window.location.reload(); return { default: () => null }; }));
 const Dashboard = lazy(() => import("./components/Dashboard").catch(err => { window.location.reload(); return { default: () => null }; }));
 const Mentorship = lazy(() => import("./components/Mentorship").catch(err => { window.location.reload(); return { default: () => null }; }));
@@ -535,20 +536,47 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
           </div>
 
           {/* Contact Details */}
-          <div className="space-y-3">
+          <div className="space-y-3" id="footer_contact_section">
             <h4 className="text-sm font-poppins font-extrabold tracking-wider uppercase text-secondary">Contact Us</h4>
-            <ul className="space-y-2 text-sm font-bold text-white/80">
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-secondary font-semibold" /> +91-8528335708
+            <ul className="space-y-2.5 text-sm font-semibold text-white/90">
+              <li>
+                <a 
+                  href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance." 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-mono"
+                >
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs font-bold font-sans">WA</span>
+                  +91 85283 35708
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="text-secondary font-semibold text-xs flex items-center justify-center font-mono">WA:</span> +91-8528335708
+              <li>
+                <a 
+                  href="tel:+918528335708" 
+                  className="flex items-center gap-2 hover:text-secondary transition-colors font-mono text-white/80"
+                >
+                  <Phone className="w-4 h-4 text-secondary shrink-0" />
+                  +91 85283 35708
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-secondary font-semibold" /> sankalpcareersolutions@gmail.com
+              <li>
+                <a 
+                  href="mailto:sankalpcareersolutions@gmail.com" 
+                  className="flex items-center gap-2 hover:text-secondary transition-colors text-white/80"
+                >
+                  <Mail className="w-4 h-4 text-secondary shrink-0" />
+                  sankalpcareersolutions@gmail.com
+                </a>
               </li>
-              <li className="flex items-center gap-2 mt-2"> 
-                 <a href="https://www.careercounsellinghub.com" className="text-secondary hover:underline">www.careercounsellinghub.com</a>
+              <li className="pt-1"> 
+                <a 
+                  href="https://www.careercounsellinghub.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-secondary hover:underline font-mono text-xs flex items-center gap-1.5"
+                >
+                  🌐 www.careercounsellinghub.com
+                </a>
               </li>
             </ul>
           </div>
@@ -560,13 +588,16 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
           <div className="flex gap-4 items-center">
             <button 
               onClick={() => setCurrentTab("admin")}
-              className="text-white/40 hover:text-white font-mono tracking-widest uppercase transition-colors mr-4"
+              className="text-white/40 hover:text-white font-mono tracking-widest uppercase transition-colors mr-4 cursor-pointer"
             >
               Admin Access
             </button>
           </div>
         </div>
       </footer>
+
+      {/* Global Floating WhatsApp Chat Button on Every Page */}
+      <FloatingWhatsApp />
     </div>
     </HelmetProvider>
   );
