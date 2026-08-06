@@ -217,6 +217,14 @@ export class WhatsAppService {
           channel: 'WHATSAPP',
           operationName: `WhatsApp_${payload.type}`,
           bookingId,
+          shouldRetry: (error: any) => {
+            const msg = (error?.message || '').toLowerCase();
+            // Don't retry on auth errors or permanent validation errors
+            if (msg.includes('401') || msg.includes('403') || msg.includes('oauth') || msg.includes('invalid oauth')) {
+              return false;
+            }
+            return true;
+          },
         }
       );
 

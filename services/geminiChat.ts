@@ -60,7 +60,7 @@ CORE KNOWLEDGE DOMAINS:
    - 1:1 Personalized Online Video Consultation (with complete psychometric assessment & roadmap report).
    - Comprehensive Career Library covering 150+ career paths in detail.
    - Sovereign Exam Tracker & Notification Alerts.
-   - Direct WhatsApp Counselling Desk: +91 85283 35708.
+   - Direct Counselling Helpline Desk: +91 85283 35708.
    - Official Portal: https://www.careercounsellinghub.com.
 
 RESPONSE STYLE & GUIDELINES:
@@ -69,7 +69,7 @@ RESPONSE STYLE & GUIDELINES:
 - For exam queries: always include Eligibility (Age, Education, Subjects), Exam Pattern, Key Stages, and Preparation Timeline.
 - For defence queries: highlight eligibility, physical/medical standards, and SSB preparation focus areas.
 - If a student feels confused, anxious, or overwhelmed, validate their concerns and give a step-by-step decision framework.
-- Whenever appropriate, invite the student to book a personalized 1:1 session with Senior Counsellors on the platform or connect via WhatsApp (+91 85283 35708) for personalized file review.
+- Whenever appropriate, invite the student to book a personalized 1:1 session with Senior Counsellors on the platform.
 - Language: You can respond in English or Hinglish/Hindi depending on the student's language, ensuring maximum clarity.`;
 
 class GeminiChatService {
@@ -222,25 +222,17 @@ class GeminiChatService {
     return [
       "Top emerging careers in AI, Tech & Defence for 2026-2030",
       "How to choose between Engineering and Armed Forces?",
-      "Can I connect with senior counsellor on WhatsApp?",
+      "How to prepare for SSB Interview & OLQ traits?",
       "Book 1:1 Personalized Online Consultation",
     ];
   }
 
   private deriveRecommendedAction(query: string, reply: string) {
     const q = query.toLowerCase();
-    if (q.includes("book") || q.includes("consult") || q.includes("mentor") || q.includes("appointment") || q.includes("session")) {
+    if (q.includes("book") || q.includes("consult") || q.includes("mentor") || q.includes("appointment") || q.includes("session") || q.includes("call") || q.includes("contact") || q.includes("phone")) {
       return {
         type: "BOOK_APPOINTMENT" as const,
         label: "Book 1:1 Consultation with Senior Counsellor",
-      };
-    }
-
-    if (q.includes("whatsapp") || q.includes("call") || q.includes("contact") || q.includes("phone") || q.includes("number")) {
-      return {
-        type: "WHATSAPP" as const,
-        label: "Chat on WhatsApp (+91 85283 35708)",
-        payload: "https://wa.me/918528335708?text=Hello%20Aayu,%20I%20need%20career%20guidance.",
       };
     }
 

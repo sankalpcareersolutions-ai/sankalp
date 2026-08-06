@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   Award, Calendar, Clock, Video, CheckCircle2, ShieldCheck, Mail, Phone,
-  MessageSquare, Copy, ExternalLink, Download, Sparkles, AlertCircle, RefreshCw, ChevronRight, User, GraduationCap, Compass
+  Copy, ExternalLink, Download, Sparkles, AlertCircle, RefreshCw, User, GraduationCap, Compass, HelpCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { CareerAppointment } from "../types";
@@ -20,14 +20,14 @@ export default function AboutAndAppointment() {
     board: 'CBSE',
     percentage: '',
     stream: 'Science (PCM)',
-    careerInterest: 'Defence Services (NDA / CDS / AFCAT)',
+    careerInterest: 'Defence Services (NDA / CDS / AFCAT / SSB)',
     defenceAspirant: 'Yes',
     preferredDefenceExam: 'NDA',
     preferredOrg: 'Armed Forces',
     counsellingType: 'Online Video 1:1',
     preferredLanguage: 'English & Hindi (Bilingual)',
     preferredDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    preferredTime: '10:30 AM',
+    preferredTime: '10:00 AM',
     parentName: '',
     parentContact: '',
     questions: '',
@@ -37,7 +37,6 @@ export default function AboutAndAppointment() {
   const [bookingSuccess, setBookingSuccess] = useState<CareerAppointment | null>(null);
   const [bookings, setBookings] = useState<CareerAppointment[]>([]);
   const [copiedLink, setCopiedLink] = useState(false);
-  const [formStep, setFormStep] = useState<1 | 2 | 3>(1);
 
   const availableSlots = [
     { label: "10:00 AM", period: "Morning", badge: "Fastest Response" },
@@ -73,6 +72,10 @@ export default function AboutAndAppointment() {
 
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.name || !formData.email || !formData.mobileNumber) {
+      alert("Please fill in your Full Name, Mobile Number, and Email Address.");
+      return;
+    }
     setIsSubmitting(true);
     
     try {
@@ -100,19 +103,18 @@ export default function AboutAndAppointment() {
           board: 'CBSE',
           percentage: '',
           stream: 'Science (PCM)',
-          careerInterest: 'Defence Services (NDA / CDS / AFCAT)',
+          careerInterest: 'Defence Services (NDA / CDS / AFCAT / SSB)',
           defenceAspirant: 'Yes',
           preferredDefenceExam: 'NDA',
           preferredOrg: 'Armed Forces',
           counsellingType: 'Online Video 1:1',
           preferredLanguage: 'English & Hindi (Bilingual)',
           preferredDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          preferredTime: '10:30 AM',
+          preferredTime: '10:00 AM',
           parentName: '',
           parentContact: '',
           questions: '',
         });
-        setFormStep(1);
       } else {
         alert(result.error || 'Failed to book appointment.');
       }
@@ -151,10 +153,10 @@ export default function AboutAndAppointment() {
             1:1 Sovereign Career & Defence Guidance
           </div>
           <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight font-sans text-lightyellow-100 uppercase">
-            Reserve Your 1:1 Mentorship Session
+            Book 1:1 Career Counselling & Mentorship
           </h1>
           <p className="text-xs sm:text-sm text-lightyellow-200/90 leading-relaxed font-sans max-w-2xl">
-            Book an exclusive 45-minute strategic consultation with Senior Defence Officers, DRDO/ISRO Scientists, and Academic Counsellors. Instant notification dispatch via Resend Email, WhatsApp, and Google Calendar.
+            Book an exclusive 45-minute strategic consultation with Senior Defence Officers, DRDO/ISRO Scientists, and Academic Counsellors. Instant notification dispatch via Email, SMS, and Google Calendar.
           </p>
 
           {/* Guarantee Badges */}
@@ -163,10 +165,10 @@ export default function AboutAndAppointment() {
               <Mail className="w-3.5 h-3.5 text-gold-400" /> Instant Email Confirmation
             </span>
             <span className="flex items-center gap-1.5 bg-navy-950/80 px-3 py-1.5 rounded-lg border border-gold-500/20">
-              <MessageSquare className="w-3.5 h-3.5 text-emerald-400" /> Meta WhatsApp Cloud Alerts
+              <Video className="w-3.5 h-3.5 text-blue-400" /> Unique 1:1 Google Meet Room
             </span>
             <span className="flex items-center gap-1.5 bg-navy-950/80 px-3 py-1.5 rounded-lg border border-gold-500/20">
-              <Video className="w-3.5 h-3.5 text-blue-400" /> Unique 1:1 Google Meet Room
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Personalized Roadmap & Report
             </span>
           </div>
         </div>
@@ -262,7 +264,7 @@ export default function AboutAndAppointment() {
               {/* Sync to Google Calendar & ICS */}
               <div className="pt-3 border-t border-emerald-500/15 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-lightyellow-200/70 font-sans">
-                  📩 Notifications were automatically triggered to <strong className="text-white">{bookingSuccess.email}</strong>, WhatsApp <strong className="text-white">{bookingSuccess.mobileNumber}</strong>, and Admin portal (<strong className="text-gold-400">sankalpcareersolutions@gmail.com</strong>).
+                  📩 Confirmation email and session itinerary sent to <strong className="text-white">{bookingSuccess.email}</strong> and Admin desk (<strong className="text-gold-400">sankalpcareersolutions@gmail.com</strong>).
                 </p>
                 <div className="flex items-center gap-2">
                   {bookingSuccess.googleCalendarUrl && (
@@ -292,408 +294,368 @@ export default function AboutAndAppointment() {
         )}
       </AnimatePresence>
 
-      {/* Main Grid: Form + Live Sessions */}
+      {/* Main Grid: Restored Unified Form + Live Sessions Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* Form Column */}
+        {/* Form Column - Restored Comprehensive Single-Screen Layout */}
         <div className="lg:col-span-8 space-y-6">
           <div className="bg-navy-900 border border-gold-600/25 rounded-3xl p-6 md:p-8 shadow-xl text-left">
             
-            {/* Step Selector Tabs */}
-            <div className="flex items-center justify-between border-b border-gold-600/15 pb-4 mb-6">
+            <div className="border-b border-gold-600/15 pb-4 mb-6 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-lightyellow-100 tracking-tight uppercase font-sans">
-                  Aspirant Booking Portal
-                </h3>
-                <p className="text-xs text-lightyellow-200/70">Step {formStep} of 3 • Accurate data ensures tailored guidance</p>
+                <h2 className="text-xl font-bold text-lightyellow-100 tracking-tight uppercase font-sans flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-gold-400" />
+                  Appointment Booking Form
+                </h2>
+                <p className="text-xs text-lightyellow-200/70 mt-1">
+                  Fill in your details below to schedule your 1:1 career consultation session
+                </p>
               </div>
-              <div className="flex items-center gap-1.5 bg-navy-950 p-1 rounded-xl border border-gold-500/20">
-                <button
-                  type="button"
-                  onClick={() => setFormStep(1)}
-                  className={`px-3 py-1 text-xs font-mono rounded-lg transition cursor-pointer flex items-center gap-1 ${
-                    formStep === 1 ? 'bg-gold-500 text-navy-950 font-bold shadow' : 'text-lightyellow-200/60 hover:text-white'
-                  }`}
-                >
-                  <User className="w-3 h-3" /> 1. Profile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormStep(2)}
-                  className={`px-3 py-1 text-xs font-mono rounded-lg transition cursor-pointer flex items-center gap-1 ${
-                    formStep === 2 ? 'bg-gold-500 text-navy-950 font-bold shadow' : 'text-lightyellow-200/60 hover:text-white'
-                  }`}
-                >
-                  <GraduationCap className="w-3 h-3" /> 2. Academics
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormStep(3)}
-                  className={`px-3 py-1 text-xs font-mono rounded-lg transition cursor-pointer flex items-center gap-1 ${
-                    formStep === 3 ? 'bg-gold-500 text-navy-950 font-bold shadow' : 'text-lightyellow-200/60 hover:text-white'
-                  }`}
-                >
-                  <Compass className="w-3 h-3" /> 3. Slot & Topic
-                </button>
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-300 text-xs font-mono">
+                <Sparkles className="w-3 h-3 text-gold-400" />
+                45-Min Session
               </div>
             </div>
 
-            <form onSubmit={handleBook} className="space-y-6">
+            <form onSubmit={handleBook} className="space-y-8">
               
-              {/* STEP 1: Student Information */}
-              {formStep === 1 && (
+              {/* SECTION 1: Aspirant Personal Details */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-gold-400 border-b border-gold-500/10 pb-2">
+                  <User className="w-4 h-4 text-gold-400" />
+                  1. Aspirant Personal & Contact Details
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">
+                      Full Name <span className="text-gold-400">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      name="name" 
+                      placeholder="e.g. Rohan Sharma" 
+                      required 
+                      value={formData.name} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">
+                      Mobile / Contact Number <span className="text-gold-400">*</span>
+                    </label>
+                    <input 
+                      type="tel" 
+                      name="mobileNumber" 
+                      placeholder="e.g. +91 9876543210" 
+                      required 
+                      value={formData.mobileNumber} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                    <span className="text-[10px] text-lightyellow-200/50 mt-1 block">SMS notifications & verification updates</span>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">
+                      Email Address <span className="text-gold-400">*</span>
+                    </label>
+                    <input 
+                      type="email" 
+                      name="email" 
+                      placeholder="e.g. rohan.sharma@example.com" 
+                      required 
+                      value={formData.email} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                    <span className="text-[10px] text-lightyellow-200/50 mt-1 block">Detailed confirmation + Google Meet invite sent here</span>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Date of Birth</label>
+                    <input 
+                      type="date" 
+                      name="dob" 
+                      value={formData.dob} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Gender</label>
+                    <select 
+                      name="gender" 
+                      value={formData.gender} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">State / UT</label>
+                    <input 
+                      type="text" 
+                      name="state" 
+                      placeholder="e.g. Maharashtra, Uttar Pradesh, Delhi" 
+                      value={formData.state} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">City / Town</label>
+                    <input 
+                      type="text" 
+                      name="city" 
+                      placeholder="e.g. Mumbai, Lucknow, Pune, Dehradun" 
+                      value={formData.city} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Preferred Language</label>
+                    <select 
+                      name="preferredLanguage" 
+                      value={formData.preferredLanguage} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
+                    >
+                      <option value="English & Hindi (Bilingual)">English & Hindi (Bilingual)</option>
+                      <option value="English Only">English Only</option>
+                      <option value="Hindi Only">Hindi Only</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 2: Academic Background */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-gold-400 border-b border-gold-500/10 pb-2">
+                  <GraduationCap className="w-4 h-4 text-gold-400" />
+                  2. Academic & Education Background
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Current Class / Education Level</label>
+                    <select 
+                      name="currentClass" 
+                      value={formData.currentClass} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
+                    >
+                      <option value="Class 9th / 10th">Class 9th / 10th</option>
+                      <option value="Class 11th">Class 11th</option>
+                      <option value="Class 12th">Class 12th</option>
+                      <option value="Undergraduate (B.Tech / B.Sc / B.Com / BA)">Undergraduate (B.Tech / B.Sc / B.Com / BA)</option>
+                      <option value="Graduate / Job Seeker">Graduate / Job Seeker</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">School / College / University Name</label>
+                    <input 
+                      type="text" 
+                      name="schoolCollege" 
+                      placeholder="e.g. Kendriya Vidyalaya / Army Public School / Delhi University" 
+                      value={formData.schoolCollege} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Academic Stream</label>
+                    <input 
+                      type="text" 
+                      name="stream" 
+                      placeholder="e.g. Science (PCM), Science (PCB), Commerce, Humanities" 
+                      value={formData.stream} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Board / University Affiliation</label>
+                    <input 
+                      type="text" 
+                      name="board" 
+                      placeholder="e.g. CBSE, ICSE, State Board" 
+                      value={formData.board} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Parent / Guardian Name</label>
+                    <input 
+                      type="text" 
+                      name="parentName" 
+                      placeholder="e.g. Ramesh Sharma" 
+                      value={formData.parentName} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">Parent Contact Number</label>
+                    <input 
+                      type="tel" 
+                      name="parentContact" 
+                      placeholder="e.g. +91 9812345678" 
+                      value={formData.parentContact} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 3: Guidance Focus & Slot Selection */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-gold-400 border-b border-gold-500/10 pb-2">
+                  <Compass className="w-4 h-4 text-gold-400" />
+                  3. Guidance Focus & Consultation Slot
+                </div>
+
                 <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">
+                      Select Guidance Topic / Career Interest <span className="text-gold-400">*</span>
+                    </label>
+                    <select 
+                      name="careerInterest" 
+                      value={formData.careerInterest} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
+                    >
+                      <option value="Defence Services (NDA / CDS / AFCAT / SSB)">Defence Services (NDA / CDS / AFCAT / SSB Mentorship)</option>
+                      <option value="Paramilitary & Police Forces (CAPF / BSF / CRPF)">Paramilitary & Police Forces (CAPF / BSF / CRPF)</option>
+                      <option value="Scientific & R&D (DRDO / ISRO / BARC / TIFR)">Scientific & R&D (DRDO / ISRO / BARC / TIFR)</option>
+                      <option value="Engineering & Tech (IIT / NIT / BITS / Coding)">Engineering & Tech (IIT / NIT / BITS / Coding)</option>
+                      <option value="Medicine, Law & Civil Services (NEET / CLAT / UPSC)">Medicine, Law & Civil Services (NEET / CLAT / UPSC)</option>
+                      <option value="Global Higher Studies & Scholarships">Global Higher Studies & Scholarships</option>
+                    </select>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-bold text-lightyellow-200 block mb-1">
-                        Full Name <span className="text-gold-400">*</span>
+                        Preferred Date <span className="text-gold-400">*</span>
                       </label>
-                      <input 
-                        type="text" 
-                        name="name" 
-                        placeholder="e.g. Rohan Sharma" 
-                        required 
-                        value={formData.name} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">
-                        WhatsApp / Mobile Number <span className="text-gold-400">*</span>
-                      </label>
-                      <input 
-                        type="tel" 
-                        name="mobileNumber" 
-                        placeholder="e.g. +91 9876543210" 
-                        required 
-                        value={formData.mobileNumber} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                      <span className="text-[10px] text-lightyellow-200/50 mt-1 block">Meta WhatsApp alerts & Google Meet link will be sent here</span>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">
-                        Email Address <span className="text-gold-400">*</span>
-                      </label>
-                      <input 
-                        type="email" 
-                        name="email" 
-                        placeholder="e.g. rohan.sharma@example.com" 
-                        required 
-                        value={formData.email} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                      <span className="text-[10px] text-lightyellow-200/50 mt-1 block">Detailed confirmation + .ICS Calendar invite sent here</span>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">Date of Birth</label>
                       <input 
                         type="date" 
-                        name="dob" 
-                        value={formData.dob} 
+                        name="preferredDate" 
+                        required 
+                        min={new Date().toISOString().split("T")[0]} 
+                        value={formData.preferredDate} 
                         onChange={handleChange} 
                         className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
                       />
                     </div>
 
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">Gender</label>
-                      <select 
-                        name="gender" 
-                        value={formData.gender} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
-                      >
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">State / UT</label>
-                      <input 
-                        type="text" 
-                        name="state" 
-                        placeholder="e.g. Maharashtra, Uttar Pradesh, Delhi" 
-                        value={formData.state} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">City / Town</label>
-                      <input 
-                        type="text" 
-                        name="city" 
-                        placeholder="e.g. Mumbai, Lucknow, Pune" 
-                        value={formData.city} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-                  </div>
-
-                  {/* Honeypot for bot protection */}
-                  <input type="text" name="hp" value="" className="hidden" tabIndex={-1} autoComplete="off" />
-
-                  <div className="flex justify-end pt-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!formData.name || !formData.email || !formData.mobileNumber) {
-                          alert("Please fill in Name, WhatsApp number, and Email to continue.");
-                          return;
-                        }
-                        setFormStep(2);
-                      }}
-                      className="px-6 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold font-mono text-xs rounded-xl flex items-center gap-1.5 transition cursor-pointer"
-                    >
-                      Next: Academic Details <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 2: Academic Background */}
-              {formStep === 2 && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">Current Class / Degree</label>
-                      <select 
-                        name="currentClass" 
-                        value={formData.currentClass} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
-                      >
-                        <option value="Class 9th / 10th">Class 9th / 10th</option>
-                        <option value="Class 11th">Class 11th</option>
-                        <option value="Class 12th">Class 12th</option>
-                        <option value="Undergraduate (B.Tech / B.Sc / B.Com / BA)">Undergraduate (B.Tech / B.Sc / B.Com / BA)</option>
-                        <option value="Graduate / Job Seeker">Graduate / Job Seeker</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">School / College / University</label>
-                      <input 
-                        type="text" 
-                        name="schoolCollege" 
-                        placeholder="e.g. Kendriya Vidyalaya / Army Public School / IIT" 
-                        value={formData.schoolCollege} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">Academic Stream</label>
-                      <input 
-                        type="text" 
-                        name="stream" 
-                        placeholder="e.g. Science (PCM), Science (PCB), Commerce, Arts" 
-                        value={formData.stream} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">Board / University Affiliation</label>
-                      <input 
-                        type="text" 
-                        name="board" 
-                        placeholder="e.g. CBSE, ICSE, State Board" 
-                        value={formData.board} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">Parent / Guardian Name</label>
-                      <input 
-                        type="text" 
-                        name="parentName" 
-                        placeholder="e.g. Ramesh Sharma" 
-                        value={formData.parentName} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">Parent Contact Number</label>
-                      <input 
-                        type="tel" 
-                        name="parentContact" 
-                        placeholder="e.g. +91 9812345678" 
-                        value={formData.parentContact} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setFormStep(1)}
-                      className="px-4 py-2.5 bg-navy-950 border border-gold-500/30 text-xs font-mono text-lightyellow-200 rounded-xl transition cursor-pointer"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormStep(3)}
-                      className="px-6 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold font-mono text-xs rounded-xl flex items-center gap-1.5 transition cursor-pointer"
-                    >
-                      Next: Choose Slot & Focus <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 3: Slot Selection & Focus Area */}
-              {formStep === 3 && (
-                <div className="space-y-5">
-                  <div className="space-y-4">
                     <div>
                       <label className="text-xs font-bold text-lightyellow-200 block mb-1">
-                        Select Guidance Topic / Career Interest <span className="text-gold-400">*</span>
+                        Consultation Mode
                       </label>
                       <select 
-                        name="careerInterest" 
-                        value={formData.careerInterest} 
+                        name="counsellingType" 
+                        value={formData.counsellingType} 
                         onChange={handleChange} 
                         className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
                       >
-                        <option value="Defence Services (NDA / CDS / AFCAT / SSB)">Defence Services (NDA / CDS / AFCAT / SSB Mentorship)</option>
-                        <option value="Paramilitary & Police Forces (CAPF / BSF / CRPF)">Paramilitary & Police Forces (CAPF / BSF / CRPF)</option>
-                        <option value="Scientific & R&D (DRDO / ISRO / BARC / TIFR)">Scientific & R&D (DRDO / ISRO / BARC / TIFR)</option>
-                        <option value="Engineering & Tech (IIT / NIT / BITS / Coding)">Engineering & Tech (IIT / NIT / BITS / Coding)</option>
-                        <option value="Medicine, Law & Civil Services (NEET / CLAT / UPSC)">Medicine, Law & Civil Services (NEET / CLAT / UPSC)</option>
-                        <option value="Global Higher Studies & Scholarships">Global Higher Studies & Scholarships</option>
+                        <option value="Online Video 1:1 (Google Meet)">Online Video 1:1 (Google Meet)</option>
+                        <option value="Direct Telephonic Consultation">Direct Telephonic Consultation</option>
                       </select>
                     </div>
+                  </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-bold text-lightyellow-200 block mb-1">
-                          Preferred Date <span className="text-gold-400">*</span>
-                        </label>
-                        <input 
-                          type="date" 
-                          name="preferredDate" 
-                          required 
-                          min={new Date().toISOString().split("T")[0]} 
-                          value={formData.preferredDate} 
-                          onChange={handleChange} 
-                          className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450" 
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-lightyellow-200 block mb-1">
-                          Preferred Language for Consultation
-                        </label>
-                        <select 
-                          name="preferredLanguage" 
-                          value={formData.preferredLanguage} 
-                          onChange={handleChange} 
-                          className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
+                  {/* Visual Slot Grid */}
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-2">
+                      Select Preferred Time Slot (IST) <span className="text-gold-400">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                      {availableSlots.map(slot => (
+                        <button
+                          type="button"
+                          key={slot.label}
+                          onClick={() => setFormData({ ...formData, preferredTime: slot.label })}
+                          className={`p-3 rounded-xl border text-left transition cursor-pointer relative overflow-hidden ${
+                            formData.preferredTime === slot.label
+                              ? 'bg-gold-500/20 border-gold-500 text-gold-300 ring-1 ring-gold-500'
+                              : 'bg-navy-950 border-gold-500/20 text-lightyellow-200/80 hover:border-gold-500/50'
+                          }`}
                         >
-                          <option value="English & Hindi (Bilingual)">English & Hindi (Bilingual)</option>
-                          <option value="English Only">English Only</option>
-                          <option value="Hindi Only">Hindi Only</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Visual Slot Grid */}
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-2">
-                        Select Exact Time Slot (IST) <span className="text-gold-400">*</span>
-                      </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                        {availableSlots.map(slot => (
-                          <button
-                            type="button"
-                            key={slot.label}
-                            onClick={() => setFormData({ ...formData, preferredTime: slot.label })}
-                            className={`p-3 rounded-xl border text-left transition cursor-pointer relative overflow-hidden ${
-                              formData.preferredTime === slot.label
-                                ? 'bg-gold-500/20 border-gold-500 text-gold-300 ring-1 ring-gold-500'
-                                : 'bg-navy-950 border-gold-500/20 text-lightyellow-200/80 hover:border-gold-500/50'
-                            }`}
-                          >
-                            <div className="text-xs font-bold font-mono">{slot.label}</div>
-                            <div className="text-[10px] text-lightyellow-200/50 mt-0.5">{slot.period} • {slot.badge}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-lightyellow-200 block mb-1">
-                        Specific Questions or Topics You Wish to Discuss
-                      </label>
-                      <textarea 
-                        name="questions" 
-                        rows={2} 
-                        placeholder="e.g., Which entry is best after 12th PCM for Air Force? How to prepare for SSB psychological tests?" 
-                        value={formData.questions} 
-                        onChange={handleChange} 
-                        className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
-                      ></textarea>
+                          <div className="text-xs font-bold font-mono">{slot.label}</div>
+                          <div className="text-[10px] text-lightyellow-200/50 mt-0.5">{slot.period} • {slot.badge}</div>
+                        </button>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="p-4 bg-navy-950/80 rounded-xl border border-gold-500/20 space-y-2">
-                    <div className="flex items-start gap-2">
-                      <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                      <p className="text-[11px] text-lightyellow-200/80 leading-relaxed">
-                        By submitting, you will immediately receive an official email confirmation with your unique booking reference and Google Meet room details. Admin (sankalpcareersolutions@gmail.com) is notified automatically.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setFormStep(2)}
-                      className="px-4 py-2.5 bg-navy-950 border border-gold-500/30 text-xs font-mono text-lightyellow-200 rounded-xl transition cursor-pointer"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-8 py-4 bg-gradient-to-r from-gold-500 via-gold-450 to-gold-550 hover:from-gold-400 hover:to-gold-500 text-navy-950 font-black text-sm uppercase tracking-wider rounded-xl transition shadow-lg shadow-gold-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          Locking In Appointment...
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          Confirm & Book Appointment
-                        </>
-                      )}
-                    </button>
+                  <div>
+                    <label className="text-xs font-bold text-lightyellow-200 block mb-1">
+                      Specific Questions or Goals You Wish to Discuss
+                    </label>
+                    <textarea 
+                      name="questions" 
+                      rows={3} 
+                      placeholder="e.g., Which entry is best after 12th PCM for Air Force? How to prepare for SSB psychological tests and stream selection?" 
+                      value={formData.questions} 
+                      onChange={handleChange} 
+                      className="w-full bg-navy-950 border border-gold-500/20 rounded-xl p-3 text-xs text-lightyellow-100 focus:outline-none focus:ring-1 focus:ring-gold-450"
+                    ></textarea>
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* Anti-spam honeypot */}
+              <input type="text" name="hp" defaultValue="" className="hidden" tabIndex={-1} autoComplete="off" />
+
+              <div className="p-4 bg-navy-950/80 rounded-xl border border-gold-500/20 space-y-2">
+                <div className="flex items-start gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <p className="text-[11.5px] text-lightyellow-200/80 leading-relaxed">
+                    By submitting, you will immediately receive an official email confirmation with your unique booking reference and Google Meet room details. Admin (<strong>sankalpcareersolutions@gmail.com</strong>) is notified automatically.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-gold-500 via-gold-450 to-gold-550 hover:from-gold-400 hover:to-gold-500 text-navy-950 font-black text-sm uppercase tracking-wider rounded-xl transition shadow-lg shadow-gold-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Locking In Appointment...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      Confirm & Book 1:1 Appointment
+                    </>
+                  )}
+                </button>
+              </div>
+
             </form>
           </div>
         </div>
@@ -773,20 +735,18 @@ export default function AboutAndAppointment() {
               Immediate Assistance
             </h4>
             <p className="text-xs text-lightyellow-200/70 leading-relaxed font-sans">
-              Need urgent help choosing a slot or prefer direct discussion with our counselling desk?
+              Need urgent help choosing a slot or prefer direct discussion with our senior counselling desk?
             </p>
             <div className="space-y-3 pt-1">
               <a
-                href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 px-3.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-mono text-xs rounded-xl flex items-center justify-between transition group cursor-pointer"
+                href="tel:+918528335708"
+                className="w-full py-2.5 px-3.5 bg-navy-950 hover:bg-navy-850 border border-gold-500/30 text-lightyellow-200 font-mono text-xs rounded-xl flex items-center justify-between transition group cursor-pointer"
               >
-                <span className="flex items-center gap-2 font-bold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  WhatsApp Desk
+                <span className="flex items-center gap-2 font-sans font-semibold">
+                  <Phone className="w-3.5 h-3.5 text-secondary" />
+                  Direct Phone Desk
                 </span>
-                <span className="font-mono text-[11px] text-emerald-400 group-hover:underline">+91 85283 35708</span>
+                <span className="font-mono text-[11px] text-secondary group-hover:underline">+91 85283 35708</span>
               </a>
 
               <a

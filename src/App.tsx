@@ -555,23 +555,10 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
               <li><a href="#" className="hover:text-secondary">Privacy Policy</a></li>
               <li><a href="#" className="hover:text-secondary">Terms & Conditions</a></li>
             </ul>
-          </div>
-
-          {/* Contact Details */}
+          </div>          {/* Contact Details */}
           <div className="space-y-3" id="footer_contact_section">
             <h4 className="text-sm font-poppins font-extrabold tracking-wider uppercase text-secondary">Contact Us</h4>
             <ul className="space-y-2.5 text-sm font-semibold text-white/90">
-              <li>
-                <a 
-                  href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance." 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-mono"
-                >
-                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs font-bold font-sans">WA</span>
-                  +91 85283 35708
-                </a>
-              </li>
               <li>
                 <a 
                   href="tel:+918528335708" 

@@ -763,7 +763,47 @@ export class EmailService {
           });
 
           // If there is a domain verification error, fallback to onboarding@resend.dev
-          if (response.error && (response.error.message.includes('domain') || response.error.message.includes('from'))) {
+          if (response.error && (response.error.message?.includes('domain') || response.error.message?.includes('from'))) {
+            // Check if this error is specifically the Resend testing account limitation (sending to external email on unverified domain)
+            const isTestEmailRestriction =
+              response.error.message?.includes('only send testing emails to your own email address') ||
+              response.error.message?.includes('verify a domain at resend.com') ||
+              (response.error.name === 'validation_error' && response.error.message?.includes('testing emails'));
+
+            if (isTestEmailRestriction) {
+              logger.info('EMAIL', 'EMAIL_SANDBOX_REDIRECT', `Resend test account mode: Delivering notification to verified account (${this.adminEmail}) with sandbox badge`, {
+                intendedRecipient: targetRecipient,
+                adminRecipient: this.adminEmail,
+              }, bookingId, targetRecipient);
+
+              const sandboxNotice = `
+                <div style="background-color: #1e293b; border-left: 4px solid #f59e0b; color: #fef3c7; padding: 12px 16px; margin: 0 0 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 1.5; border-radius: 6px;">
+                  <strong style="color: #fbbf24;">[Resend Sandbox Test Mode]</strong><br/>
+                  Original Intended Recipient: <strong>${targetRecipient}</strong> (${payload.bookingData?.studentName || 'Student'})<br/>
+                  <span style="font-size: 11px; color: #cbd5e1;">(Resend unverified test accounts deliver to registered address ${this.adminEmail}. Verify domain at resend.com/domains for live direct delivery).</span>
+                </div>
+              `;
+
+              const fallbackResponse = await this.resendClient!.emails.send({
+                from: 'Career Counselling Hub <onboarding@resend.dev>',
+                replyTo: this.adminEmail,
+                to: [this.adminEmail],
+                subject: `[Test Sandbox • ${targetRecipient}] ${payload.customSubject || subject}`,
+                html: sandboxNotice + html,
+                attachments: attachments as any,
+                headers: {
+                  'X-Entity-Ref-ID': bookingId || 'cch_booking',
+                },
+              });
+
+              if (fallbackResponse.error) {
+                throw new Error(`Resend API Error: ${fallbackResponse.error.message}`);
+              }
+
+              return fallbackResponse.data?.id || `resend_sandbox_${Date.now()}`;
+            }
+
+            // Otherwise retry with onboarding@resend.dev
             response = await this.resendClient!.emails.send({
               from: 'Career Counselling Hub <onboarding@resend.dev>',
               replyTo: this.adminEmail,
@@ -778,6 +818,43 @@ export class EmailService {
           }
 
           if (response.error) {
+            // Check again if the response error is the test email limitation
+            const isTestEmailRestriction =
+              response.error.message?.includes('only send testing emails to your own email address') ||
+              response.error.message?.includes('verify a domain at resend.com') ||
+              (response.error.name === 'validation_error' && response.error.message?.includes('testing emails'));
+
+            if (isTestEmailRestriction) {
+              logger.info('EMAIL', 'EMAIL_SANDBOX_REDIRECT', `Resend test account mode: Delivering notification to verified account (${this.adminEmail}) with sandbox badge`, {
+                intendedRecipient: targetRecipient,
+                adminRecipient: this.adminEmail,
+              }, bookingId, targetRecipient);
+
+              const sandboxNotice = `
+                <div style="background-color: #1e293b; border-left: 4px solid #f59e0b; color: #fef3c7; padding: 12px 16px; margin: 0 0 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 1.5; border-radius: 6px;">
+                  <strong style="color: #fbbf24;">[Resend Sandbox Test Mode]</strong><br/>
+                  Original Intended Recipient: <strong>${targetRecipient}</strong> (${payload.bookingData?.studentName || 'Student'})<br/>
+                  <span style="font-size: 11px; color: #cbd5e1;">(Resend unverified test accounts deliver to registered address ${this.adminEmail}. Verify domain at resend.com/domains for live direct delivery).</span>
+                </div>
+              `;
+
+              const fallbackResponse = await this.resendClient!.emails.send({
+                from: 'Career Counselling Hub <onboarding@resend.dev>',
+                replyTo: this.adminEmail,
+                to: [this.adminEmail],
+                subject: `[Test Sandbox • ${targetRecipient}] ${payload.customSubject || subject}`,
+                html: sandboxNotice + html,
+                attachments: attachments as any,
+                headers: {
+                  'X-Entity-Ref-ID': bookingId || 'cch_booking',
+                },
+              });
+
+              if (!fallbackResponse.error) {
+                return fallbackResponse.data?.id || `resend_sandbox_${Date.now()}`;
+              }
+            }
+
             throw new Error(`Resend API Error: ${response.error.message}`);
           }
 
@@ -788,6 +865,13 @@ export class EmailService {
           channel: 'EMAIL',
           operationName: `ResendEmail_${payload.template}`,
           bookingId,
+          shouldRetry: (error: any) => {
+            const msg = (error?.message || '').toLowerCase();
+            if (msg.includes('validation_error') || msg.includes('only send testing emails') || msg.includes('verify a domain')) {
+              return false;
+            }
+            return true;
+          },
         }
       );
 

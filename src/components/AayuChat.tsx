@@ -183,12 +183,11 @@ export default function AayuChat({
       const errorMessage: AayuMessage = {
         id: `error_${Date.now()}`,
         role: "model",
-        text: `I had trouble connecting to the server. You can also reach our senior counselling desk directly on **WhatsApp (+91 85283 35708)** or book a **1:1 Video Consultation**.`,
+        text: `I had trouble connecting to the server. You can also reach our senior counselling desk directly via **Phone (+91 85283 35708)** or book a **1:1 Video Consultation**.`,
         timestamp: Date.now(),
         recommendedAction: {
-          type: "WHATSAPP",
-          label: "Connect on WhatsApp (+91 85283 35708)",
-          payload: "https://wa.me/918528335708?text=Hello%20Aayu,%20I%20need%20career%20guidance.",
+          type: "BOOK_APPOINTMENT",
+          label: "Book 1:1 Consultation with Senior Mentor",
         },
       };
       setMessages((prev) => [...prev, errorMessage]);

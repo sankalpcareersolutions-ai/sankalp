@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import aayuAvatar from '../assets/images/aayu_girl_avatar_1786025045279.jpg';
-import { Bot, MessageCircle, X, Sparkles, Send } from 'lucide-react';
+import { X, Sparkles, Send } from 'lucide-react';
 import AayuChat from './AayuChat';
 
 interface FloatingAssistantProps {
@@ -11,8 +11,6 @@ export default function FloatingAssistant({ onTabChange = () => {} }: FloatingAs
   const [isAayuOpen, setIsAayuOpen] = useState(false);
   const [showGreetingBadge, setShowGreetingBadge] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-
-  const whatsappUrl = 'https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance.';
 
   // Show an inviting popup badge after 3 seconds if user hasn't interacted
   useEffect(() => {
@@ -89,49 +87,32 @@ export default function FloatingAssistant({ onTabChange = () => {} }: FloatingAs
           </div>
         )}
 
-        {/* Dual Inline Floating Action Buttons in bottom corner */}
-        <div className="flex items-center gap-2 bg-navy-950/80 p-1 rounded-2xl backdrop-blur-sm border border-white/10 shadow-2xl">
-          {/* 1. WhatsApp Action Button */}
-          <a
-            id="floating-whatsapp-btn"
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Chat on WhatsApp (+91 85283 35708)"
-            onClick={() => setHasInteracted(true)}
-            className="h-11 px-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-navy-950 font-poppins font-bold rounded-xl shadow-md flex items-center gap-1.5 transition-all duration-200 transform hover:scale-105 active:scale-95 border border-emerald-300/50 focus:outline-none"
-            aria-label="Chat on WhatsApp"
-          >
-            <MessageCircle className="w-4 h-4 fill-navy-950/20 stroke-[2.4]" />
-            <span className="text-xs font-black tracking-tight">WhatsApp</span>
-          </a>
+        {/* Single Dedicated Floating Action Button in bottom corner */}
+        <button
+          id="floating-aayu-launcher-btn"
+          onClick={() => {
+            if (isAayuOpen) {
+              setIsAayuOpen(false);
+            } else {
+              handleOpenAayu();
+            }
+          }}
+          title="Chat with Aayu AI Career Counsellor"
+          className="relative h-12 px-4 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-navy-950 rounded-2xl shadow-[0_8px_25px_rgba(245,158,11,0.45)] hover:shadow-[0_12px_32px_rgba(245,158,11,0.65)] flex items-center gap-2.5 transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none font-poppins font-extrabold group cursor-pointer border border-amber-300"
+          aria-label="Open Aayu AI Chatbot"
+        >
+          <div className="w-8 h-8 rounded-xl overflow-hidden border border-navy-950/30 bg-navy-950 flex items-center justify-center shrink-0 shadow-sm">
+            <img src={aayuAvatar} alt="Aayu" className="w-full h-full object-cover" />
+          </div>
 
-          {/* 2. Primary Aayu Chatbot Launcher Button */}
-          <button
-            id="floating-aayu-launcher-btn"
-            onClick={() => {
-              if (isAayuOpen) {
-                setIsAayuOpen(false);
-              } else {
-                handleOpenAayu();
-              }
-            }}
-            title="Chat with Aayu AI Career Counsellor"
-            className="relative h-11 px-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-navy-950 rounded-xl shadow-md flex items-center gap-2 transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none font-poppins font-extrabold group cursor-pointer border border-amber-300"
-            aria-label="Open Aayu AI Chatbot"
-          >
-            <div className="w-7 h-7 rounded-lg overflow-hidden border border-navy-950/30 bg-navy-950 flex items-center justify-center shrink-0 shadow-sm">
-              <img src={aayuAvatar} alt="Aayu" className="w-full h-full object-cover" />
-            </div>
+          <div className="flex flex-col items-start leading-tight text-navy-950">
+            <span className="text-xs sm:text-sm font-black tracking-tight">Ask Aayu</span>
+            <span className="text-[9.5px] font-sans font-bold uppercase tracking-wider text-navy-900/80">AI Guide</span>
+          </div>
 
-            <div className="flex flex-col items-start leading-tight text-navy-950">
-              <span className="text-xs font-black tracking-tight">Ask Aayu</span>
-            </div>
-
-            {/* Online Indicator */}
-            <span className="w-2 h-2 bg-emerald-600 border border-white rounded-full animate-pulse"></span>
-          </button>
-        </div>
+          {/* Online Indicator */}
+          <span className="w-2.5 h-2.5 bg-emerald-600 border border-white rounded-full animate-pulse ml-0.5"></span>
+        </button>
       </div>
     </>
   );

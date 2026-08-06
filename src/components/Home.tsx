@@ -45,18 +45,6 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-700 animate-ping"></span>
             </button>
 
-            {/* WhatsApp Chat Tab */}
-            <a 
-              id="hero_btn_whatsapp"
-              href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[#25D366] hover:bg-[#20bd5a] text-navy-950 font-poppins font-bold px-5 sm:px-6 py-3.5 text-base rounded-xl shadow-lg flex items-center justify-center gap-2.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer border border-emerald-400"
-            >
-              <MessageCircle className="w-5 h-5 text-navy-950 fill-navy-950/20" />
-              <span className="tracking-tight">WhatsApp Counselling</span>
-            </a>
-
             {/* Book Free Consultation */}
             <button 
               id="hero_btn_appointment"
@@ -133,7 +121,7 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
               </p>
 
               <div className="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
-                {["10th/12th Streams", "NDA & SSB Tips", "JEE vs NEET Roadmaps", "CUET Cutoffs", "Direct WhatsApp Help"].map((pill, i) => (
+                {["10th/12th Streams", "NDA & SSB Tips", "JEE vs NEET Roadmaps", "CUET Cutoffs", "1:1 Expert Mentorship"].map((pill, i) => (
                   <span key={i} className="text-xs bg-white/10 border border-white/15 px-3 py-1 rounded-lg text-white/90 font-medium">
                     {pill}
                   </span>
@@ -142,35 +130,34 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
             </div>
           </div>
 
-          {/* Inline Action Buttons for Aayu & WhatsApp */}
+          {/* Inline Action Buttons for Aayu & Mentorship */}
           <div className="flex flex-col sm:flex-row lg:flex-col gap-3 relative z-10 w-full sm:w-auto shrink-0">
             <button
               id="spotlight_btn_chat_aayu"
               onClick={() => onTabChange('aayu')}
-              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-navy-950 font-poppins font-extrabold text-base rounded-2xl shadow-xl flex items-center justify-center gap-2.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
+              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-navy-950 font-poppins font-extrabold text-base rounded-2xl shadow-xl flex items-center justify-center gap-2.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer border border-amber-300"
             >
               <Bot className="w-5 h-5 text-navy-950" />
               <span>Chat with Aayu AI</span>
               <ArrowRight className="w-4 h-4 text-navy-950" />
             </button>
 
-            <a
-              id="spotlight_btn_whatsapp"
-              href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-navy-950 font-poppins font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer shadow-md"
-            >
-              <MessageCircle className="w-4 h-4 text-navy-950" />
-              <span>WhatsApp +91 85283 35708</span>
-            </a>
-
             <button
               id="spotlight_btn_appointment"
               onClick={() => onTabChange('appointment')}
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-poppins font-semibold text-xs rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer"
+              className="px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-poppins font-semibold text-sm rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
-              <span>Book 1:1 Expert Career Mentorship</span>
+              <Sparkles className="w-4 h-4 text-secondary" />
+              <span>Book 1:1 Expert Mentorship</span>
+            </button>
+
+            <button
+              id="spotlight_btn_library"
+              onClick={() => onTabChange('career-library')}
+              className="px-6 py-2.5 text-white/70 hover:text-white font-poppins font-medium text-xs rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>Explore 500+ Career Library</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -303,47 +290,43 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* WhatsApp Card */}
-            <div className="bg-[#0B1F3A] border border-emerald-500/30 hover:border-emerald-500/60 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col items-center group">
-              <div className="w-16 h-16 rounded-2xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <MessageCircle className="w-8 h-8 text-[#25D366]" />
+            {/* Phone Helpline Card */}
+            <div className="bg-[#0B1F3A] border border-secondary/30 hover:border-secondary/60 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col items-center group">
+              <div className="w-16 h-16 rounded-2xl bg-secondary/20 border border-secondary/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Phone className="w-8 h-8 text-secondary" />
               </div>
-              <h3 className="text-xl font-poppins font-bold text-white mb-2">WhatsApp Assistance</h3>
-              <p className="text-sm text-white/70 mb-4">Instant response for admission & exam guidance</p>
+              <h3 className="text-xl font-poppins font-bold text-white mb-2">Direct Phone Desk</h3>
+              <p className="text-sm text-white/70 mb-4">Direct telephonic career counselling & queries</p>
               <a 
-                href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-lg font-mono font-bold text-[#25D366] hover:underline mb-6 block"
+                href="tel:+918528335708"
+                className="text-lg font-mono font-bold text-secondary hover:underline mb-6 block"
               >
                 +91 85283 35708
               </a>
               <a
-                href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-auto w-full py-3 px-4 bg-[#25D366] hover:bg-[#20bd5a] text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg shadow-[#25D366]/20 flex items-center justify-center gap-2"
+                href="tel:+918528335708"
+                className="mt-auto w-full py-3 px-4 bg-secondary hover:bg-secondary/90 text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg shadow-secondary/20 flex items-center justify-center gap-2"
               >
-                <MessageCircle className="w-4 h-4" /> Start WhatsApp Chat
+                <Phone className="w-4 h-4" /> Call Direct Desk
               </a>
             </div>
 
             {/* Email Card */}
-            <div className="bg-[#0B1F3A] border border-secondary/30 hover:border-secondary/60 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col items-center group">
-              <div className="w-16 h-16 rounded-2xl bg-secondary/20 border border-secondary/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Mail className="w-8 h-8 text-secondary" />
+            <div className="bg-[#0B1F3A] border border-gold-500/30 hover:border-gold-500/60 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1.5 shadow-xl flex flex-col items-center group">
+              <div className="w-16 h-16 rounded-2xl bg-gold-500/20 border border-gold-500/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Mail className="w-8 h-8 text-gold-400" />
               </div>
               <h3 className="text-xl font-poppins font-bold text-white mb-2">Email Desk</h3>
               <p className="text-sm text-white/70 mb-4">Detailed enquiry review & official communications</p>
               <a 
                 href="mailto:sankalpcareersolutions@gmail.com"
-                className="text-sm sm:text-base font-mono font-semibold text-secondary hover:underline mb-6 break-all block"
+                className="text-sm sm:text-base font-mono font-semibold text-gold-400 hover:underline mb-6 break-all block"
               >
                 sankalpcareersolutions@gmail.com
               </a>
               <a
                 href="mailto:sankalpcareersolutions@gmail.com"
-                className="mt-auto w-full py-3 px-4 bg-secondary hover:bg-secondary/90 text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg shadow-secondary/20 flex items-center justify-center gap-2"
+                className="mt-auto w-full py-3 px-4 bg-gold-500 hover:bg-gold-400 text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg shadow-gold-500/20 flex items-center justify-center gap-2"
               >
                 <Mail className="w-4 h-4" /> Send Email Enquiry
               </a>
