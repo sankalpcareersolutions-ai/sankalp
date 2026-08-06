@@ -14,6 +14,7 @@ import { notificationQueue } from './services/queue';
 import { emailService, EmailTemplateType } from './services/email';
 import { whatsAppService, WhatsAppMessageType } from './services/whatsapp';
 import { googleMeetService } from './services/meet';
+import { geminiChatService } from './services/geminiChat';
 
 // Validation Schema for Booking an Appointment
 const createAppointmentSchema = z.object({
@@ -503,6 +504,36 @@ async function startServer() {
   });
 
   // ==========================================
+  // AAYU AI CHATBOT ENDPOINT (Multi-Turn Student Guide)
+  // ==========================================
+  app.post("/api/chat", async (req: Request, res: Response) => {
+    try {
+      const { message, history, studentContext } = req.body;
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ success: false, error: "Message string is required" });
+      }
+
+      const response = await geminiChatService.sendMessage({
+        message: message.trim(),
+        history: Array.isArray(history) ? history : [],
+        studentContext: typeof studentContext === 'object' ? studentContext : undefined,
+      });
+
+      res.json({
+        success: true,
+        ...response,
+      });
+    } catch (err: any) {
+      logger.error('CHAT', 'AAYU_API_ERROR', 'Error handling /api/chat request', err);
+      res.status(500).json({
+        success: false,
+        reply: "I am temporarily having trouble connecting. Please feel free to WhatsApp our counselling desk directly at +91 85283 35708 or schedule a 1:1 consultation.",
+        error: err.message,
+      });
+    }
+  });
+
+  // ==========================================
   // GEMINI SEO AUTOMATION ENDPOINTS (Preserved)
   // ==========================================
   app.post("/api/generate-seo-content", async (req, res) => {
@@ -512,7 +543,14 @@ async function startServer() {
       let data;
       try {
         if (!apiKey) throw new Error("No API key");
-        const ai = new GoogleGenAI({ apiKey });
+        const ai = new GoogleGenAI({ 
+          apiKey,
+          httpOptions: {
+            headers: {
+              'User-Agent': 'aistudio-build',
+            }
+          }
+        });
         const prompt = `Act as an expert SEO copywriter. Generate a comprehensive, SEO-optimized article about "${topic}".
         Target Keywords: ${keywords}
         Language: ${language}
@@ -529,11 +567,11 @@ async function startServer() {
         }`;
         
         const response = await ai.models.generateContent({
-          model: "gemini-2.0-flash",
+          model: "gemini-3.5-flash",
           contents: prompt,
           config: { responseMimeType: "application/json" }
         });
-        data = JSON.parse(response.text);
+        data = JSON.parse(response.text || '{}');
       } catch (err) {
         console.warn("Falling back to mock SEO data:", err);
         data = {
@@ -561,16 +599,23 @@ async function startServer() {
       let data;
       try {
         if (!apiKey) throw new Error("No API key");
-        const ai = new GoogleGenAI({ apiKey });
+        const ai = new GoogleGenAI({ 
+          apiKey,
+          httpOptions: {
+            headers: {
+              'User-Agent': 'aistudio-build',
+            }
+          }
+        });
         const prompt = `Act as an expert SEO strategist. Generate a list of 10 high-value, long-tail keywords related to "${topic || 'defence and education counselling'}".
         Format as JSON array of objects: [{ "keyword": "...", "volume": "number e.g. 1500", "difficulty": "Low/Medium/High", "intent": "Informational/Transactional" }]`;
         
         const response = await ai.models.generateContent({
-          model: "gemini-2.0-flash",
+          model: "gemini-3.5-flash",
           contents: prompt,
           config: { responseMimeType: "application/json" }
         });
-        data = JSON.parse(response.text);
+        data = JSON.parse(response.text || '[]');
       } catch(err) {
         const t = topic || 'defence';
         data = [

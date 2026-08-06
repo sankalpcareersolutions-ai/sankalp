@@ -1,8 +1,8 @@
 import React from 'react';
 import girlStudentsImg from '../assets/images/girl_students_1_1784450559085.jpg';
+import aayuAvatar from '../assets/images/aayu_girl_avatar_1786025045279.jpg';
 import { testimonials } from '../data/testimonials';
-import { Helmet } from 'react-helmet-async';
-import { Search, Compass, Target, Shield, BookOpen, Clock, Users, ArrowRight, CheckCircle, ChevronRight, MessageCircle, Phone, Mail, Globe, Sparkles } from 'lucide-react';
+import { Search, Compass, Target, Shield, BookOpen, Clock, Users, ArrowRight, CheckCircle, ChevronRight, MessageCircle, Phone, Mail, Globe, Sparkles, Bot, Zap } from 'lucide-react';
 
 interface HomeProps {
   onSearchSelection?: (item: any) => void;
@@ -12,43 +12,166 @@ interface HomeProps {
 export default function Home({ onSearchSelection, onTabChange = () => {} }: HomeProps) {
   return (
     <div className="w-full flex flex-col items-center">
-      <Helmet>
-        <title>Career Counselling Hub | Discover • Decide • Achieve</title>
-        <meta name="description" content="Empowering students to make informed career decisions through expert counselling, defence career guidance, and a comprehensive career library." />
-      </Helmet>
+      <title>Career Counselling Hub | Discover • Decide • Achieve</title>
+      <meta name="description" content="Empowering students to make informed career decisions through expert counselling, defence career guidance, and a comprehensive career library." />
       
       {/* Hero Banner */}
-      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col-reverse lg:flex-row items-center gap-12">
-        <div className="flex-1 space-y-8 text-center lg:text-left">
-          <h1 className="text-[36px] lg:text-[48px] xl:text-[56px] font-poppins font-extrabold leading-tight text-white drop-shadow-sm">
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 flex flex-col-reverse lg:flex-row items-center gap-12">
+        <div className="flex-1 space-y-7 text-center lg:text-left">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-secondary text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-secondary" /> India's Leading Career & Defence Guidance Platform
+          </div>
+
+          <h1 className="text-[34px] sm:text-[42px] lg:text-[48px] xl:text-[54px] font-poppins font-extrabold leading-tight text-white drop-shadow-sm">
             Shape Your Future with
-            <span className="text-secondary block mt-2 lg:mt-3">Career Counselling Hub</span>
+            <span className="text-secondary block mt-1.5 lg:mt-2">Career Counselling Hub</span>
           </h1>
-          <p className="text-[18px] text-white/90 max-w-2xl mx-auto lg:mx-0">
-            Career Counselling | Defence Guidance | Career Library | Entrance Exam Guidance | Career Assessment
+          <p className="text-[17px] sm:text-[18px] text-white/90 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+            Career Counselling • Defence Guidance • 500+ Career Library • Entrance Exam Trackers • Psychometric Assessments
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <button onClick={() => onTabChange('appointment')} className="btn-primary px-8 py-4 text-lg">
-              Book Free Consultation
+
+          {/* Primary & Interactive Actions - Inline Tabs */}
+          <div className="flex flex-wrap items-center gap-3.5 justify-center lg:justify-start pt-2">
+            {/* Ask Aayu AI Tab */}
+            <button 
+              id="hero_btn_ask_aayu"
+              onClick={() => onTabChange('aayu')} 
+              className="bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-navy-950 font-poppins font-bold px-5 sm:px-6 py-3.5 text-base rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all transform hover:scale-105 active:scale-95 cursor-pointer border border-amber-300"
+            >
+              <div className="w-7 h-7 rounded-full overflow-hidden border border-navy-950/40 shadow-sm shrink-0 bg-navy-900">
+                <img src={aayuAvatar} alt="Aayu AI" className="w-full h-full object-cover" />
+              </div>
+              <span className="tracking-tight">Ask Aayu AI Guide</span>
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-700 animate-ping"></span>
             </button>
-            <button onClick={() => onTabChange('career-library')} className="btn-secondary px-8 py-4 text-lg">
-              Explore Career Library
+
+            {/* WhatsApp Chat Tab */}
+            <a 
+              id="hero_btn_whatsapp"
+              href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#25D366] hover:bg-[#20bd5a] text-navy-950 font-poppins font-bold px-5 sm:px-6 py-3.5 text-base rounded-xl shadow-lg flex items-center justify-center gap-2.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer border border-emerald-400"
+            >
+              <MessageCircle className="w-5 h-5 text-navy-950 fill-navy-950/20" />
+              <span className="tracking-tight">WhatsApp Counselling</span>
+            </a>
+
+            {/* Book Free Consultation */}
+            <button 
+              id="hero_btn_appointment"
+              onClick={() => onTabChange('appointment')} 
+              className="btn-primary px-5 sm:px-6 py-3.5 text-base"
+            >
+              Book 1:1 Consultation
+            </button>
+
+            {/* Explore Career Library */}
+            <button 
+              id="hero_btn_library"
+              onClick={() => onTabChange('career-library')} 
+              className="btn-secondary px-5 sm:px-6 py-3.5 text-base"
+            >
+              Career Library
             </button>
           </div>
-          <div className="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">
-            {['Expert Guidance', 'Personalized Roadmaps', 'Career Assessment', 'Defence Career Specialist'].map((badge, i) => (
-              <div key={i} className="flex items-center gap-2 text-[15px] font-medium text-text-muted">
-                <CheckCircle className="w-5 h-5 text-accent" />
+
+          <div className="flex flex-wrap gap-4 pt-2 justify-center lg:justify-start">
+            {['Expert Counsellors', 'Personalized Roadmaps', 'Psychometric Tests', 'Defence Specialist'].map((badge, i) => (
+              <div key={i} className="flex items-center gap-2 text-[14px] font-medium text-text-muted">
+                <CheckCircle className="w-4 h-4 text-accent" />
                 {badge}
               </div>
             ))}
           </div>
         </div>
         <div className="flex-1">
-          <div className="relative rounded-[16px] overflow-hidden shadow-2xl aspect-4/3 bg-slate-200">
-            {/* Placeholder for the image of smiling Indian students */}
+          <div className="relative rounded-[20px] overflow-hidden shadow-2xl aspect-4/3 bg-slate-200 border-2 border-white/10">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent mix-blend-overlay"></div>
             <img src={girlStudentsImg} referrerPolicy="no-referrer" alt="Students" className="w-full h-full object-cover" />
+          </div>
+        </div>
+      </section>
+
+      {/* Aayu AI Spotlight Banner - Engaging Student Virtual Assistant Card */}
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 mb-4">
+        <div className="bg-gradient-to-r from-[#0B1F3A] via-[#071224] to-[#0B1F3A] border-2 border-amber-400/40 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+          
+          {/* Avatar Thumbnail + Student Pitch */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-6 flex-1 text-center sm:text-left relative z-10">
+            {/* Small Attractive 3D Virtual Assistant Avatar */}
+            <div className="relative shrink-0 group">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl p-1 bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 shadow-xl shadow-amber-400/20 transform group-hover:scale-105 transition-transform">
+                <div className="w-full h-full rounded-[14px] overflow-hidden bg-navy-950">
+                  <img 
+                    src={aayuAvatar} 
+                    alt="Aayu Virtual Assistant" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              <span className="absolute -bottom-2 -right-2 bg-emerald-500 text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border-2 border-navy-950 flex items-center gap-1 shadow-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> 24x7 Online
+              </span>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 text-xs font-mono font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Aayu • AI Student Career Mentor
+              </div>
+              
+              <h2 className="text-2xl sm:text-3xl font-poppins font-black text-white leading-tight">
+                Confused About Streams, Exams, or Colleges? <br className="hidden sm:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200">
+                  Ask Aayu — Your 24/7 Smart Career Guide
+                </span>
+              </h2>
+
+              <p className="text-sm sm:text-base text-white/80 max-w-xl">
+                Get instant, customized answers for 10th/12th stream selection, NDA/SSB testing preparation, JEE vs NEET roadmaps, cutoffs, and top college admissions.
+              </p>
+
+              <div className="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
+                {["10th/12th Streams", "NDA & SSB Tips", "JEE vs NEET Roadmaps", "CUET Cutoffs", "Direct WhatsApp Help"].map((pill, i) => (
+                  <span key={i} className="text-xs bg-white/10 border border-white/15 px-3 py-1 rounded-lg text-white/90 font-medium">
+                    {pill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Inline Action Buttons for Aayu & WhatsApp */}
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 relative z-10 w-full sm:w-auto shrink-0">
+            <button
+              id="spotlight_btn_chat_aayu"
+              onClick={() => onTabChange('aayu')}
+              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-navy-950 font-poppins font-extrabold text-base rounded-2xl shadow-xl flex items-center justify-center gap-2.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
+            >
+              <Bot className="w-5 h-5 text-navy-950" />
+              <span>Chat with Aayu AI</span>
+              <ArrowRight className="w-4 h-4 text-navy-950" />
+            </button>
+
+            <a
+              id="spotlight_btn_whatsapp"
+              href="https://wa.me/918528335708?text=Hello%20CareerCounsellingHub,%20I%20need%20career%20guidance."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-navy-950 font-poppins font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer shadow-md"
+            >
+              <MessageCircle className="w-4 h-4 text-navy-950" />
+              <span>WhatsApp +91 85283 35708</span>
+            </a>
+
+            <button
+              id="spotlight_btn_appointment"
+              onClick={() => onTabChange('appointment')}
+              className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-poppins font-semibold text-xs rounded-2xl transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Book 1:1 Expert Career Mentorship</span>
+            </button>
           </div>
         </div>
       </section>

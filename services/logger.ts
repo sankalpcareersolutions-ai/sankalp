@@ -4,7 +4,7 @@
  */
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
-export type LogChannel = 'BOOKING' | 'EMAIL' | 'WHATSAPP' | 'CALENDAR' | 'MEET' | 'SYSTEM' | 'SECURITY' | 'PERFORMANCE';
+export type LogChannel = 'BOOKING' | 'EMAIL' | 'WHATSAPP' | 'CALENDAR' | 'MEET' | 'SYSTEM' | 'SECURITY' | 'PERFORMANCE' | 'CHAT';
 
 export interface LogEntry {
   id: string;

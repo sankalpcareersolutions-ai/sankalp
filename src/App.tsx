@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import Navbar from "./components/Navbar";
-import FloatingWhatsApp from "./components/FloatingWhatsApp";
+import FloatingAssistant from "./components/FloatingAssistant";
 const Home = lazy(() => import("./components/Home").catch(err => { window.location.reload(); return { default: () => null }; }));
+const AayuChat = lazy(() => import("./components/AayuChat").catch(err => { window.location.reload(); return { default: () => null }; }));
 const Dashboard = lazy(() => import("./components/Dashboard").catch(err => { window.location.reload(); return { default: () => null }; }));
 const Mentorship = lazy(() => import("./components/Mentorship").catch(err => { window.location.reload(); return { default: () => null }; }));
 const CareerLibrary = lazy(() => import("./components/CareerLibrary").catch(err => { window.location.reload(); return { default: () => null }; }));
@@ -55,6 +55,11 @@ const metaTagsByTab: Record<string, { title: string; description: string; keywor
     title: "Career Counselling Hub - India's Trusted Career Hub | Defence & General Careers",
     description: "Career Counselling Hub is India's premier career guidance platform for Class 9th students to graduates. Specializing in Defence & Strategic Careers, Engineering, Medical, Civil Services, and Research.",
     keywords: "Career Counselling Hub, career counselling, career guidance India, NDA prep, CDS exam, DRDO careers, ISRO, stream selection, Career Counselling Hub counselling",
+  },
+  aayu: {
+    title: "Career Counselling Hub - Ask Aayu AI Career & Defence Guide",
+    description: "Instant 24x7 AI career mentoring for stream selection, NDA, SSB interview preparation, JEE, NEET, and booking 1:1 sessions with Senior Career Counsellors.",
+    keywords: "Aayu AI, AI career counsellor, CareerCounsellingHub chatbot, defence exam guide, stream selector AI, SSB testing mentor",
   },
   "career-library": {
     title: "Career Counselling Hub - Comprehensive Career Library",
@@ -369,17 +374,24 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
 
   const currentMeta = metaTagsByTab[currentTab] || metaTagsByTab.home;
 
+  // Dynamic Document Title and Meta Management
+  useEffect(() => {
+    const meta = metaTagsByTab[currentTab] || metaTagsByTab.home;
+    document.title = meta.title;
+    const descEl = document.querySelector('meta[name="description"]');
+    if (descEl) descEl.setAttribute('content', meta.description);
+    const kwEl = document.querySelector('meta[name="keywords"]');
+    if (kwEl) kwEl.setAttribute('content', meta.keywords);
+  }, [currentTab]);
+
   return (
-    <HelmetProvider>
-      <div className="min-h-screen bg-bg-main text-text-main flex flex-col justify-between" id="app_scaffold_root">
+    <div className="min-h-screen bg-bg-main text-text-main flex flex-col justify-between" id="app_scaffold_root">
       <div className="bg-pattern"></div>
-        <Helmet>
-          <title>{currentMeta.title}</title>
-          <meta name="description" content={currentMeta.description} />
-          <meta name="keywords" content={currentMeta.keywords} />
-          <meta name="robots" content="index, follow" />
-          <link rel="canonical" href={`https://careercounsellinghub.com/${currentTab === 'home' ? '' : currentTab}`} />
-        </Helmet>
+      <title>{currentMeta.title}</title>
+      <meta name="description" content={currentMeta.description} />
+      <meta name="keywords" content={currentMeta.keywords} />
+      <meta name="robots" content="index, follow" />
+      <link rel="canonical" href={`https://careercounsellinghub.com/${currentTab === 'home' ? '' : currentTab}`} />
       {/* Top Banner Warning or Notice Board */}
       <div className="bg-white/10 text-white text-[12.5px] font-mono py-2 px-4 text-center border-b border-white/20 flex items-center justify-center gap-2 shadow-md uppercase font-black" id="sovereign_announcement">
         <span className="inline-block w-2.5 h-2.5 rounded-full bg-gold-450 animate-pulse"></span>
@@ -413,6 +425,11 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
                 onSearchSelection={handleSearchSelection}
                 onTabChange={setCurrentTab}
               />
+            )}
+            {currentTab === "aayu" && (
+              <div className="py-2">
+                <AayuChat onTabChange={setCurrentTab} isFloating={false} />
+              </div>
             )}
             {currentTab === "exams" && (
               <SovereignExams
@@ -509,6 +526,11 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
                 </button>
               </li>
               <li>
+                <button onClick={() => setCurrentTab("aayu")} className="hover:text-amber-400 transition hover:underline cursor-pointer text-amber-300 font-bold flex items-center gap-1.5">
+                  ✨ Ask Aayu AI Guide
+                </button>
+              </li>
+              <li>
                 <button onClick={() => setCurrentTab("career-library")} className="hover:text-secondary transition hover:underline cursor-pointer text-white/80">
                   Career Library
                 </button>
@@ -596,9 +618,8 @@ const [subscribedEmail, setSubscribedEmail] = useState<string>(() => {
         </div>
       </footer>
 
-      {/* Global Floating WhatsApp Chat Button on Every Page */}
-      <FloatingWhatsApp />
+      {/* Omnipresent Floating AI Assistant (Aayu & WhatsApp Desk) */}
+      <FloatingAssistant onTabChange={setCurrentTab} />
     </div>
-    </HelmetProvider>
   );
 }

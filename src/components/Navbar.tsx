@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Compass, Shield, Search, Menu, X, BookOpen, Calendar, Award, GraduationCap, Users, FileText, Globe, MoreHorizontal, ChevronDown } from "lucide-react";
+import { Compass, Shield, Search, Menu, X, BookOpen, Calendar, Award, GraduationCap, Users, FileText, Globe, MoreHorizontal, ChevronDown, Bot, Sparkles } from "lucide-react";
 import logoImg from "../assets/images/sankalp_epic_logo_1780997195913.png";
 import { useLanguage } from "../contexts/LanguageContext";
 
@@ -50,9 +50,9 @@ export default function Navbar({
     { id: "home", label: t("navbar.nav_overview"), icon: Compass },
     { id: "career-library", label: t("navbar.nav_library"), icon: BookOpen },
     { id: "exams", label: t("navbar.nav_exams"), icon: FileText, badge: alertCount > 0 ? alertCount : null },
+    { id: "appointment", label: t("navbar.nav_appointment"), icon: Calendar },
     { id: "dashboard", label: t("navbar.nav_dashboard"), icon: GraduationCap, badge: enrolledCount > 0 ? enrolledCount : null },
     { id: "mentorship", label: t("navbar.nav_mentorship"), icon: Users, badge: bookedCount > 0 ? bookedCount : null },
-    { id: "appointment", label: t("navbar.nav_appointment"), icon: Calendar },
     { id: "courses", label: t("navbar.nav_courses"), icon: BookOpen },
     { id: "placements", label: t("navbar.nav_placements"), icon: Award },
     { id: "study-material", label: t("navbar.nav_study_material"), icon: BookOpen },

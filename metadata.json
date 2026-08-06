@@ -1,6 +1,6 @@
 {
   "name": "Sankalp",
-  "description": "SANKALP is a consolidated Career Counselling platform for School Students, Graduates & Defence Aspirants across India, including guidance for NDA, CDS, AFCAT, DRDO, ISRO, BARC.",
+  "description": "Career Counselling Hub is a premier Career Counselling platform with Aayu AI guidance, Sovereign Exam Trackers, and 1:1 mentorship for School Students, Graduates, and Defence Aspirants across India.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
