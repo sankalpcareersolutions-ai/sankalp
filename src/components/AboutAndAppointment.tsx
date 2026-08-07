@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   Award, Calendar, Clock, Video, CheckCircle2, ShieldCheck, Mail, Phone,
-  Copy, ExternalLink, Download, Sparkles, AlertCircle, RefreshCw, User, GraduationCap, Compass, HelpCircle
+  Copy, ExternalLink, Download, Sparkles, AlertCircle, RefreshCw, User, GraduationCap, Compass, HelpCircle, MessageSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { CareerAppointment } from "../types";
@@ -34,6 +34,7 @@ export default function AboutAndAppointment() {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState<CareerAppointment | null>(null);
   const [bookings, setBookings] = useState<CareerAppointment[]>([]);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -68,15 +69,50 @@ export default function AboutAndAppointment() {
       ...formData,
       [e.target.name]: e.target.value
     });
+    if (errorMessage) setErrorMessage(null);
+  };
+
+  const validateForm = (): boolean => {
+    if (!formData.name || formData.name.trim().length < 2) {
+      setErrorMessage("Please enter the student's full name (at least 2 characters).");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email.trim())) {
+      setErrorMessage("Please provide a valid email address (e.g. yourname@gmail.com).");
+      return false;
+    }
+
+    // Indian mobile number validation (clean non-digits, check 10 digits or 12 with 91)
+    const cleanPhone = formData.mobileNumber.replace(/[^\d+]/g, '');
+    const digitsOnly = cleanPhone.replace(/\D/g, '');
+    if (digitsOnly.length < 10) {
+      setErrorMessage("Please enter a valid 10-digit Indian Mobile/WhatsApp number.");
+      return false;
+    }
+
+    if (!formData.preferredDate) {
+      setErrorMessage("Please select your preferred appointment date.");
+      return false;
+    }
+
+    if (!formData.preferredTime) {
+      setErrorMessage("Please select a consultation time slot.");
+      return false;
+    }
+
+    setErrorMessage(null);
+    return true;
   };
 
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.mobileNumber) {
-      alert("Please fill in your Full Name, Mobile Number, and Email Address.");
+    if (!validateForm()) {
       return;
     }
     setIsSubmitting(true);
+    setErrorMessage(null);
     
     try {
       const response = await fetch('/api/appointments', {
@@ -116,11 +152,11 @@ export default function AboutAndAppointment() {
           questions: '',
         });
       } else {
-        alert(result.error || 'Failed to book appointment.');
+        setErrorMessage(result.error || 'Failed to book appointment. Please try selecting a different slot.');
       }
-    } catch(err) {
+    } catch(err: any) {
       console.error(err);
-      alert('Error connecting to the appointment server.');
+      setErrorMessage('Network connection issue. Please check your connection and retry.');
     } finally {
       setIsSubmitting(false);
     }
@@ -261,12 +297,21 @@ export default function AboutAndAppointment() {
                 </div>
               </div>
 
-              {/* Sync to Google Calendar & ICS */}
+              {/* Sync to Google Calendar, WhatsApp & ICS */}
               <div className="pt-3 border-t border-emerald-500/15 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-lightyellow-200/70 font-sans">
                   📩 Confirmation email and session itinerary sent to <strong className="text-white">{bookingSuccess.email}</strong> and Admin desk (<strong className="text-gold-400">sankalpcareersolutions@gmail.com</strong>).
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={`https://wa.me/918528335708?text=${encodeURIComponent(`Hello Career Counselling Hub Desk, I have booked a 1:1 consultation.\n\n*Booking ID:* ${bookingSuccess.ticketNumber}\n*Student Name:* ${bookingSuccess.name}\n*Date & Time:* ${bookingSuccess.preferredDate} at ${bookingSuccess.preferredTime}\n*Track:* ${bookingSuccess.careerInterest || bookingSuccess.counsellingType}\n*Google Meet:* ${bookingSuccess.meetLink}\n\nPlease confirm my slot.`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 text-[11px] font-mono text-white rounded-lg flex items-center gap-1.5 cursor-pointer transition shadow-md"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 text-emerald-300" />
+                    WhatsApp Desk (+91 85283 35708)
+                  </a>
                   {bookingSuccess.googleCalendarUrl && (
                     <a
                       href={bookingSuccess.googleCalendarUrl}
@@ -316,6 +361,17 @@ export default function AboutAndAppointment() {
                 45-Min Session
               </div>
             </div>
+
+            {/* Validation Error Banner */}
+            {errorMessage && (
+              <div className="mb-6 p-4 bg-red-950/80 border border-red-500/40 rounded-2xl flex items-start gap-3 text-red-200 text-xs">
+                <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="font-bold text-red-300">Action Required</div>
+                  <div>{errorMessage}</div>
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleBook} className="space-y-8">
               

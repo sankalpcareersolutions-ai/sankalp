@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Compass, Shield, Search, Menu, X, BookOpen, Calendar, Award, GraduationCap, Users, FileText, Globe, MoreHorizontal, ChevronDown, Bot, Sparkles } from "lucide-react";
+import { Compass, Shield, Search, Menu, X, BookOpen, Calendar, Award, GraduationCap, Users, FileText, Globe, MoreHorizontal, ChevronDown, Bot, Sparkles, ShieldAlert } from "lucide-react";
 import logoImg from "../assets/images/sankalp_epic_logo_1780997195913.png";
 import { useLanguage } from "../contexts/LanguageContext";
 

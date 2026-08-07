@@ -2,7 +2,7 @@ import React from 'react';
 import girlStudentsImg from '../assets/images/girl_students_1_1784450559085.jpg';
 import aayuAvatar from '../assets/images/aayu_girl_avatar_1786025045279.jpg';
 import { testimonials } from '../data/testimonials';
-import { Search, Compass, Target, Shield, BookOpen, Clock, Users, ArrowRight, CheckCircle, ChevronRight, MessageCircle, Phone, Mail, Globe, Sparkles, Bot, Zap } from 'lucide-react';
+import { Search, Compass, Target, Shield, BookOpen, Clock, Users, ArrowRight, CheckCircle, ChevronRight, MessageCircle, Phone, Mail, Globe, Sparkles, Bot, Zap, Lock, ShieldCheck, KeyRound, Activity, ShieldAlert } from 'lucide-react';
 
 interface HomeProps {
   onSearchSelection?: (item: any) => void;
@@ -352,6 +352,48 @@ export default function Home({ onSearchSelection, onTabChange = () => {} }: Home
                 className="mt-auto w-full py-3 px-4 bg-gradient-to-r from-secondary to-amber-500 hover:from-amber-400 hover:to-secondary text-navy-950 font-poppins font-bold text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
               >
                 Book 1:1 Consultation <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Admin Access Panel - Positioned Down Below on Home Page */}
+      <section className="w-full bg-[#050C17] py-12 border-t border-white/10 text-white" id="admin-access-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-[#09182E] via-[#0E2547] to-[#09182E] border border-gold-500/30 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded-2xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-7 h-7 text-gold-400" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-gold-500/20 text-gold-300 text-[11px] font-mono font-bold uppercase tracking-wider border border-gold-500/40">
+                    Staff & Counsellor Portal
+                  </span>
+                  <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    API & Notifications Active
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-poppins font-extrabold text-white">
+                  Admin Command & Dispatch Deck
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
+                  Manage student appointment approvals, Google Meet video rooms, Resend email dispatches, WhatsApp alerts, and calendar notifications.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0 w-full md:w-auto">
+              <button
+                id="btn_home_admin_access"
+                onClick={() => onTabChange('admin')}
+                className="w-full md:w-auto px-6 py-3.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-navy-950 font-poppins font-bold text-sm rounded-xl shadow-lg shadow-gold-500/20 flex items-center justify-center gap-2 cursor-pointer transition transform hover:scale-105 active:scale-95"
+              >
+                <KeyRound className="w-4 h-4" />
+                Open Admin Access Panel
+                <ArrowRight className="w-4 h-4 ml-1" />
               </button>
             </div>
           </div>

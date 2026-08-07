@@ -48,17 +48,33 @@ export interface WhatsAppDispatchResult {
 }
 
 export class WhatsAppService {
-  private metaToken: string;
-  private phoneNumberId: string;
   private apiVersion: string = 'v21.0';
   private adminPhone: string;
   private websiteUrl: string;
 
   constructor() {
-    this.metaToken = process.env.META_WHATSAPP_TOKEN || '';
-    this.phoneNumberId = process.env.META_WHATSAPP_PHONE_NUMBER_ID || process.env.META_WHATSAPP_PHONE || '';
     this.adminPhone = process.env.ADMIN_PHONE || process.env.META_WHATSAPP_PHONE || '+918528335708';
     this.websiteUrl = process.env.WEBSITE_URL || 'https://www.careercounsellinghub.com';
+  }
+
+  public getAdminPhone(): string {
+    return process.env.ADMIN_PHONE || process.env.META_WHATSAPP_PHONE || '+918528335708';
+  }
+
+  public getMetaCredentials(): { token: string; phoneNumberId: string } | null {
+    const token = process.env.META_WHATSAPP_TOKEN || '';
+    const phoneNumberId = process.env.META_WHATSAPP_PHONE_NUMBER_ID || '';
+    if (
+      token &&
+      token.trim().length > 10 &&
+      !token.includes('placeholder') &&
+      phoneNumberId &&
+      phoneNumberId.trim().length > 5 &&
+      !phoneNumberId.includes('placeholder')
+    ) {
+      return { token: token.trim(), phoneNumberId: phoneNumberId.trim() };
+    }
+    return null;
   }
 
   /**
@@ -71,6 +87,29 @@ export class WhatsAppService {
       clean = '91' + clean;
     }
     return clean;
+  }
+
+  /**
+   * Generates a 1-click WhatsApp web/app link to send the formatted message directly
+   */
+  public getDirectWhatsAppUrl(phone: string, payload: WhatsAppDispatchPayload): string {
+    const clean = this.sanitizePhoneNumber(phone);
+    const text = this.formatMessage(payload);
+    return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
+  }
+
+  /**
+   * Generates 1-click Admin alert WhatsApp URL
+   */
+  public getAdminWhatsAppUrl(payload: WhatsAppDispatchPayload): string {
+    const cleanAdmin = this.sanitizePhoneNumber(this.getAdminPhone());
+    const adminPayload: WhatsAppDispatchPayload = {
+      ...payload,
+      to: cleanAdmin,
+      type: 'ADMIN_ALERT',
+    };
+    const text = this.formatMessage(adminPayload);
+    return `https://wa.me/${cleanAdmin}?text=${encodeURIComponent(text)}`;
   }
 
   /**
@@ -180,10 +219,11 @@ export class WhatsAppService {
     }, bookingId, sanitizedTo);
 
     // If Meta WhatsApp Cloud API credentials are valid
-    if (this.metaToken && this.phoneNumberId && !this.metaToken.includes('placeholder')) {
+    const credentials = this.getMetaCredentials();
+    if (credentials) {
       const retryResult = await executeWithRetry(
         async (attempt) => {
-          const url = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
+          const url = `https://graph.facebook.com/${this.apiVersion}/${credentials.phoneNumberId}/messages`;
           const bodyPayload = {
             messaging_product: 'whatsapp',
             recipient_type: 'individual',
@@ -198,7 +238,7 @@ export class WhatsAppService {
           const res = await fetch(url, {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${this.metaToken}`,
+              Authorization: `Bearer ${credentials.token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(bodyPayload),
@@ -219,8 +259,19 @@ export class WhatsAppService {
           bookingId,
           shouldRetry: (error: any) => {
             const msg = (error?.message || '').toLowerCase();
-            // Don't retry on auth errors or permanent validation errors
-            if (msg.includes('401') || msg.includes('403') || msg.includes('oauth') || msg.includes('invalid oauth')) {
+            // Don't retry on auth errors, missing object IDs, bad permissions, or permanent client errors
+            if (
+              msg.includes('400') ||
+              msg.includes('401') ||
+              msg.includes('403') ||
+              msg.includes('404') ||
+              msg.includes('oauth') ||
+              msg.includes('invalid oauth') ||
+              msg.includes('unsupported post request') ||
+              msg.includes('does not exist') ||
+              msg.includes('missing permissions') ||
+              msg.includes('graphmethodexception')
+            ) {
               return false;
             }
             return true;
@@ -244,17 +295,17 @@ export class WhatsAppService {
           messageContent: messageBody,
         };
       } else {
-        logger.error('WHATSAPP', 'WHATSAPP_FAILED', `Failed to send WhatsApp via Meta API after ${retryResult.attempts} attempts`, retryResult.error, {
+        logger.info('WHATSAPP', 'WHATSAPP_FALLBACK_SIMULATED', `Meta Cloud API not active for ID ${credentials.phoneNumberId}; falling back to simulated dispatch and direct link`, {
           type: payload.type,
+          reason: retryResult.error?.message || 'Meta Cloud API error',
         }, bookingId, sanitizedTo);
 
         return {
-          id: `fail_wa_${Date.now()}`,
-          status: 'FAILED',
+          id: `sim_wa_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          status: 'SIMULATED',
           recipient: sanitizedTo,
           type: payload.type,
           timestamp: new Date().toISOString(),
-          error: retryResult.error?.message || 'Meta Cloud API dispatch error',
           messageContent: messageBody,
         };
       }

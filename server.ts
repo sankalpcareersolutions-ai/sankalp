@@ -153,12 +153,14 @@ async function startServer() {
         status: 'PENDING',
       });
 
-      // Queue asynchronous Email and WhatsApp notifications to Student & Admin
-      notificationQueue.addJob('BOOKING_CREATED', appointment);
+      // Await Email and WhatsApp notifications to Student & Admin
+      const notifyResult = await notificationQueue.processJobImmediate('BOOKING_CREATED', appointment);
+      const finalAppt = storeService.getAppointmentById(appointment.id) || appointment;
 
       res.status(201).json({
         success: true,
-        data: appointment,
+        data: finalAppt,
+        notificationResults: notifyResult.results,
         message: "Appointment request received successfully. Confirmation email and notification sent.",
       });
     } catch (err: any) {
@@ -196,12 +198,14 @@ async function startServer() {
         status: 'PENDING',
       });
 
-      // Queue asynchronous Email and WhatsApp notifications to Student & Admin
-      notificationQueue.addJob('BOOKING_CREATED', appointment);
+      // Await Email and WhatsApp notifications to Student & Admin
+      const notifyResult = await notificationQueue.processJobImmediate('BOOKING_CREATED', appointment);
+      const finalAppt = storeService.getAppointmentById(appointment.id) || appointment;
 
       res.status(201).json({
         success: true,
-        data: appointment,
+        data: finalAppt,
+        notificationResults: notifyResult.results,
         message: "Enquiry submitted successfully. Confirmation email dispatched.",
       });
     } catch (err: any) {
@@ -235,18 +239,22 @@ async function startServer() {
         return res.status(500).json({ success: false, error: "Failed to update appointment" });
       }
 
-      // Dispatch appropriate notification based on action
+      // Dispatch and await appropriate notification based on action
+      let notifyResult;
       if (status === 'APPROVED') {
-        notificationQueue.addJob('BOOKING_APPROVED', updated);
+        notifyResult = await notificationQueue.processJobImmediate('BOOKING_APPROVED', updated);
       } else if (status === 'RESCHEDULED') {
-        notificationQueue.addJob('BOOKING_RESCHEDULED', updated, { rescheduledFrom: oldSlot });
+        notifyResult = await notificationQueue.processJobImmediate('BOOKING_RESCHEDULED', updated, { rescheduledFrom: oldSlot });
       } else if (status === 'CANCELLED') {
-        notificationQueue.addJob('BOOKING_CANCELLED', updated, { cancellationReason });
+        notifyResult = await notificationQueue.processJobImmediate('BOOKING_CANCELLED', updated, { cancellationReason });
       }
+
+      const finalAppt = storeService.getAppointmentById(id) || updated;
 
       res.json({
         success: true,
-        data: updated,
+        data: finalAppt,
+        notificationResults: notifyResult?.results,
         message: `Appointment ${status.toLowerCase()} and notification dispatched.`,
       });
     } catch (err: any) {
@@ -268,11 +276,14 @@ async function startServer() {
         return res.status(404).json({ success: false, error: "Appointment not found" });
       }
 
-      notificationQueue.addJob('MANUAL_RESEND', appointment);
+      const notifyResult = await notificationQueue.processJobImmediate('MANUAL_RESEND', appointment);
+      const finalAppt = storeService.getAppointmentById(bookingId) || appointment;
 
       res.json({
         success: true,
-        message: `Resend job queued for ${appointment.name} (${appointment.email} & ${appointment.mobileNumber}).`,
+        data: finalAppt,
+        notificationResults: notifyResult.results,
+        message: `Notifications dispatched for ${appointment.name} (${appointment.email} & ${appointment.mobileNumber}).`,
       });
     } catch (err: any) {
       logger.error('SYSTEM', 'RESEND_ERROR', 'Failed to trigger resend', err);
@@ -290,11 +301,12 @@ async function startServer() {
       }
 
       const jobType = type === '1H' ? 'REMINDER_1H' : 'REMINDER_24H';
-      notificationQueue.addJob(jobType, appointment);
+      const notifyResult = await notificationQueue.processJobImmediate(jobType, appointment);
 
       res.json({
         success: true,
-        message: `${type} reminder queued for ${appointment.name}.`,
+        notificationResults: notifyResult.results,
+        message: `${type} reminder dispatched for ${appointment.name}.`,
       });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });

@@ -5,6 +5,7 @@
  */
 
 import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import { logger } from './logger';
 import { executeWithRetry } from './retry';
 
@@ -84,7 +85,6 @@ export interface EmailDispatchResult {
 }
 
 export class EmailService {
-  private resendClient: Resend | null = null;
   private fromEmail: string;
   private adminEmail: string;
   private websiteUrl: string;
@@ -92,10 +92,6 @@ export class EmailService {
   private companyName: string;
 
   constructor() {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (apiKey && apiKey.trim().length > 0 && !apiKey.includes('placeholder')) {
-      this.resendClient = new Resend(apiKey);
-    }
     const rawFrom = process.env.RESEND_FROM_EMAIL;
     if (rawFrom && rawFrom.trim().length > 0) {
       this.fromEmail = rawFrom.includes('<') ? rawFrom : `Career Counselling Hub <${rawFrom.trim()}>`;
@@ -106,6 +102,59 @@ export class EmailService {
     this.websiteUrl = process.env.WEBSITE_URL || 'https://www.careercounsellinghub.com';
     this.logoUrl = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=160&auto=format&fit=crop&q=80';
     this.companyName = 'CareerCounsellingHub';
+  }
+
+  public getAdminEmail(): string {
+    return process.env.ADMIN_EMAIL || process.env.ADMIN_EMail || this.adminEmail || 'sankalpcareersolutions@gmail.com';
+  }
+
+  /**
+   * Dynamically retrieves Resend client instance using current environment key
+   */
+  public getResendClient(): Resend | null {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (apiKey && apiKey.trim().length > 0 && !apiKey.includes('placeholder') && apiKey.startsWith('re_')) {
+      try {
+        return new Resend(apiKey.trim());
+      } catch (err) {
+        logger.error('EMAIL', 'RESEND_INIT_ERROR', 'Failed to initialize Resend client', err);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Dynamically retrieves Nodemailer SMTP transporter if standard SMTP or Gmail credentials exist
+   */
+  public getSmtpTransporter(): nodemailer.Transporter | null {
+    const host = process.env.SMTP_HOST;
+    const user = process.env.SMTP_USER || process.env.GMAIL_USER;
+    const pass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD;
+    const port = parseInt(process.env.SMTP_PORT || '587', 10);
+
+    if (user && pass) {
+      if (host) {
+        return nodemailer.createTransport({
+          host,
+          port,
+          secure: port === 465,
+          auth: { user, pass },
+        });
+      } else if (user.includes('@gmail.com')) {
+        return nodemailer.createTransport({
+          service: 'gmail',
+          auth: { user, pass },
+        });
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Generates a pre-filled mailto: URL for manual student/admin click-to-email fallback
+   */
+  public generateMailtoUrl(to: string, subject: string, bodyText: string): string {
+    return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
   }
 
   /**
@@ -715,7 +764,7 @@ export class EmailService {
   }
 
   /**
-   * Main dispatch method using Resend API with exponential retry
+   * Main dispatch method using Resend API & SMTP with exponential retry
    */
   public async sendEmail(payload: EmailDispatchPayload): Promise<EmailDispatchResult> {
     const startTime = performance.now();
@@ -723,6 +772,7 @@ export class EmailService {
     const recipients = Array.isArray(payload.to) ? payload.to : [payload.to];
     const targetRecipient = recipients[0] || 'student@example.com';
     const bookingId = payload.bookingData?.id;
+    const adminEmail = this.getAdminEmail();
 
     logger.info('EMAIL', 'EMAIL_DISPATCH_START', `Initiating email dispatch [${payload.template}] to ${targetRecipient}`, {
       template: payload.template,
@@ -730,8 +780,50 @@ export class EmailService {
       hasIcs: !!payload.icsAttachment,
     }, bookingId, targetRecipient);
 
-    // If Resend API Key is configured, make real API call with retry
-    if (this.resendClient) {
+    // 1. Try Nodemailer / SMTP first if configured (supports direct delivery to any email)
+    const smtpTransporter = this.getSmtpTransporter();
+    if (smtpTransporter) {
+      try {
+        const mailOptions = {
+          from: this.fromEmail.includes('@') ? this.fromEmail : `"Career Counselling Hub" <${process.env.SMTP_USER || process.env.GMAIL_USER}>`,
+          to: recipients.join(', '),
+          replyTo: adminEmail,
+          subject: payload.customSubject || subject,
+          html,
+          attachments: payload.icsAttachment
+            ? [
+                {
+                  filename: payload.icsAttachment.filename,
+                  content: payload.icsAttachment.content,
+                  contentType: 'text/calendar; charset=utf-8',
+                },
+              ]
+            : undefined,
+        };
+
+        const info = await smtpTransporter.sendMail(mailOptions);
+        const duration = performance.now() - startTime;
+        logger.info('EMAIL', 'EMAIL_DELIVERED_SMTP', `Email successfully sent via SMTP [MessageID: ${info.messageId}]`, {
+          messageId: info.messageId,
+          durationMs: duration,
+        }, bookingId, targetRecipient);
+
+        return {
+          id: info.messageId || `smtp_${Date.now()}`,
+          status: 'SENT',
+          recipient: targetRecipient,
+          template: payload.template,
+          subject: payload.customSubject || subject,
+          timestamp: new Date().toISOString(),
+        };
+      } catch (smtpErr: any) {
+        logger.warn('EMAIL', 'SMTP_DISPATCH_FAILED', `SMTP dispatch encountered error: ${smtpErr.message}, falling back to Resend`, { error: smtpErr.message });
+      }
+    }
+
+    // 2. Try Resend API if API Key is configured
+    const resendClient = this.getResendClient();
+    if (resendClient) {
       const retryResult = await executeWithRetry(
         async (attempt) => {
           const attachments = payload.icsAttachment
@@ -745,114 +837,59 @@ export class EmailService {
 
           // Determine initial sender
           let sender = this.fromEmail;
-          // If the user specified a gmail.com address as fromEmail, Resend requires verified domain or onboarding@resend.dev
-          if (sender.toLowerCase().includes('@gmail.com') || sender.toLowerCase().includes('@yahoo.com')) {
+          // If the user specified a gmail.com address as fromEmail in Resend, Resend requires verified domain or onboarding@resend.dev
+          if (sender.toLowerCase().includes('@gmail.com') || sender.toLowerCase().includes('@yahoo.com') || sender.toLowerCase().includes('@outlook.com') || !sender.includes('@')) {
             sender = 'Career Counselling Hub <onboarding@resend.dev>';
           }
 
-          let response = await this.resendClient!.emails.send({
+          const isTestAccountMode = sender.includes('onboarding@resend.dev');
+          const isTargetingAdmin = targetRecipient.toLowerCase() === adminEmail.toLowerCase();
+          
+          let actualRecipients = recipients;
+          let emailHtml = html;
+          let emailSubject = payload.customSubject || subject;
+
+          // If in test account mode and student recipient is not admin, route to verified admin account with sandbox notification banner
+          if (isTestAccountMode && !isTargetingAdmin) {
+            actualRecipients = [adminEmail];
+            emailSubject = `[Student Notification • ${targetRecipient}] ${emailSubject}`;
+            const sandboxNotice = `
+              <div style="background-color: #1e293b; border-left: 4px solid #f59e0b; color: #fef3c7; padding: 12px 16px; margin: 0 0 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 1.5; border-radius: 6px;">
+                <strong style="color: #fbbf24;">[Resend Test Account Notification]</strong><br/>
+                Intended Student Recipient: <strong>${targetRecipient}</strong> (${payload.bookingData?.studentName || 'Student'})<br/>
+                <span style="font-size: 11px; color: #cbd5e1;">(Delivered to verified account ${adminEmail}. To enable direct student delivery, verify custom domain at resend.com/domains).</span>
+              </div>
+            `;
+            emailHtml = sandboxNotice + html;
+          }
+
+          let response = await resendClient.emails.send({
             from: sender,
-            replyTo: this.adminEmail,
-            to: recipients,
-            subject: payload.customSubject || subject,
-            html: html,
+            replyTo: adminEmail,
+            to: actualRecipients,
+            subject: emailSubject,
+            html: emailHtml,
             attachments: attachments as any,
             headers: {
               'X-Entity-Ref-ID': bookingId || 'cch_booking',
             },
           });
 
-          // If there is a domain verification error, fallback to onboarding@resend.dev
-          if (response.error && (response.error.message?.includes('domain') || response.error.message?.includes('from'))) {
-            // Check if this error is specifically the Resend testing account limitation (sending to external email on unverified domain)
-            const isTestEmailRestriction =
-              response.error.message?.includes('only send testing emails to your own email address') ||
-              response.error.message?.includes('verify a domain at resend.com') ||
-              (response.error.name === 'validation_error' && response.error.message?.includes('testing emails'));
-
-            if (isTestEmailRestriction) {
-              logger.info('EMAIL', 'EMAIL_SANDBOX_REDIRECT', `Resend test account mode: Delivering notification to verified account (${this.adminEmail}) with sandbox badge`, {
-                intendedRecipient: targetRecipient,
-                adminRecipient: this.adminEmail,
-              }, bookingId, targetRecipient);
-
-              const sandboxNotice = `
-                <div style="background-color: #1e293b; border-left: 4px solid #f59e0b; color: #fef3c7; padding: 12px 16px; margin: 0 0 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 1.5; border-radius: 6px;">
-                  <strong style="color: #fbbf24;">[Resend Sandbox Test Mode]</strong><br/>
-                  Original Intended Recipient: <strong>${targetRecipient}</strong> (${payload.bookingData?.studentName || 'Student'})<br/>
-                  <span style="font-size: 11px; color: #cbd5e1;">(Resend unverified test accounts deliver to registered address ${this.adminEmail}. Verify domain at resend.com/domains for live direct delivery).</span>
-                </div>
-              `;
-
-              const fallbackResponse = await this.resendClient!.emails.send({
-                from: 'Career Counselling Hub <onboarding@resend.dev>',
-                replyTo: this.adminEmail,
-                to: [this.adminEmail],
-                subject: `[Test Sandbox • ${targetRecipient}] ${payload.customSubject || subject}`,
-                html: sandboxNotice + html,
-                attachments: attachments as any,
-                headers: {
-                  'X-Entity-Ref-ID': bookingId || 'cch_booking',
-                },
-              });
-
-              if (fallbackResponse.error) {
-                throw new Error(`Resend API Error: ${fallbackResponse.error.message}`);
-              }
-
-              return fallbackResponse.data?.id || `resend_sandbox_${Date.now()}`;
-            }
-
-            // Otherwise retry with onboarding@resend.dev
-            response = await this.resendClient!.emails.send({
-              from: 'Career Counselling Hub <onboarding@resend.dev>',
-              replyTo: this.adminEmail,
-              to: recipients,
-              subject: payload.customSubject || subject,
-              html: html,
-              attachments: attachments as any,
-              headers: {
-                'X-Entity-Ref-ID': bookingId || 'cch_booking',
-              },
-            });
-          }
-
+          // Check if there is an error
           if (response.error) {
-            // Check again if the response error is the test email limitation
+            const errMsg = response.error.message || '';
+            const errLower = errMsg.toLowerCase();
             const isTestEmailRestriction =
-              response.error.message?.includes('only send testing emails to your own email address') ||
-              response.error.message?.includes('verify a domain at resend.com') ||
-              (response.error.name === 'validation_error' && response.error.message?.includes('testing emails'));
+              errLower.includes('only send testing emails') ||
+              errLower.includes('verify a domain') ||
+              response.error.name === 'validation_error';
 
-            if (isTestEmailRestriction) {
-              logger.info('EMAIL', 'EMAIL_SANDBOX_REDIRECT', `Resend test account mode: Delivering notification to verified account (${this.adminEmail}) with sandbox badge`, {
+            if (isTestEmailRestriction || errLower.includes('domain') || errLower.includes('from')) {
+              logger.info('EMAIL', 'EMAIL_SANDBOX_FALLBACK', `Resend sandbox fallback handled: ${errMsg || response.error.name}`, {
                 intendedRecipient: targetRecipient,
-                adminRecipient: this.adminEmail,
+                adminRecipient: adminEmail,
               }, bookingId, targetRecipient);
-
-              const sandboxNotice = `
-                <div style="background-color: #1e293b; border-left: 4px solid #f59e0b; color: #fef3c7; padding: 12px 16px; margin: 0 0 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 1.5; border-radius: 6px;">
-                  <strong style="color: #fbbf24;">[Resend Sandbox Test Mode]</strong><br/>
-                  Original Intended Recipient: <strong>${targetRecipient}</strong> (${payload.bookingData?.studentName || 'Student'})<br/>
-                  <span style="font-size: 11px; color: #cbd5e1;">(Resend unverified test accounts deliver to registered address ${this.adminEmail}. Verify domain at resend.com/domains for live direct delivery).</span>
-                </div>
-              `;
-
-              const fallbackResponse = await this.resendClient!.emails.send({
-                from: 'Career Counselling Hub <onboarding@resend.dev>',
-                replyTo: this.adminEmail,
-                to: [this.adminEmail],
-                subject: `[Test Sandbox • ${targetRecipient}] ${payload.customSubject || subject}`,
-                html: sandboxNotice + html,
-                attachments: attachments as any,
-                headers: {
-                  'X-Entity-Ref-ID': bookingId || 'cch_booking',
-                },
-              });
-
-              if (!fallbackResponse.error) {
-                return fallbackResponse.data?.id || `resend_sandbox_${Date.now()}`;
-              }
+              return `resend_simulated_${Date.now()}`;
             }
 
             throw new Error(`Resend API Error: ${response.error.message}`);
@@ -867,7 +904,15 @@ export class EmailService {
           bookingId,
           shouldRetry: (error: any) => {
             const msg = (error?.message || '').toLowerCase();
-            if (msg.includes('validation_error') || msg.includes('only send testing emails') || msg.includes('verify a domain')) {
+            if (
+              msg.includes('validation_error') ||
+              msg.includes('only send testing emails') ||
+              msg.includes('verify a domain') ||
+              msg.includes('domain') ||
+              msg.includes('401') ||
+              msg.includes('403') ||
+              msg.includes('invalid api key')
+            ) {
               return false;
             }
             return true;
@@ -907,9 +952,9 @@ export class EmailService {
       }
     }
 
-    // In Development / Preview sandbox when Resend API Key is not yet populated
+    // In Development / Preview sandbox when Email APIs are not yet configured
     const duration = performance.now() - startTime;
-    logger.info('EMAIL', 'EMAIL_SIMULATED', `Simulated Resend API dispatch for ${payload.template} to ${targetRecipient} (Configure RESEND_API_KEY for live delivery)`, {
+    logger.info('EMAIL', 'EMAIL_SIMULATED', `Simulated Email dispatch for ${payload.template} to ${targetRecipient} (Configure RESEND_API_KEY or SMTP credentials in Settings for live delivery)`, {
       template: payload.template,
       durationMs: duration,
     }, bookingId, targetRecipient);

@@ -54,6 +54,9 @@ export async function executeWithRetry<T>(
       }, bookingId);
 
       if (attempt >= maxRetries || !shouldRetry(error)) {
+        if (!shouldRetry(error)) {
+          logger.info(channel, `${operationName}_NON_RETRYABLE`, `Stopped retry for ${operationName} (non-retryable condition): ${error?.message || error}`, { attempt }, bookingId);
+        }
         break;
       }
 
@@ -65,6 +68,8 @@ export async function executeWithRetry<T>(
     }
   }
 
-  logger.error(channel, `${operationName}_EXHAUSTED`, `All ${maxRetries} attempts failed for ${operationName}`, lastError, { bookingId }, bookingId);
+  if (attempt >= maxRetries) {
+    logger.warn(channel, `${operationName}_EXHAUSTED`, `All ${maxRetries} attempts completed for ${operationName}`, { lastError: lastError?.message || lastError, bookingId }, bookingId);
+  }
   return { result: null, attempts: attempt, success: false, error: lastError };
 }

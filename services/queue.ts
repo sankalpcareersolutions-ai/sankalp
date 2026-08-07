@@ -23,9 +23,67 @@ export interface QueueJob {
   retryCount: number;
 }
 
+export interface JobExecutionResult {
+  emailStatus: 'PENDING' | 'SENT' | 'DELIVERED' | 'SIMULATED' | 'FAILED';
+  whatsappStatus: 'PENDING' | 'SENT' | 'DELIVERED' | 'SIMULATED' | 'FAILED';
+  lastEmailId?: string;
+  lastWhatsAppId?: string;
+  studentEmailResult?: any;
+  studentWaResult?: any;
+  adminEmailResult?: any;
+  adminWaResult?: any;
+  errors?: string[];
+}
+
 class NotificationQueueService {
   private queue: QueueJob[] = [];
   private isProcessing: boolean = false;
+
+  public async processJobImmediate(
+    type: QueueJob['type'],
+    appointment: StoredAppointment,
+    extra?: QueueJob['extra']
+  ): Promise<{
+    job: QueueJob;
+    results: JobExecutionResult;
+  }> {
+    const job: QueueJob = {
+      id: `job_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      bookingId: appointment.id,
+      type,
+      data: appointment,
+      extra,
+      addedAt: new Date().toISOString(),
+      status: 'PROCESSING',
+      retryCount: 0,
+    };
+
+    logger.info('SYSTEM', 'QUEUE_JOB_IMMEDIATE_START', `Executing immediate notification job ${job.id} [${type}] for ${appointment.name}`, {
+      jobId: job.id,
+      type,
+      bookingId: appointment.id,
+    }, appointment.id, appointment.email);
+
+    const startTime = performance.now();
+    try {
+      const results = await this.executeJob(job, appointment);
+      job.status = 'COMPLETED';
+      const duration = performance.now() - startTime;
+      logger.performance(`JOB_IMMEDIATE_${job.type}`, duration, { jobId: job.id, bookingId: job.bookingId });
+      return { job, results };
+    } catch (err: any) {
+      job.status = 'FAILED';
+      logger.error('SYSTEM', 'JOB_IMMEDIATE_FAILED', `Immediate job ${job.id} execution failed`, err, { jobId: job.id }, job.bookingId);
+      return {
+        job,
+        results: {
+          emailStatus: 'FAILED',
+          whatsappStatus: 'FAILED',
+          errors: [err.message || 'Job execution failed'],
+        },
+      };
+    }
+  }
 
   public addJob(
     type: QueueJob['type'],
@@ -85,7 +143,7 @@ class NotificationQueueService {
     this.isProcessing = false;
   }
 
-  private async executeJob(job: QueueJob, appt: StoredAppointment) {
+  private async executeJob(job: QueueJob, appt: StoredAppointment): Promise<JobExecutionResult> {
     const adminEmail = process.env.ADMIN_EMAIL || process.env.ADMIN_EMail || 'sankalpcareersolutions@gmail.com';
     const adminPhone = process.env.ADMIN_PHONE || process.env.META_WHATSAPP_PHONE || '+918528335708';
 
@@ -125,314 +183,444 @@ class NotificationQueueService {
     switch (job.type) {
       // 1. New Booking Created
       case 'BOOKING_CREATED': {
-        // (a) Send Email to Student
-        const studentEmailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: 'APPOINTMENT_CONFIRMATION',
-          bookingData: bookingPayload,
-          icsAttachment,
-        });
+        const [studentEmailRes, studentWaRes, adminEmailRes, adminWaRes] = await Promise.allSettled([
+          // (a) Send Email to Student
+          emailService.sendEmail({
+            to: appt.email,
+            template: 'APPOINTMENT_CONFIRMATION',
+            bookingData: bookingPayload,
+            icsAttachment,
+          }),
+          // (b) Send WhatsApp to Student
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: 'BOOKING_CONFIRMATION',
+            bookingData: bookingPayload,
+          }),
+          // (c) Send Alert Email to Admin
+          emailService.sendEmail({
+            to: adminEmail,
+            template: 'ADMIN_NEW_BOOKING',
+            bookingData: bookingPayload,
+          }),
+          // (d) Send Alert WhatsApp to Admin
+          whatsAppService.sendMessage({
+            to: adminPhone,
+            type: 'ADMIN_ALERT',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        // (b) Send WhatsApp to Student
-        const studentWaRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: 'BOOKING_CONFIRMATION',
-          bookingData: bookingPayload,
-        });
-
-        // (c) Send Alert Email to Admin
-        await emailService.sendEmail({
-          to: adminEmail,
-          template: 'ADMIN_NEW_BOOKING',
-          bookingData: bookingPayload,
-        });
-
-        // (d) Send Alert WhatsApp to Admin
-        await whatsAppService.sendMessage({
-          to: adminPhone,
-          type: 'ADMIN_ALERT',
-          bookingData: bookingPayload,
-        });
+        const emailResult = studentEmailRes.status === 'fulfilled' ? studentEmailRes.value : null;
+        const waResult = studentWaRes.status === 'fulfilled' ? studentWaRes.value : null;
+        const adminEmailResult = adminEmailRes.status === 'fulfilled' ? adminEmailRes.value : null;
+        const adminWaResult = adminWaRes.status === 'fulfilled' ? adminWaRes.value : null;
 
         // Update Store Status
         storeService.updateAppointment(appt.id, {
-          emailStatus: studentEmailRes.status === 'FAILED' ? 'FAILED' : 'SENT',
-          whatsappStatus: studentWaRes.status === 'FAILED' ? 'FAILED' : 'SENT',
-          lastEmailId: studentEmailRes.id,
-          lastWhatsAppId: studentWaRes.id,
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
           lastNotificationAt: new Date().toISOString(),
         });
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'APPOINTMENT_CONFIRMATION',
-          status: studentEmailRes.status,
-          details: `Subject: ${studentEmailRes.subject}`,
-        });
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'APPOINTMENT_CONFIRMATION',
+            status: emailResult.status,
+            details: `Subject: ${emailResult.subject}`,
+          });
+        }
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.mobileNumber,
-          channel: 'WHATSAPP',
-          type: 'BOOKING_CONFIRMATION',
-          status: studentWaRes.status,
-          details: `Msg: ${studentWaRes.messageContent.substring(0, 60)}...`,
-        });
+        if (waResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.mobileNumber,
+            channel: 'WHATSAPP',
+            type: 'BOOKING_CONFIRMATION',
+            status: waResult.status,
+            details: `Msg: ${waResult.messageContent?.substring(0, 60) || 'Sent'}...`,
+          });
+        }
 
-        break;
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+          adminEmailResult,
+          adminWaResult,
+        };
       }
 
       // 2. Booking Approved (With Google Meet Link)
       case 'BOOKING_APPROVED': {
-        const studentEmailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: 'APPOINTMENT_APPROVED',
-          bookingData: bookingPayload,
-          icsAttachment,
-        });
+        const [studentEmailRes, studentWaRes] = await Promise.allSettled([
+          emailService.sendEmail({
+            to: appt.email,
+            template: 'APPOINTMENT_APPROVED',
+            bookingData: bookingPayload,
+            icsAttachment,
+          }),
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: 'APPROVAL',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        const studentWaRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: 'APPROVAL',
-          bookingData: bookingPayload,
-        });
+        const emailResult = studentEmailRes.status === 'fulfilled' ? studentEmailRes.value : null;
+        const waResult = studentWaRes.status === 'fulfilled' ? studentWaRes.value : null;
 
         storeService.updateAppointment(appt.id, {
           status: 'APPROVED',
           meetStatus: 'SHARED',
-          emailStatus: studentEmailRes.status === 'FAILED' ? 'FAILED' : 'SENT',
-          whatsappStatus: studentWaRes.status === 'FAILED' ? 'FAILED' : 'SENT',
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
           lastNotificationAt: new Date().toISOString(),
         });
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'APPOINTMENT_APPROVED',
-          status: studentEmailRes.status,
-          details: `Meet link shared: ${appt.meetLink}`,
-        });
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'APPOINTMENT_APPROVED',
+            status: emailResult.status,
+            details: `Meet link shared: ${appt.meetLink}`,
+          });
+        }
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.mobileNumber,
-          channel: 'WHATSAPP',
-          type: 'APPROVAL',
-          status: studentWaRes.status,
-          details: `WhatsApp approval with Google Meet link`,
-        });
-        break;
+        if (waResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.mobileNumber,
+            channel: 'WHATSAPP',
+            type: 'APPROVAL',
+            status: waResult.status,
+            details: `WhatsApp approval with Google Meet link`,
+          });
+        }
+
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+        };
       }
 
       // 3. Booking Rescheduled
       case 'BOOKING_RESCHEDULED': {
-        const studentEmailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: 'APPOINTMENT_RESCHEDULED',
-          bookingData: bookingPayload,
-          icsAttachment,
-        });
+        const [studentEmailRes, studentWaRes, adminEmailRes] = await Promise.allSettled([
+          emailService.sendEmail({
+            to: appt.email,
+            template: 'APPOINTMENT_RESCHEDULED',
+            bookingData: bookingPayload,
+            icsAttachment,
+          }),
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: 'RESCHEDULE',
+            bookingData: bookingPayload,
+          }),
+          emailService.sendEmail({
+            to: adminEmail,
+            template: 'ADMIN_RESCHEDULE',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        const studentWaRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: 'RESCHEDULE',
-          bookingData: bookingPayload,
-        });
-
-        await emailService.sendEmail({
-          to: adminEmail,
-          template: 'ADMIN_RESCHEDULE',
-          bookingData: bookingPayload,
-        });
+        const emailResult = studentEmailRes.status === 'fulfilled' ? studentEmailRes.value : null;
+        const waResult = studentWaRes.status === 'fulfilled' ? studentWaRes.value : null;
+        const adminEmailResult = adminEmailRes.status === 'fulfilled' ? adminEmailRes.value : null;
 
         storeService.updateAppointment(appt.id, {
           status: 'RESCHEDULED',
-          emailStatus: studentEmailRes.status === 'FAILED' ? 'FAILED' : 'SENT',
-          whatsappStatus: studentWaRes.status === 'FAILED' ? 'FAILED' : 'SENT',
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
           lastNotificationAt: new Date().toISOString(),
         });
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'APPOINTMENT_RESCHEDULED',
-          status: studentEmailRes.status,
-        });
-        break;
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'APPOINTMENT_RESCHEDULED',
+            status: emailResult.status,
+          });
+        }
+
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+          adminEmailResult,
+        };
       }
 
       // 4. Booking Cancelled
       case 'BOOKING_CANCELLED': {
-        const studentEmailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: 'APPOINTMENT_CANCELLED',
-          bookingData: bookingPayload,
-        });
+        const [studentEmailRes, studentWaRes, adminEmailRes] = await Promise.allSettled([
+          emailService.sendEmail({
+            to: appt.email,
+            template: 'APPOINTMENT_CANCELLED',
+            bookingData: bookingPayload,
+          }),
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: 'CANCELLATION',
+            bookingData: bookingPayload,
+          }),
+          emailService.sendEmail({
+            to: adminEmail,
+            template: 'ADMIN_CANCELLATION',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        const studentWaRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: 'CANCELLATION',
-          bookingData: bookingPayload,
-        });
-
-        await emailService.sendEmail({
-          to: adminEmail,
-          template: 'ADMIN_CANCELLATION',
-          bookingData: bookingPayload,
-        });
+        const emailResult = studentEmailRes.status === 'fulfilled' ? studentEmailRes.value : null;
+        const waResult = studentWaRes.status === 'fulfilled' ? studentWaRes.value : null;
+        const adminEmailResult = adminEmailRes.status === 'fulfilled' ? adminEmailRes.value : null;
 
         storeService.updateAppointment(appt.id, {
           status: 'CANCELLED',
-          emailStatus: studentEmailRes.status === 'FAILED' ? 'FAILED' : 'SENT',
-          whatsappStatus: studentWaRes.status === 'FAILED' ? 'FAILED' : 'SENT',
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
           lastNotificationAt: new Date().toISOString(),
         });
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'APPOINTMENT_CANCELLED',
-          status: studentEmailRes.status,
-        });
-        break;
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'APPOINTMENT_CANCELLED',
+            status: emailResult.status,
+          });
+        }
+
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+          adminEmailResult,
+        };
       }
 
       // 5. 24 Hour Reminder
       case 'REMINDER_24H': {
-        const emailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: 'REMINDER_24H',
-          bookingData: bookingPayload,
-          icsAttachment,
-        });
+        const [emailRes, waRes] = await Promise.allSettled([
+          emailService.sendEmail({
+            to: appt.email,
+            template: 'REMINDER_24H',
+            bookingData: bookingPayload,
+            icsAttachment,
+          }),
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: 'REMINDER_24H',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        const waRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: 'REMINDER_24H',
-          bookingData: bookingPayload,
-        });
+        const emailResult = emailRes.status === 'fulfilled' ? emailRes.value : null;
+        const waResult = waRes.status === 'fulfilled' ? waRes.value : null;
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'REMINDER_24H',
-          status: emailRes.status,
-        });
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'REMINDER_24H',
+            status: emailResult.status,
+          });
+        }
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.mobileNumber,
-          channel: 'WHATSAPP',
-          type: 'REMINDER_24H',
-          status: waRes.status,
-        });
-        break;
+        if (waResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.mobileNumber,
+            channel: 'WHATSAPP',
+            type: 'REMINDER_24H',
+            status: waResult.status,
+          });
+        }
+
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+        };
       }
 
       // 6. 1 Hour Reminder
       case 'REMINDER_1H': {
-        const emailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: 'REMINDER_1H',
-          bookingData: bookingPayload,
-        });
+        const [emailRes, waRes] = await Promise.allSettled([
+          emailService.sendEmail({
+            to: appt.email,
+            template: 'REMINDER_1H',
+            bookingData: bookingPayload,
+          }),
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: 'REMINDER_1H',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        const waRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: 'REMINDER_1H',
-          bookingData: bookingPayload,
-        });
+        const emailResult = emailRes.status === 'fulfilled' ? emailRes.value : null;
+        const waResult = waRes.status === 'fulfilled' ? waRes.value : null;
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'REMINDER_1H',
-          status: emailRes.status,
-        });
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'REMINDER_1H',
+            status: emailResult.status,
+          });
+        }
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.mobileNumber,
-          channel: 'WHATSAPP',
-          type: 'REMINDER_1H',
-          status: waRes.status,
-        });
-        break;
+        if (waResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.mobileNumber,
+            channel: 'WHATSAPP',
+            type: 'REMINDER_1H',
+            status: waResult.status,
+          });
+        }
+
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+        };
       }
 
       // 7. Feedback Request
       case 'FEEDBACK_REQUEST': {
-        const emailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: 'FEEDBACK_REQUEST',
-          bookingData: bookingPayload,
-        });
+        const [emailRes, waRes] = await Promise.allSettled([
+          emailService.sendEmail({
+            to: appt.email,
+            template: 'FEEDBACK_REQUEST',
+            bookingData: bookingPayload,
+          }),
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: 'FEEDBACK_REQUEST',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        const waRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: 'FEEDBACK_REQUEST',
-          bookingData: bookingPayload,
-        });
+        const emailResult = emailRes.status === 'fulfilled' ? emailRes.value : null;
+        const waResult = waRes.status === 'fulfilled' ? waRes.value : null;
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'FEEDBACK_REQUEST',
-          status: emailRes.status,
-        });
-        break;
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'FEEDBACK_REQUEST',
+            status: emailResult.status,
+          });
+        }
+
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+        };
       }
 
       // 8. Manual Resend
       case 'MANUAL_RESEND': {
-        const emailRes = await emailService.sendEmail({
-          to: appt.email,
-          template: appt.status === 'APPROVED' ? 'APPOINTMENT_APPROVED' : 'APPOINTMENT_CONFIRMATION',
-          bookingData: bookingPayload,
-          icsAttachment,
-        });
+        const [emailRes, waRes] = await Promise.allSettled([
+          emailService.sendEmail({
+            to: appt.email,
+            template: appt.status === 'APPROVED' ? 'APPOINTMENT_APPROVED' : 'APPOINTMENT_CONFIRMATION',
+            bookingData: bookingPayload,
+            icsAttachment,
+          }),
+          whatsAppService.sendMessage({
+            to: appt.mobileNumber,
+            type: appt.status === 'APPROVED' ? 'APPROVAL' : 'BOOKING_CONFIRMATION',
+            bookingData: bookingPayload,
+          }),
+        ]);
 
-        const waRes = await whatsAppService.sendMessage({
-          to: appt.mobileNumber,
-          type: appt.status === 'APPROVED' ? 'APPROVAL' : 'BOOKING_CONFIRMATION',
-          bookingData: bookingPayload,
-        });
+        const emailResult = emailRes.status === 'fulfilled' ? emailRes.value : null;
+        const waResult = waRes.status === 'fulfilled' ? waRes.value : null;
 
         storeService.updateAppointment(appt.id, {
-          emailStatus: emailRes.status === 'FAILED' ? 'FAILED' : 'SENT',
-          whatsappStatus: waRes.status === 'FAILED' ? 'FAILED' : 'SENT',
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
           retryCount: appt.retryCount + 1,
           lastNotificationAt: new Date().toISOString(),
         });
 
-        storeService.logNotification({
-          bookingId: appt.id,
-          ticketNumber: appt.ticketNumber,
-          recipient: appt.email,
-          channel: 'EMAIL',
-          type: 'MANUAL_RESEND',
-          status: emailRes.status,
-        });
-        break;
+        if (emailResult) {
+          storeService.logNotification({
+            bookingId: appt.id,
+            ticketNumber: appt.ticketNumber,
+            recipient: appt.email,
+            channel: 'EMAIL',
+            type: 'MANUAL_RESEND',
+            status: emailResult.status,
+          });
+        }
+
+        return {
+          emailStatus: emailResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          whatsappStatus: waResult?.status === 'FAILED' ? 'FAILED' : 'SENT',
+          lastEmailId: emailResult?.id,
+          lastWhatsAppId: waResult?.id,
+          studentEmailResult: emailResult,
+          studentWaResult: waResult,
+        };
+      }
+
+      default: {
+        return {
+          emailStatus: 'SENT',
+          whatsappStatus: 'SENT',
+        };
       }
     }
   }
